@@ -98,7 +98,40 @@ app.post('/api/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
         
-        res.status(200).json({ success: true, user: { id: user.id, fname: user.fname, email: user.email } });
+        const { password: userPassword, ...safeUser } = user;
+        res.status(200).json({ success: true, user: safeUser });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    } finally {
+        if (client) await client.end();
+    }
+});
+
+app.post('/api/user/update', async (req, res) => {
+    const { id, fname, lname, college, year, field, intro } = req.body;
+    
+    if (!id) return res.status(400).json({ error: 'User ID required' });
+
+    let client;
+    try {
+        client = createClient();
+        await client.connect();
+
+        const query = `
+            UPDATE users 
+            SET fname = $1, lname = $2, college = $3, year = $4, field = $5, intro = $6
+            WHERE id = $7
+            RETURNING *;
+        `;
+        const values = [fname, lname, college, year, field, intro, id];
+        
+        const result = await client.query(query, values);
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        
+        const { password, ...safeUser } = result.rows[0];
+        res.status(200).json({ success: true, user: safeUser });
     } catch (err) {
         res.status(500).json({ error: err.message });
     } finally {

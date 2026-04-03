@@ -521,6 +521,7 @@
         const data = await res.json();
 
         if (data.success) {
+            localStorage.setItem('gigni_user', JSON.stringify(data.user));
             closeOvl(null, 'signin');
             showToast('Logging in...');
             setTimeout(() => {

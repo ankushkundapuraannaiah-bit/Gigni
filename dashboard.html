@@ -217,23 +217,46 @@
     document.getElementById('prof-intro').value = user.intro || '';
   });
 
-  function saveProfile() {
-    // This updates the local storage cache so it persists locally
+  async function saveProfile() {
     const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
-    user.fname = document.getElementById('prof-fname').value;
-    user.lname = document.getElementById('prof-lname').value;
-    user.college = document.getElementById('prof-college').value;
-    user.year = document.getElementById('prof-year').value;
-    user.field = document.getElementById('prof-field').value;
-    user.intro = document.getElementById('prof-intro').value;
+    if (!user.id) {
+        alert('User ID is missing. Please log in again.');
+        return;
+    }
 
-    localStorage.setItem('gigni_user', JSON.stringify(user));
-    
-    // Update top UI Elements
-    document.getElementById('welcome-msg').innerText = 'Welcome back, ' + user.fname + '!';
-    document.getElementById('nav-av').innerText = user.fname.charAt(0).toUpperCase();
-    
-    alert('Profile saved successfully! 🎉');
+    const updatedData = {
+        id: user.id,
+        fname: document.getElementById('prof-fname').value,
+        lname: document.getElementById('prof-lname').value,
+        college: document.getElementById('prof-college').value,
+        year: document.getElementById('prof-year').value,
+        field: document.getElementById('prof-field').value,
+        intro: document.getElementById('prof-intro').value
+    };
+
+    try {
+        const res = await fetch('/api/user/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedData)
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            // Update local storage cache
+            localStorage.setItem('gigni_user', JSON.stringify(data.user));
+            
+            // Update top UI Elements
+            document.getElementById('welcome-msg').innerText = 'Welcome back, ' + data.user.fname + '!';
+            if (data.user.fname) document.getElementById('nav-av').innerText = data.user.fname.charAt(0).toUpperCase();
+            
+            alert('Profile saved successfully to Database! 🎉');
+        } else {
+            alert('Error saving profile: ' + (data.error || 'Unknown error'));
+        }
+    } catch (e) {
+        alert('Error connecting to server.');
+    }
   }
 </script>
 
