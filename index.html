@@ -69,16 +69,16 @@
   .college-carousel { display: flex; align-items: center; gap: 32px; }
   
   .college-card {
-    background: #fff; border-radius: 0px; width: 260px; height: 130px;
+    background: #fff; border-radius: 14px; width: 280px; height: 160px;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    color: #000; padding: 12px; gap: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    color: #000; padding: 16px; gap: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
-  .cbadge {
-    width: 50px; height: 50px; border-radius: 50%; background: #962820;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1rem; font-weight: 800; color: #fff; flex-shrink: 0; box-shadow:0 3px 10px rgba(0,0,0,0.15);
+  .college-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.9); }
+  .college-logo {
+    width: 80px; height: 80px; object-fit: contain; flex-shrink: 0;
   }
-  .college-card span { font-weight: 800; font-size: 1.05rem; }
+  .college-card span { font-weight: 800; font-size: 0.95rem; color: #111; text-align: center; }
 
   .arr { width: 44px; height: 44px; border-radius: 50%; border: none; background: transparent; color: #fff; cursor: pointer; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
   .arr:hover { color: #f97316; transform: scale(1.15); }
@@ -222,10 +222,10 @@
 <nav id="nav">
   <div class="logo">GIGNI</div>
   <ul class="nav-links">
-    <li><a href="about.html" class="blue">About</a></li>
+    <li><a href="about.html">About</a></li>
     <li><a href="#achieve">Hosting</a></li>
-    <li><a href="#join-sec" class="nav-btn">Sign In</a></li>
-    <li><a href="#" onclick="openOvl('signin');return false;" class="nav-btn" style="background:rgba(255,255,255,0.1);border-color:transparent;">Log In <span style="font-size:1.1rem;margin-left:4px;">👤</span></a></li>
+    <li><a href="#join-sec">Sign In</a></li>
+    <li><a href="#" onclick="openOvl('signin');return false;">Log In</a></li>
   </ul>
 </nav>
 
@@ -244,8 +244,8 @@
     <div class="college-carousel">
       <button class="arr" onclick="prevCol()">&#10094;</button>
       <div class="college-card">
-        <div class="cbadge" id="cbadge-logo">RB</div>
-        <span id="cbadge-name">Reva University</span>
+        <img class="college-logo" id="cbadge-logo" src="college-iitb.png" alt="IIT Bombay Logo">
+        <span id="cbadge-name">IIT Bombay</span>
       </div>
       <button class="arr" onclick="nextCol()">&#10095;</button>
     </div>
@@ -486,15 +486,16 @@
   function closeOvl(e, id){ if(e && e.target!==e.currentTarget) return; document.getElementById(id+'-ovl').classList.remove('open'); document.body.style.overflow=''; }
 
   const colleges = [
-    { s: 'RB', n: 'Reva University' },
-    { s: 'IITB', n: 'IIT Bombay' },
-    { s: 'NITS', n: 'NIT Surat' },
-    { s: 'NITK', n: 'NIT Surathkal' },
-    { s: 'IITK', n: 'IIT Kanpur' }
+    { s: 'IITB', n: 'IIT Bombay',     img: 'college-iitb.png' },
+    { s: 'NITS', n: 'NIT Surat',       img: 'college-nits.png' },
+    { s: 'NITK', n: 'NIT Surathkal',   img: 'college-nitk.png' },
+    { s: 'IITK', n: 'IIT Kanpur',      img: 'college-iitk.png' }
   ];
   let currCol = 0;
   function updateCol() {
-    document.getElementById('cbadge-logo').innerText = colleges[currCol].s;
+    const logo = document.getElementById('cbadge-logo');
+    logo.src = colleges[currCol].img;
+    logo.alt = colleges[currCol].n + ' Logo';
     document.getElementById('cbadge-name').innerText = colleges[currCol].n;
   }
   function nextCol() { currCol = (currCol + 1) % colleges.length; updateCol(); }
