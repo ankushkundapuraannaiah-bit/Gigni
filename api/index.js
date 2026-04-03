@@ -49,6 +49,20 @@ app.post('/api/register', async (req, res) => {
         client = createClient();
         await client.connect();
 
+        // Ensure the table exists before attempting to insert
+        await client.query(`CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            fname VARCHAR(255),
+            lname VARCHAR(255),
+            email VARCHAR(255) UNIQUE,
+            password VARCHAR(255),
+            college VARCHAR(255),
+            year VARCHAR(255),
+            field VARCHAR(255),
+            interest VARCHAR(255),
+            intro TEXT
+        );`);
+
         const query = `
             INSERT INTO users (fname, lname, email, password, college, year, field, interest, intro)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
