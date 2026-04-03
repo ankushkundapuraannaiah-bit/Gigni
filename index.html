@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIGNI — Real Internships. Real Growth.</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    padding: 22px 52px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.3s;
+  }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; letter-spacing: 0.05em; color: #fff; line-height:1; }
+  .nav-links { display: flex; gap: 36px; align-items: center; list-style: none; }
+  .nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: #fff; }
+  .nav-links a.blue { color: #3b5bdb; }
+  .nav-btn { background: transparent; border: 1.5px solid rgba(255,255,255,0.25); border-radius: 8px; padding: 8px 22px; color: #fff !important; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .nav-btn:hover { border-color: #3b5bdb; color: #3b5bdb !important; }
+
+  /* HERO */
+  .hero {
+    position: relative; min-height: 100vh;
+    display: flex; align-items: flex-end;
+    overflow: hidden; background: #000;
+  }
+
+  /* big helmet background */
+  .hero-helmet-bg {
+    position: absolute; right: 0; top: 0;
+    width: 68%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none;
+  }
+
+  .hero-helmet-bg svg { width: 100%; height: 100%; }
+
+  .hero-text {
+    position: absolute; z-index: 1;
+    bottom: 20px; left: 60px;
+  }
+
+  .hero-h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 8vw, 8rem);
+    line-height: 0.92; letter-spacing: 0.02em;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(249,115,22,0.4);
+    text-shadow: 0 0 80px rgba(249,115,22,0.15);
+    margin-top: 32px;
+    z-index: 1;
+  }
+
+  .trusted-strip {
+    position: absolute; z-index: 3;
+    bottom: 50px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .trusted-strip p { font-family:'Inter',sans-serif; color: #fff; font-size: 2rem; font-weight: 500; margin-bottom: 24px; text-shadow: 0 2px 10px #000; letter-spacing: -0.01em;}
+  
+  .college-carousel { display: flex; align-items: center; gap: 32px; }
+  
+  .college-card {
+    background: #fff; border-radius: 0px; width: 260px; height: 130px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: #000; padding: 12px; gap: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+  }
+  .cbadge {
+    width: 50px; height: 50px; border-radius: 50%; background: #962820;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; font-weight: 800; color: #fff; flex-shrink: 0; box-shadow:0 3px 10px rgba(0,0,0,0.15);
+  }
+  .college-card span { font-weight: 800; font-size: 1.05rem; }
+
+  .arr { width: 44px; height: 44px; border-radius: 50%; border: none; background: transparent; color: #fff; cursor: pointer; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+  .arr:hover { color: #f97316; transform: scale(1.15); }
+
+  /* ACHIEVE */
+  .achieve { background: #000; padding: 110px 60px; text-align: center; }
+  .achieve h2 { font-size: clamp(1.5rem,3vw,2.1rem); font-weight: 700; margin-bottom: 60px; }
+
+  .cards-row { display: flex; gap: 16px; justify-content: center; align-items: flex-end; flex-wrap: wrap; }
+
+  .acard {
+    background: #2b20c8; border-radius: 28px;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+    padding: 28px 20px 32px;
+    transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+    cursor: default; position: relative; overflow: hidden;
+  }
+  .acard:hover { transform: translateY(-10px); box-shadow: 0 28px 70px rgba(59,91,219,0.55); }
+  .acard.c1 { width: 190px; height: 300px; }
+  .acard.c2 { width: 190px; height: 340px; background: #3b5bdb; }
+  .acard.c3 { width: 210px; height: 380px; background: #3b5bdb; box-shadow: 0 0 40px rgba(59,91,219,0.35); }
+  .acard.c4 { width: 190px; height: 270px; }
+  .acard.c5 { width: 190px; height: 320px; background: #1a1ab5; }
+  .acard-icon { font-size: 3.2rem; margin-bottom: 18px; }
+  .acard h3 { font-size: 0.88rem; font-weight: 800; color: #f8d584; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 5px; }
+  .acard p { font-size: 0.68rem; color: rgba(248,213,132,0.65); text-transform: uppercase; letter-spacing: 0.09em; font-weight: 500; }
+
+  /* GET STARTED */
+  .getstarted { background: #000; padding: 0 60px 120px; }
+  .step { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; max-width: 920px; margin: 0 auto 52px; align-items: center; }
+  .step.flip { direction: rtl; }
+  .step.flip > * { direction: ltr; }
+  .step-t h2 { font-size: clamp(2.2rem,4.5vw,3.2rem); font-weight: 900; color: #3b5bdb; line-height: 1.05; margin-bottom: 18px; letter-spacing: -0.02em; }
+  .step-t p { font-size: 1rem; color: rgba(255,255,255,0.65); line-height: 1.65; }
+  .step-v {
+    background: #2b20c8; border: 3px solid #3b5bdb; border-radius: 22px;
+    min-height: 260px; display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .step-v-inner { text-align: center; position: relative; z-index: 1; }
+  .step-v-inner .ico { font-size: 5rem; display: block; }
+  .step-v-inner .lbl { font-size: 0.9rem; font-weight: 700; color: rgba(255,255,255,0.75); margin-top: 10px; display: block; }
+
+  /* HOWTO GRID */
+  .howto { background: #000; padding: 0 60px 120px; text-align: center; }
+  .howto h2 { font-size: clamp(1.6rem,3.2vw,2.4rem); font-weight: 800; margin-bottom: 44px; }
+  .h4grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 5px;
+    max-width: 800px; margin: 0 auto;
+    border-radius: 22px; overflow: hidden; border: 5px solid #000;
+  }
+  .hcard { padding: 44px 36px; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; min-height: 230px; transition: filter 0.3s, transform 0.3s; }
+  .hcard:hover { filter: brightness(1.1); transform: scale(1.02); z-index: 1; position: relative; }
+  .hcard .hico { font-size: 3.5rem; }
+  .hcard h3 { font-size: 1.35rem; font-weight: 800; }
+  .hblu { background: #2b5fff; } .hblu h3 { color: #fff; }
+  .hwhi { background: #f0f4ff; } .hwhi h3 { color: #3b5bdb; }
+  .hlig { background: #e4ecff; } .hlig h3 { color: #3b5bdb; }
+  .htea { background: #0e6dbb; } .htea h3 { color: #fff; }
+
+  /* COMMUNITY */
+  .community { background: #000; padding: 80px 60px 110px; text-align: center; }
+  .community h2 { font-size: clamp(1.6rem,3.5vw,2.5rem); font-weight: 700; margin-bottom: 56px; }
+  .comm-fig { max-width: 700px; margin: 0 auto; }
+  .comm-btns { margin-top: 48px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .btn-blue { background: #3b5bdb; color: #fff; border: none; border-radius: 10px; padding: 15px 32px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: 'Inter',sans-serif; transition: all 0.3s; }
+  .btn-blue:hover { background: #2f4ec4; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(59,91,219,0.5); }
+  .btn-out { background: transparent; border: 1.5px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 15px 28px; color: rgba(255,255,255,0.65); font-family: 'Inter',sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-out:hover { border-color: #f97316; color: #f97316; }
+
+  /* JOIN FORM */
+  .join { background: #000; border-top: 1px solid rgba(255,255,255,0.07); padding: 100px 60px; }
+  .join-wrap { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+  .jleft h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem,5vw,4.5rem); line-height: 0.95; letter-spacing: 0.04em; margin-bottom: 20px; }
+  .jleft h2 em { font-style: normal; color: #f97316; }
+  .jleft p { color: rgba(255,255,255,0.5); font-size: 0.98rem; line-height: 1.7; margin-bottom: 36px; }
+  .plist { display: flex; flex-direction: column; gap: 16px; }
+  .prow { display: flex; gap: 14px; align-items: center; }
+  .pdot { width: 34px; height: 34px; border-radius: 9px; background: #1a1ab5; border: 1px solid #3b5bdb; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0; }
+  .prow span { color: rgba(255,255,255,0.65); font-size: 0.9rem; }
+
+  .jform { background: #0d0d0d; border: 1px solid rgba(255,255,255,0.09); border-radius: 22px; padding: 38px 34px; }
+  .jform h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 28px; letter-spacing: -0.01em; }
+  .fg { margin-bottom: 16px; }
+  .fg label { display: block; font-size: 0.72rem; font-weight: 700; color: rgba(255,255,255,0.35); letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 7px; }
+  .fg input, .fg select, .fg textarea { width: 100%; background: #181818; border: 1px solid rgba(255,255,255,0.09); border-radius: 9px; padding: 12px 15px; color: #fff; font-family: 'Inter',sans-serif; font-size: 0.88rem; outline: none; transition: all 0.2s; }
+  .fg input::placeholder, .fg textarea::placeholder { color: rgba(255,255,255,0.2); }
+  .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: #3b5bdb; box-shadow: 0 0 0 3px rgba(59,91,219,0.2); }
+  .fg select option { background: #181818; }
+  .frow2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .fsub { width: 100%; background: #3b5bdb; color: #fff; border: none; border-radius: 9px; padding: 14px; font-size: 0.93rem; font-weight: 700; cursor: pointer; font-family: 'Inter',sans-serif; margin-top: 6px; transition: all 0.3s; letter-spacing: 0.02em; }
+  .fsub:hover { background: #2f4ec4; transform: translateY(-2px); box-shadow: 0 12px 36px rgba(59,91,219,0.5); }
+
+  /* FOOTER */
+  footer { background: #000; border-top: 1px solid rgba(255,255,255,0.07); padding: 44px 60px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+  .flogo { font-family: 'Bebas Neue', sans-serif; font-size: 1.9rem; letter-spacing: 0.05em; }
+  .flinks { display: flex; gap: 24px; flex-wrap: wrap; }
+  .flinks a { color: rgba(255,255,255,0.35); text-decoration: none; font-size: 0.83rem; transition: color 0.2s; }
+  .flinks a:hover { color: #fff; }
+  .femail a { color: #3b5bdb; text-decoration: none; font-size: 0.83rem; font-weight: 600; }
+  .fcopy { color: rgba(255,255,255,0.2); font-size: 0.75rem; }
+
+  /* MODALS */
+  .ovl { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+  .ovl.open { opacity: 1; pointer-events: all; }
+  .modal { background: #111; border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 42px 38px; width: 90%; max-width: 420px; transform: translateY(20px); transition: transform 0.3s; position: relative; }
+  .ovl.open .modal { transform: translateY(0); }
+  .mx { position: absolute; top: 14px; right: 14px; background: rgba(255,255,255,0.06); border: none; color: rgba(255,255,255,0.4); width: 30px; height: 30px; border-radius: 7px; cursor: pointer; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .mx:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  .modal h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 4px; }
+  .modal .ms { color: rgba(255,255,255,0.4); font-size: 0.85rem; margin-bottom: 26px; }
+
+  /* TOAST */
+  #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: #161616; border: 1px solid rgba(59,91,219,0.4); border-radius: 100px; padding: 13px 26px; color: #fff; font-size: 0.86rem; font-weight: 500; z-index: 9999; transition: all 0.4s cubic-bezier(0.16,1,0.3,1); white-space: nowrap; box-shadow: 0 16px 48px rgba(0,0,0,0.5); opacity: 0; }
+
+  /* ANIMATIONS */
+  @keyframes glow { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+  @keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+  .reveal { opacity: 0; transform: translateY(30px); transition: all 0.75s cubic-bezier(0.16,1,0.3,1); }
+  .reveal.vis { opacity: 1; transform: translateY(0); }
+
+  @media(max-width:768px){
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .hero-text { padding: 0 20px 60px; width: 100%; }
+    .hero-helmet-bg { width: 100%; opacity: 0.25; }
+    .achieve { padding: 80px 20px; }
+    .acard { width: 130px !important; height: 200px !important; }
+    .getstarted, .howto, .community, .join { padding: 60px 20px; }
+    .step { grid-template-columns: 1fr; }
+    .step.flip { direction: ltr; }
+    .join-wrap { grid-template-columns: 1fr; gap: 40px; }
+    .frow2 { grid-template-columns: 1fr; }
+    footer { flex-direction: column; padding: 32px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="logo">GIGNI</div>
+  <ul class="nav-links">
+    <li><a href="about.html" class="blue">About</a></li>
+    <li><a href="#achieve">Hosting</a></li>
+    <li><a href="#join-sec" class="nav-btn">Sign In</a></li>
+    <li><a href="#" onclick="openOvl('signin');return false;" class="nav-btn" style="background:rgba(255,255,255,0.1);border-color:transparent;">Log In <span style="font-size:1.1rem;margin-left:4px;">👤</span></a></li>
+  </ul>
+</nav>
+
+<!-- ══════════ HERO ══════════ -->
+<section class="hero" id="home">
+  <!-- Helmet background -->
+  <div class="hero-helmet-bg" style="width:100%; right:0; opacity:0.8;">
+    <img src="home-hero.png" alt="Gigni Character" style="width:100%; height:100%; object-fit:cover; object-position: right top;">
+  </div>
+
+  <div class="hero-text">
+    <h1 class="hero-h1">LET'S BUILD<br>THE FUTURE<br>TOGETHER</h1>
+  </div>
+  <div class="trusted-strip">
+    <p>Trusted By Students from!</p>
+    <div class="college-carousel">
+      <button class="arr" onclick="prevCol()">&#10094;</button>
+      <div class="college-card">
+        <div class="cbadge" id="cbadge-logo">RB</div>
+        <span id="cbadge-name">Reva University</span>
+      </div>
+      <button class="arr" onclick="nextCol()">&#10095;</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ ACHIEVE ══════════ -->
+<section class="achieve" id="achieve">
+  <h2 class="reveal">What you will achieve through Gigni</h2>
+  <div class="cards-row reveal">
+    <div class="acard c1">
+      <div class="acard-icon">🎉</div>
+      <h3>Event</h3>
+      <p>Knowledge to Success</p>
+    </div>
+    <div class="acard c2">
+      <div class="acard-icon">🤝</div>
+      <h3>Mentorship</h3>
+      <p>By Gigni Team</p>
+    </div>
+    <div class="acard c3">
+      <div class="acard-icon">💼</div>
+      <h3>Internship</h3>
+      <p>Real World Project</p>
+    </div>
+    <div class="acard c4">
+      <div class="acard-icon">📢</div>
+      <h3>Competitions</h3>
+      <p>Hackathons For All</p>
+    </div>
+    <div class="acard c5">
+      <div class="acard-icon">💰</div>
+      <h3>Paid Internship</h3>
+      <p>Get Paid Internships</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ GET STARTED ══════════ -->
+<section class="getstarted" id="about">
+
+  <div class="step reveal">
+    <div class="step-t">
+      <h2>Get Started:</h2>
+      <p>Register or Sign In to create your Gigni account. Fill out your profile and become eligible to receive real, verified internship opportunities.</p>
+    </div>
+    <div class="step-v">
+      <div class="step-v-inner">
+        <svg width="190" height="130" viewBox="0 0 190 130" fill="none">
+          <rect x="18" y="22" width="154" height="82" rx="18" fill="#3b5bdb" opacity="0.9"/>
+          <text x="95" y="60" text-anchor="middle" font-family="Inter" font-weight="900" font-size="26" fill="#fbbf24">JOIN</text>
+          <rect x="28" y="72" width="134" height="22" rx="11" fill="#2a4bc7"/>
+          <text x="95" y="88" text-anchor="middle" font-family="Inter" font-weight="900" font-size="16" fill="#fbbf24">NOW</text>
+          <text x="20" y="22" font-size="16">⭐</text>
+          <text x="155" y="24" font-size="14">💫</text>
+          <text x="8" y="110" font-size="13">✨</text>
+          <text x="168" y="115" font-size="14">🌟</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="step flip reveal" style="transition-delay:0.1s">
+    <div class="step-v">
+      <div class="step-v-inner">
+        <span class="ico">📧</span>
+        <span class="lbl">Inbox → Opportunities</span>
+      </div>
+    </div>
+    <div class="step-t">
+      <h2>Get email or Apply:</h2>
+      <p>Related to Internships, Mentor sessions, Hackathons and events — everything lands in your inbox. No hunting, no stress.</p>
+    </div>
+  </div>
+
+  <div class="step reveal" style="transition-delay:0.2s">
+    <div class="step-t">
+      <h2>Get Certificate:</h2>
+      <p>Free Internships, mentorship, Hackathons and Events come with verified certificates that carry real weight with employers.</p>
+    </div>
+    <div class="step-v">
+      <div class="step-v-inner">
+        <span class="ico">🎓</span>
+        <span class="lbl">Verified Certificate</span>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════ HOW TO GET (4-GRID) ══════════ -->
+<section class="howto" id="howto">
+  <h2 class="reveal">How to get free Internship of Gigni ?</h2>
+  <div class="h4grid reveal">
+    <div class="hcard hblu">
+      <div class="hico">📬</div>
+      <h3>Receive Project</h3>
+    </div>
+    <div class="hcard hwhi">
+      <div class="hico">💻</div>
+      <h3>Work on it</h3>
+    </div>
+    <div class="hcard hlig">
+      <div class="hico">✅</div>
+      <h3>Get verified</h3>
+    </div>
+    <div class="hcard htea">
+      <div class="hico">🤖</div>
+      <h3>Get Certificate</h3>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ COMMUNITY ══════════ -->
+<section class="community">
+  <h2 class="reveal">Become part of Gigni community</h2>
+  <div class="comm-fig reveal">
+    <img src="community.png" style="width:100%; max-width:800px; display:block; margin:0 auto; border-radius:12px;">
+    <div class="comm-btns">
+      <button class="btn-blue" onclick="document.getElementById('join-sec').scrollIntoView({behavior:'smooth'})">Join the Community →</button>
+      <button class="btn-out" onclick="document.getElementById('join-sec').scrollIntoView({behavior:'smooth'})">Build Profile</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ JOIN / PROFILE ══════════ -->
+<section class="join" id="join-sec">
+  <div class="join-wrap">
+    <div class="jleft reveal">
+      <h2>BUILD YOUR<br><em>PROFILE.</em><br>GET MATCHED.</h2>
+      <p>Create your free Gigni profile and start receiving verified internships, mentorship sessions, hackathon invites, and more — straight to your email. Zero fakes. Zero spam. Always free.</p>
+      <div class="plist">
+        <div class="prow"><div class="pdot">💼</div><span>100% Verified Internships — manually vetted</span></div>
+        <div class="prow"><div class="pdot">🧠</div><span>1-on-1 Mentorship by industry professionals</span></div>
+        <div class="prow"><div class="pdot">⚡</div><span>Hackathons & Events access</span></div>
+        <div class="prow"><div class="pdot">🎓</div><span>Free verified certificates on completion</span></div>
+        <div class="prow"><div class="pdot">📬</div><span>gigniconnect@gmail.com</span></div>
+      </div>
+    </div>
+    <div class="jform reveal" style="transition-delay:0.15s" id="form-wrap">
+      <h3>Create Your Profile</h3>
+      <div id="form-body">
+        <div class="frow2">
+          <div class="fg"><label>First Name</label><input type="text" id="p_fname" placeholder="Aryan"></div>
+          <div class="fg"><label>Last Name</label><input type="text" id="p_lname" placeholder="Mehta"></div>
+        </div>
+        <div class="fg"><label>Email Address</label><input type="email" id="p_email" placeholder="aryan@college.edu"></div>
+        <div class="fg"><label>Password</label><input type="password" id="p_password" placeholder="Create a password"></div>
+        <div class="fg"><label>College / University</label><input type="text" id="p_college" placeholder="NIT Trichy"></div>
+        <div class="frow2">
+          <div class="fg">
+            <label>Year of Study</label>
+            <select id="p_year">
+              <option value="">Select</option>
+              <option>1st Year</option><option>2nd Year</option>
+              <option>3rd Year</option><option>4th Year</option>
+              <option>Postgraduate</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Field</label>
+            <select id="p_field">
+              <option value="">Select</option>
+              <option>Computer Science</option>
+              <option>Engineering</option>
+              <option>Design / UX</option>
+              <option>Data Science / AI</option>
+              <option>Business / Management</option>
+              <option>Marketing</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <label>Area of Interest</label>
+          <select id="p_interest">
+            <option value="">Select interest</option>
+            <option>Frontend Development</option>
+            <option>Backend Development</option>
+            <option>Full Stack Development</option>
+            <option>Data Science / ML</option>
+            <option>Product Management</option>
+            <option>UI/UX Design</option>
+            <option>Digital Marketing</option>
+            <option>Content Creation</option>
+            <option>Business Development</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Brief Introduction (optional)</label>
+          <textarea id="p_intro" rows="3" placeholder="Your goals, skills, or what makes you stand out..."></textarea>
+        </div>
+        <button class="fsub" onclick="submitForm()">Create Profile & Get Matched →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="flogo">GIGNI</div>
+  <div class="flinks">
+    <a href="#about">About</a>
+    <a href="#achieve">Features</a>
+    <a href="#join-sec">Join</a>
+    <a href="#howto">How it Works</a>
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+  </div>
+  <div class="femail"><a href="mailto:gigniconnect@gmail.com">gigniconnect@gmail.com</a></div>
+  <div class="fcopy">© 2025 Gigni</div>
+</footer>
+
+<!-- SIGNIN MODAL -->
+<div class="ovl" id="signin-ovl" onclick="closeOvl(event,'signin')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="mx" onclick="closeOvl(null,'signin')">✕</button>
+    <h3>Welcome back</h3>
+    <p class="ms">Log in to your Gigni account.</p>
+    <div class="fg"><label>Email</label><input type="email" id="l_email" placeholder="you@college.edu"></div>
+    <div class="fg"><label>Password</label><input type="password" id="l_password" placeholder="••••••••"></div>
+    <button class="fsub" onclick="handleLogin()">Log In →</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+  // Reveal
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('vis'); io.unobserve(e.target); }});
+  }, {threshold: 0.1});
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Modal
+  function openOvl(id){ document.getElementById(id+'-ovl').classList.add('open'); document.body.style.overflow='hidden'; }
+  function closeOvl(e, id){ if(e && e.target!==e.currentTarget) return; document.getElementById(id+'-ovl').classList.remove('open'); document.body.style.overflow=''; }
+
+  const colleges = [
+    { s: 'RB', n: 'Reva University' },
+    { s: 'IITB', n: 'IIT Bombay' },
+    { s: 'NITS', n: 'NIT Surat' },
+    { s: 'NITK', n: 'NIT Surathkal' },
+    { s: 'IITK', n: 'IIT Kanpur' }
+  ];
+  let currCol = 0;
+  function updateCol() {
+    document.getElementById('cbadge-logo').innerText = colleges[currCol].s;
+    document.getElementById('cbadge-name').innerText = colleges[currCol].n;
+  }
+  function nextCol() { currCol = (currCol + 1) % colleges.length; updateCol(); }
+  function prevCol() { currCol = (currCol - 1 + colleges.length) % colleges.length; updateCol(); }
+  
+  // init
+  updateCol();
+
+  async function handleLogin() {
+    let email = document.getElementById('l_email')?.value || '';
+    let password = document.getElementById('l_password')?.value || '';
+    
+    if (!email || !password) {
+        showToast('Email and Password are required!');
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            closeOvl(null, 'signin');
+            showToast('Logging in...');
+            setTimeout(() => {
+              window.location.href = 'dashboard.html';
+            }, 1000);
+        } else {
+            showToast(data.error || 'Invalid credentials');
+        }
+    } catch (e) {
+        showToast('Error connecting to server. Is it running?');
+    }
+  }
+
+  // Form
+  async function submitForm(){
+    // Gather details
+    let fname = document.getElementById('p_fname')?.value || '';
+    let lname = document.getElementById('p_lname')?.value || '';
+    let email = document.getElementById('p_email')?.value || '';
+    let password = document.getElementById('p_password')?.value || '';
+    let college = document.getElementById('p_college')?.value || '';
+    let year = document.getElementById('p_year')?.value || '';
+    let field = document.getElementById('p_field')?.value || '';
+    let interest = document.getElementById('p_interest')?.value || '';
+    let intro = document.getElementById('p_intro')?.value || '';
+
+    if (!email || !password) {
+        showToast('Email and Password are required!');
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fname, lname, email, password, college, year, field, interest, intro })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            document.getElementById('form-body').innerHTML = `
+              <div style="text-align:center;padding:28px 0">
+                <div style="width:68px;height:68px;border-radius:50%;background:rgba(59,91,219,0.14);border:2px solid #3b5bdb;display:flex;align-items:center;justify-content:center;font-size:1.9rem;margin:0 auto 22px">🎉</div>
+                <h3 style="font-size:1.25rem;font-weight:800;margin-bottom:10px">Profile Created!</h3>
+                <p style="color:rgba(255,255,255,0.45);font-size:0.88rem;line-height:1.7">Your Gigni profile is created. Please log in to view your dashboard.</p>
+                <div style="margin-top:22px;">
+                  <button onclick="openOvl('signin')" style="padding:12px;width:100%;background:#3b5bdb;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;">Log In Now</button>
+                </div>
+              </div>`;
+            showToast('Profile created successfully ✓');
+        } else {
+            showToast(data.error || 'Failed to create profile');
+        }
+    } catch (e) {
+        showToast('Error connecting to server. Is it running?');
+    }
+  }
+
+  // Toast
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.transform = 'translateX(-50%) translateY(0)';
+    t.style.opacity = '1';
+    setTimeout(()=>{ t.style.transform='translateX(-50%) translateY(80px)'; t.style.opacity='0'; }, 3500);
+  }
+
+  // Nav
+  window.addEventListener('scroll', ()=>{
+    document.getElementById('nav').style.background = window.scrollY > 50 ? 'rgba(0,0,0,0.96)' : 'transparent';
+  });
+</script>
+</body>
+</html>

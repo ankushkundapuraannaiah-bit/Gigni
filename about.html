@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About GIGNI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 22px 52px;
+      display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.3s;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+    }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; letter-spacing: 0.05em; color: #fff; line-height:1; text-decoration: none;}
+    .nav-links { display: flex; gap: 36px; align-items: center; list-style: none; }
+    .nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: #fff; }
+    .nav-btn { background: transparent; border: 1.5px solid rgba(255,255,255,0.25); border-radius: 8px; padding: 8px 22px; color: #fff !important; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    
+    .about-hero { position: relative; width: 100%; height: 100vh; overflow: hidden; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 80px;}
+    .about-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; opacity: 0.6;}
+    .about-hero h1 { position: relative; z-index: 2; font-family: 'Bebas Neue',sans-serif; font-size: clamp(4rem, 10vw, 9rem); color: transparent; -webkit-text-stroke: 1px rgba(249,115,22,0.8); text-align: center; text-shadow: 0 0 80px rgba(249,115,22,0.2); margin: 0; line-height: 0.9; letter-spacing: 0.02em;}
+    
+    .content-sec { padding: 80px 40px; max-width: 900px; margin: 0 auto; }
+    .content-sec h2 { font-size: 3.5rem; text-align: center; margin-bottom: 50px; font-weight: 800; letter-spacing: -0.02em; }
+    
+    .text-block p { font-size: 1.15rem; line-height: 1.8; color: rgba(255,255,255,0.85); margin-bottom: 24px; }
+    .text-block b { color: #fff; font-weight: 700; }
+    .text-block ul { margin-bottom: 30px; padding-left: 20px; }
+    .text-block li { font-size: 1.1rem; line-height: 1.7; color: rgba(255,255,255,0.8); margin-bottom: 12px; }
+    .text-block li b { color: #fff; }
+
+    .logo-huge { font-family: 'Bebas Neue', sans-serif; font-size: clamp(6rem, 15vw, 15rem); text-align: center; margin-top: 100px; color: #fff; letter-spacing: 0.05em; text-shadow: 0 10px 40px rgba(255,255,255,0.1); }
+    
+    @media(max-width:768px){
+      nav { padding: 16px 20px; }
+      .nav-links { display: none; }
+      .content-sec { padding: 60px 20px; }
+      .content-sec h2 { font-size: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">GIGNI</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="dashboard.html" class="nav-btn" style="background:rgba(255,255,255,0.1);border-color:transparent;">Dashboard 👤</a></li>
+  </ul>
+</nav>
+
+<section class="about-hero">
+  <img src="about-hero.png" alt="Gigni Astronaut Let's Know Each Other">
+  <h1>LET'S KNOW<br>EACH OTHER</h1>
+</section>
+
+<section class="content-sec" style="padding-bottom: 40px;">
+  <h2>About Gigni:</h2>
+  <div class="text-block">
+    <p><b>Gigni</b> is a platform designed to help students and explorers discover opportunities that support their learning and career growth. It acts as a central portal for internships, mentorships, hackathons, and community events.</p>
+    <p>When a student connects with <b>Gigni</b>, they become part of a network that regularly shares <b>real-world, project-based opportunities</b>. Students receive <b>email updates about internships, hackathons, mentorship programs, and events</b> that can help them gain practical experience and build skills beyond the classroom.</p>
+    <p>The platform focuses on connecting students with <b>hands-on projects and industry-relevant experiences</b>. Instead of only theoretical learning, students get chances to work on <b>real problems, collaborate with mentors, and participate in competitions or community initiatives</b>.</p>
+    <p>Key aspects of Gigni include:</p>
+    <ul>
+      <li><b>Internship Opportunities</b> – Access to real-world, project-based internships that help students build practical skills.</li>
+      <li><b>Mentorship Programs</b> – Guidance from experienced mentors who help students learn, grow, and navigate their careers.</li>
+      <li><b>Hackathons</b> – Opportunities to participate in coding or innovation challenges to solve real problems.</li>
+      <li><b>Community & Events</b> – A network where students can attend workshops, events, and connect with like-minded peers.</li>
+    </ul>
+    <p>Overall, <b>Gigni</b> aims to be a <b>trusted ecosystem where students can continuously discover opportunities, learn from mentors, and gain real-world experience</b>, helping them prepare for their future careers.</p>
+  </div>
+</section>
+
+<section class="content-sec" style="padding-top: 40px;">
+  <h2>Why email:</h2>
+  <div class="text-block">
+    <p><b>Gigni connects with students primarily through email</b>, ensuring they never miss important opportunities that can help build their future. <b>Email is used because it is one of the most reliable and convenient ways to communicate with students.</b></p>
+    <p>Once a student connects with Gigni, they begin receiving regular updates directly in their inbox about opportunities such as: <b>Real-world project-based internships, Hackathons and innovation challenges, Mentorship programs, Workshops, events, and community activities.</b></p>
+    <p>By sending these updates through email, Gigni makes sure that students stay informed without needing to constantly search for opportunities themselves. <b>Important information reaches them directly, allowing them to easily explore and apply for programs that match their interests and career goals.</b></p>
+    <p>This approach helps students stay organized, save time, and remain connected to valuable opportunities that contribute to their learning and professional growth. <b>Through consistent email communication, Gigni builds a trusted bridge between students and future-building experiences.</b></p>
+  </div>
+  <div class="logo-huge">GIGNI</div>
+</section>
+
+</body>
+</html>
