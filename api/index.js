@@ -13,9 +13,10 @@ app.use(express.static(__dirname));
 
 // Utility endpoint to initialize Vercel Postgres table
 app.get('/api/init', async (req, res) => {
-    const client = createClient();
-    await client.connect();
+    let client;
     try {
+        client = createClient();
+        await client.connect();
         await client.query(`CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
             fname VARCHAR(255),
@@ -32,7 +33,7 @@ app.get('/api/init', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     } finally {
-        await client.end();
+        if (client) await client.end();
     }
 });
 
@@ -43,10 +44,11 @@ app.post('/api/register', async (req, res) => {
         return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    const client = createClient();
-    await client.connect();
-
+    let client;
     try {
+        client = createClient();
+        await client.connect();
+
         const query = `
             INSERT INTO users (fname, lname, email, password, college, year, field, interest, intro)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
@@ -63,17 +65,18 @@ app.post('/api/register', async (req, res) => {
         }
         res.status(500).json({ error: err.message });
     } finally {
-        await client.end();
+        if (client) await client.end();
     }
 });
 
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
     
-    const client = createClient();
-    await client.connect();
-    
+    let client;
     try {
+        client = createClient();
+        await client.connect();
+    
         const result = await client.query(`SELECT * FROM users WHERE email = $1;`, [email]);
         const user = result.rows[0];
         
@@ -85,7 +88,7 @@ app.post('/api/login', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     } finally {
-        await client.end();
+        if (client) await client.end();
     }
 });
 
