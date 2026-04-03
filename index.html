@@ -126,18 +126,29 @@
   .howto { background: #000; padding: 0 60px 120px; text-align: center; }
   .howto h2 { font-size: clamp(1.6rem,3.2vw,2.4rem); font-weight: 800; margin-bottom: 44px; }
   .h4grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 5px;
-    max-width: 800px; margin: 0 auto;
-    border-radius: 22px; overflow: hidden; border: 5px solid #000;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+    max-width: 760px; margin: 0 auto;
+    background: #1a1a2e; border-radius: 20px; overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+    border: 6px solid #1a1a2e;
   }
-  .hcard { padding: 44px 36px; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; min-height: 230px; transition: filter 0.3s, transform 0.3s; }
-  .hcard:hover { filter: brightness(1.1); transform: scale(1.02); z-index: 1; position: relative; }
-  .hcard .hico { font-size: 3.5rem; }
-  .hcard h3 { font-size: 1.35rem; font-weight: 800; }
-  .hblu { background: #2b5fff; } .hblu h3 { color: #fff; }
-  .hwhi { background: #f0f4ff; } .hwhi h3 { color: #3b5bdb; }
-  .hlig { background: #e4ecff; } .hlig h3 { color: #3b5bdb; }
-  .htea { background: #0e6dbb; } .htea h3 { color: #fff; }
+  .hcard {
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    min-height: 260px; transition: filter 0.3s, transform 0.3s;
+    overflow: hidden; position: relative;
+  }
+  .hcard:hover { filter: brightness(1.08); transform: scale(1.02); z-index: 1; }
+  .hcard-img { width: 100%; flex: 1; object-fit: cover; object-position: center; display: block; }
+  .hcard-svg { width: 100%; flex: 1; display: flex; align-items: center; justify-content: center; }
+  .hcard-label {
+    width: 100%; padding: 16px 20px;
+    font-size: 1.25rem; font-weight: 800; letter-spacing: -0.01em;
+    text-align: left;
+  }
+  .hblu { background: #2b5fff; } .hblu .hcard-label { color: #fff; }
+  .hwhi { background: #f0f4ff; } .hwhi .hcard-label { color: #2b5fff; }
+  .hlig { background: #e8eeff; } .hlig .hcard-label { color: #2b5fff; }
+  .htea { background: #1a3fd4; } .htea .hcard-label { color: #fff; }
 
   /* COMMUNITY */
   .community { background: #000; padding: 80px 60px 110px; text-align: center; }
@@ -340,22 +351,62 @@
 <section class="howto" id="howto">
   <h2 class="reveal">How to get free Internship of Gigni ?</h2>
   <div class="h4grid reveal">
+
+    <!-- Card 1: Receive Project -->
     <div class="hcard hblu">
-      <div class="hico">📬</div>
-      <h3>Receive Project</h3>
+      <img class="hcard-img" src="card-receive.png" alt="Receive Project illustration">
+      <div class="hcard-label">Receive Project</div>
     </div>
+
+    <!-- Card 2: Work on it -->
     <div class="hcard hwhi">
-      <div class="hico">💻</div>
-      <h3>Work on it</h3>
+      <img class="hcard-img" src="card-work.png" alt="Work on it illustration">
+      <div class="hcard-label">Work on it</div>
     </div>
+
+    <!-- Card 3: Get verified -->
     <div class="hcard hlig">
-      <div class="hico">✅</div>
-      <h3>Get verified</h3>
+      <div class="hcard-svg">
+        <svg viewBox="0 0 160 140" width="160" height="140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="80" cy="75" rx="52" ry="52" fill="#e0e9ff"/>
+          <path d="M50 75 L70 96 L112 54" stroke="url(#vg)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+          <defs><linearGradient id="vg" x1="50" y1="54" x2="112" y2="96" gradientUnits="userSpaceOnUse"><stop stop-color="#7c5cbf"/><stop offset="1" stop-color="#38b2a6"/></linearGradient></defs>
+        </svg>
+      </div>
+      <div class="hcard-label">Get verified</div>
     </div>
+
+    <!-- Card 4: Get Certificate -->
     <div class="hcard htea">
-      <div class="hico">🤖</div>
-      <h3>Get Certificate</h3>
+      <div class="hcard-svg">
+        <svg viewBox="0 0 160 140" width="160" height="140" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Robot body -->
+          <rect x="52" y="62" width="56" height="46" rx="12" fill="#fff" opacity="0.15"/>
+          <rect x="52" y="62" width="56" height="46" rx="12" fill="white" opacity="0.9"/>
+          <!-- Robot head -->
+          <rect x="58" y="36" width="44" height="34" rx="10" fill="white" opacity="0.9"/>
+          <!-- Eyes -->
+          <circle cx="72" cy="52" r="5" fill="#1a3fd4"/>
+          <circle cx="88" cy="52" r="5" fill="#1a3fd4"/>
+          <circle cx="72" cy="52" r="2.5" fill="#fff"/>
+          <circle cx="88" cy="52" r="2.5" fill="#fff"/>
+          <!-- Smile -->
+          <path d="M72 62 Q80 68 88 62" stroke="#1a3fd4" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <!-- Antenna -->
+          <line x1="80" y1="36" x2="80" y2="26" stroke="white" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="80" cy="22" r="5" fill="#ffd700"/>
+          <!-- Stars -->
+          <text x="36" y="50" font-size="14" fill="#ffd700">★</text>
+          <text x="110" y="46" font-size="18" fill="#ffd700">★</text>
+          <text x="44" y="72" font-size="10" fill="#ffd700">★</text>
+          <!-- Arms -->
+          <rect x="36" y="68" width="16" height="10" rx="5" fill="white" opacity="0.8"/>
+          <rect x="108" y="68" width="16" height="10" rx="5" fill="white" opacity="0.8"/>
+        </svg>
+      </div>
+      <div class="hcard-label">Get Certificate</div>
     </div>
+
   </div>
 </section>
 
