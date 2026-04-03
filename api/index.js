@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { sql } = require('@vercel/postgres');
+const { createClient } = require('@vercel/postgres');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,8 +13,10 @@ app.use(express.static(__dirname));
 
 // Utility endpoint to initialize Vercel Postgres table
 app.get('/api/init', async (req, res) => {
+    const client = createClient();
+    await client.connect();
     try {
-        await sql`CREATE TABLE IF NOT EXISTS users (
+        await client.query(`CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
             fname VARCHAR(255),
             lname VARCHAR(255),
@@ -25,10 +27,12 @@ app.get('/api/init', async (req, res) => {
             field VARCHAR(255),
             interest VARCHAR(255),
             intro TEXT
-        );`;
+        );`);
         res.status(200).json({ success: true, message: 'Table initialized' });
     } catch (err) {
         res.status(500).json({ error: err.message });
+    } finally {
+        await client.end();
     }
 });
 
@@ -39,12 +43,18 @@ app.post('/api/register', async (req, res) => {
         return res.status(400).json({ error: 'Email and password are required' });
     }
 
+    const client = createClient();
+    await client.connect();
+
     try {
-        const result = await sql`
+        const query = `
             INSERT INTO users (fname, lname, email, password, college, year, field, interest, intro)
-            VALUES (${fname}, ${lname}, ${email}, ${password}, ${college}, ${year}, ${field}, ${interest}, ${intro})
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
             RETURNING id;
         `;
+        const values = [fname, lname, email, password, college, year, field, interest, intro];
+        
+        const result = await client.query(query, values);
         res.status(201).json({ success: true, id: result.rows[0].id });
     } catch (err) {
         // Handle Postgres unique constraint error (code 23505)
@@ -52,15 +62,20 @@ app.post('/api/register', async (req, res) => {
             return res.status(400).json({ error: "Email already exists" });
         }
         res.status(500).json({ error: err.message });
+    } finally {
+        await client.end();
     }
 });
 
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
     
+    const client = createClient();
+    await client.connect();
+    
     try {
-        const { rows } = await sql`SELECT * FROM users WHERE email = ${email};`;
-        const user = rows[0];
+        const result = await client.query(`SELECT * FROM users WHERE email = $1;`, [email]);
+        const user = result.rows[0];
         
         if (!user || user.password !== password) {
             return res.status(401).json({ error: 'Invalid email or password' });
@@ -69,6 +84,8 @@ app.post('/api/login', async (req, res) => {
         res.status(200).json({ success: true, user: { id: user.id, fname: user.fname, email: user.email } });
     } catch (err) {
         res.status(500).json({ error: err.message });
+    } finally {
+        await client.end();
     }
 });
 
