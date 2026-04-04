@@ -63,6 +63,49 @@
     .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: #3b5bdb; box-shadow: 0 0 0 3px rgba(59,91,219,0.2); }
     .fg select option { background: #181818; }
     .frow2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* MOBILE BOTTOM TAB BAR */
+    .mobile-tab-bar {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0;
+      background: #0a0a0a; border-top: 1px solid rgba(255,255,255,0.08);
+      z-index: 900; padding: 6px 0 env(safe-area-inset-bottom, 6px);
+      justify-content: space-around; align-items: center;
+    }
+    .mob-tab {
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      padding: 6px 8px; color: rgba(255,255,255,0.45); cursor: pointer;
+      font-size: 0.6rem; font-weight: 600; letter-spacing: 0.04em;
+      text-transform: uppercase; border: none; background: transparent;
+      flex: 1; transition: color 0.2s;
+    }
+    .mob-tab .mob-ico { font-size: 1.3rem; }
+    .mob-tab.active { color: #f97316; }
+
+    @media(max-width: 768px) {
+      nav { padding: 14px 18px; }
+      .logo { font-size: 1.8rem; }
+      .user-av { width: 32px; height: 32px; font-size: 0.85rem; }
+
+      /* Layout: stack sidebar out, go full width */
+      .dashboard { grid-template-columns: 1fr; padding-top: 60px; padding-bottom: 70px; }
+      .sidebar { display: none; }
+      .content { padding: 24px 16px; }
+
+      /* Cards grid tighter */
+      .grid { grid-template-columns: 1fr; gap: 16px; }
+      .card { padding: 20px; }
+      .header-info h1 { font-size: 1.5rem; }
+
+      /* Profile form */
+      .profile-card { padding: 20px 16px; }
+      .frow2 { grid-template-columns: 1fr; }
+
+      /* Show bottom tab bar */
+      .mobile-tab-bar { display: flex; }
+
+      /* Empty state */
+      .empty-state { padding: 40px 16px; }
+    }
   </style>
 </head>
 <body>
@@ -74,6 +117,25 @@
     <a href="index.html" class="logout-btn">Log Out</a>
   </div>
 </nav>
+
+<!-- MOBILE BOTTOM TAB BAR -->
+<div class="mobile-tab-bar">
+  <button class="mob-tab active" id="mob-tab-dash" onclick="switchTab('dash', null, this)">
+    <span class="mob-ico">🏠</span> Home
+  </button>
+  <button class="mob-tab" id="mob-tab-profile" onclick="switchTab('profile', null, this)">
+    <span class="mob-ico">👤</span> Profile
+  </button>
+  <button class="mob-tab" id="mob-tab-proj" onclick="switchTab('proj', null, this)">
+    <span class="mob-ico">💼</span> Projects
+  </button>
+  <button class="mob-tab" id="mob-tab-cert" onclick="switchTab('cert', null, this)">
+    <span class="mob-ico">🏆</span> Certs
+  </button>
+  <button class="mob-tab" id="mob-tab-hack" onclick="switchTab('hack', null, this)">
+    <span class="mob-ico">⚡</span> Events
+  </button>
+</div>
 
 <div class="dashboard">
   <div class="sidebar">
@@ -191,12 +253,20 @@
 </div>
 
 <script>
-  function switchTab(id, el) {
+  function switchTab(id, el, mobEl) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.sidebar .nav-item').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.mob-tab').forEach(i => i.classList.remove('active'));
     
     document.getElementById('tab-' + id).classList.add('active');
-    el.classList.add('active');
+    if (el) el.classList.add('active');
+    // sync mobile tab
+    const mob = document.getElementById('mob-tab-' + id);
+    if (mob) mob.classList.add('active');
+    // sync sidebar
+    document.querySelectorAll('.sidebar .nav-item').forEach(i => {
+      if (i.getAttribute('onclick') && i.getAttribute('onclick').includes("'" + id + "'")) i.classList.add('active');
+    });
   }
 
   // Hydrate local data into the profile (if they login from the main page)

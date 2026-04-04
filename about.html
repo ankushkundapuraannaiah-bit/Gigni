@@ -37,11 +37,48 @@
 
     .logo-huge { font-family: 'Bebas Neue', sans-serif; font-size: clamp(6rem, 15vw, 15rem); text-align: center; margin-top: 100px; color: #fff; letter-spacing: 0.05em; text-shadow: 0 10px 40px rgba(255,255,255,0.1); }
     
+    /* HAMBURGER */
+    .ham {
+      display: none; flex-direction: column; justify-content: center; align-items: center;
+      gap: 5px; width: 40px; height: 40px; background: transparent; border: none;
+      cursor: pointer; z-index: 1100;
+    }
+    .ham span {
+      display: block; width: 22px; height: 2px; background: #fff;
+      border-radius: 2px; transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+      transform-origin: center;
+    }
+    .ham.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .ham.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .ham.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* MOBILE DRAWER */
+    .mobile-drawer {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.97); z-index: 1050;
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 36px; opacity: 0; transform: translateY(-10px);
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+    }
+    .mobile-drawer.open { opacity: 1; transform: translateY(0); pointer-events: all; }
+    .mobile-drawer a {
+      color: rgba(255,255,255,0.85); text-decoration: none; font-size: 1.6rem;
+      font-weight: 700; letter-spacing: -0.01em; transition: color 0.2s;
+    }
+    .mobile-drawer a:hover { color: #f97316; }
+
     @media(max-width:768px){
-      nav { padding: 16px 20px; }
+      nav { padding: 14px 20px; }
       .nav-links { display: none; }
-      .content-sec { padding: 60px 20px; }
-      .content-sec h2 { font-size: 2.5rem; }
+      .ham { display: flex; }
+      .about-hero { height: 60vw; min-height: 260px; padding-bottom: 40px; }
+      .about-hero h1 { font-size: clamp(2.8rem,10vw,5rem); }
+      .content-sec { padding: 50px 20px; }
+      .content-sec h2 { font-size: 2rem; margin-bottom: 28px; }
+      .text-block p, .text-block li { font-size: 1rem; }
+      .logo-huge { font-size: clamp(5rem,18vw,9rem); margin-top: 56px; }
+      .mobile-drawer { display: flex; }
     }
   </style>
 </head>
@@ -52,7 +89,17 @@
   <ul class="nav-links">
     <li><a href="index.html">Home</a></li>
   </ul>
+  <button class="ham" id="ham-btn" onclick="toggleDrawer()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE DRAWER -->
+<div class="mobile-drawer" id="mobile-drawer">
+  <a href="index.html" onclick="closeDrawer()">Home</a>
+  <a href="index.html#achieve" onclick="closeDrawer()">Hosting</a>
+  <a href="index.html#join-sec" onclick="closeDrawer()">Join</a>
+</div>
 
 <section class="about-hero">
   <img src="about-hero.png" alt="Gigni About">
@@ -87,4 +134,18 @@
 </section>
 
 </body>
+<script>
+  function toggleDrawer() {
+    const btn = document.getElementById('ham-btn');
+    const drawer = document.getElementById('mobile-drawer');
+    btn.classList.toggle('open');
+    drawer.classList.toggle('open');
+    document.body.style.overflow = drawer.classList.contains('open') ? 'hidden' : '';
+  }
+  function closeDrawer() {
+    document.getElementById('ham-btn').classList.remove('open');
+    document.getElementById('mobile-drawer').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+</script>
 </html>
