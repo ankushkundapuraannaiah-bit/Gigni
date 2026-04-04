@@ -149,6 +149,10 @@ app.post('/api/login', async (req, res) => {
         }
         
         const { password: userPassword, ...safeUser } = user;
+
+        // Send welcome email asynchronously (don't wait to avoid login delay)
+        sendWelcomeEmail(email, user.fname).catch(err => console.error("Email fail:", err));
+
         res.status(200).json({ success: true, user: safeUser });
     } catch (err) {
         res.status(500).json({ error: err.message });
