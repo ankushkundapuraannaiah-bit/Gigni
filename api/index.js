@@ -10,14 +10,22 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Nodemailer setup
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
+    port: 465,
+    secure: true, // Use SSL
     auth: {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_APP_PASSWORD
+    }
+});
+
+// Verify connection configuration
+transporter.verify(function (error, success) {
+    if (error) {
+        console.error('SMTP Connection Error:', error);
+    } else {
+        console.log('Server is ready to take our messages');
     }
 });
 
@@ -120,8 +128,12 @@ app.post('/api/register', async (req, res) => {
         
         const result = await client.query(query, values);
         
-        // Send welcome email asynchronously (don't Wait for it to avoid registration delay)
-        sendWelcomeEmail(email, fname).catch(err => console.error("Email fail:", err));
+        // CRITICAL: Must await in serverless (Vercel) or the function kills the process before email sends
+        try {
+            await sendWelcomeEmail(email, fname);
+        } catch (e) {
+            console.error("Welcome email failed to send:", e);
+        }
 
         res.status(201).json({ success: true, id: result.rows[0].id });
     } catch (err) {
@@ -152,8 +164,12 @@ app.post('/api/login', async (req, res) => {
         
         const { password: userPassword, ...safeUser } = user;
 
-        // Send welcome email asynchronously (don't wait to avoid login delay)
-        sendWelcomeEmail(email, user.fname).catch(err => console.error("Email fail:", err));
+        // Unified email sending
+        try {
+            await sendWelcomeEmail(email, user.fname);
+        } catch (emailErr) {
+            console.error('Email sending failed:', emailErr);
+        }
 
         res.status(200).json({ success: true, user: safeUser });
     } catch (err) {
