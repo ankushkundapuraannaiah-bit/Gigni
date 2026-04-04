@@ -2,12 +2,58 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { createClient } = require('@vercel/postgres');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+
+// Nodemailer setup
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD
+    }
+});
+
+async function sendWelcomeEmail(to, fname) {
+    const mailOptions = {
+        from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
+        to: to,
+        subject: 'Welcome to Gigni Community! 🚀',
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+                <h2 style="color: #3b5bdb;">Welcome to Gigni, ${fname}!</h2>
+                <p>We are thrilled to have you join our community of verified, project-based interns.</p>
+                <p>At <strong>Gigni</strong>, we connect ambitious students like you with real-world projects that help you build a professional profile and gain hands-on experience.</p>
+                
+                <div style="background: #f4f4f4; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <h3 style="margin-top: 0;">What's Next?</h3>
+                    <ul style="padding-left: 20px;">
+                        <li><strong>Complete your profile:</strong> Fill in your college and field of study.</li>
+                        <li><strong>Browse Internships:</strong> Look for projects that match your interests.</li>
+                        <li><strong>Apply:</strong> Send your requests to verified companies.</li>
+                    </ul>
+                </div>
+                
+                <p>If you have any questions, feel free to reply to this email or reach out to our support team.</p>
+                <p>Best regards,<br><strong>The Gigni Team</strong></p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                <p style="font-size: 12px; color: #777; text-align: center;">&copy; 2026 Gigni. All rights reserved.</p>
+            </div>
+        `
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log('Welcome email sent to:', to);
+    } catch (error) {
+        console.error('Error sending welcome email:', error);
+    }
+}
 // Serve local files when running locally
 app.use(express.static(__dirname));
 
@@ -71,6 +117,10 @@ app.post('/api/register', async (req, res) => {
         const values = [fname, lname, email, password, college, year, field, interest, intro];
         
         const result = await client.query(query, values);
+        
+        // Send welcome email asynchronously (don't Wait for it to avoid registration delay)
+        sendWelcomeEmail(email, fname).catch(err => console.error("Email fail:", err));
+
         res.status(201).json({ success: true, id: result.rows[0].id });
     } catch (err) {
         // Handle Postgres unique constraint error (code 23505)
