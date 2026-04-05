@@ -10,8 +10,8 @@
       "destination": "/robots.txt"
     },
     {
-      "source": "/favicon.svg",
-      "destination": "/favicon.svg"
+      "source": "/favicon.png",
+      "destination": "/favicon.png"
     },
     {
       "source": "/api/(.*)",
