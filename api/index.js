@@ -164,12 +164,6 @@ app.post('/api/login', async (req, res) => {
         
         const { password: userPassword, ...safeUser } = user;
 
-        // Unified email sending
-        try {
-            await sendWelcomeEmail(email, user.fname);
-        } catch (emailErr) {
-            console.error('Email sending failed:', emailErr);
-        }
 
         res.status(200).json({ success: true, user: safeUser });
     } catch (err) {
