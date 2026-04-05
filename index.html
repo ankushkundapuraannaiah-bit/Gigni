@@ -743,8 +743,21 @@
     logo.alt = colleges[currCol].n + ' Logo';
     document.getElementById('cbadge-name').innerText = colleges[currCol].n;
   }
-  function nextCol() { currCol = (currCol + 1) % colleges.length; updateCol(); }
-  function prevCol() { currCol = (currCol - 1 + colleges.length) % colleges.length; updateCol(); }
+  let colAutoSlide = setInterval(nextColAuto, 3000);
+
+  function nextCol() { 
+    clearInterval(colAutoSlide);
+    currCol = (currCol + 1) % colleges.length; 
+    updateCol(); 
+    colAutoSlide = setInterval(nextColAuto, 3000);
+  }
+  function prevCol() { 
+    clearInterval(colAutoSlide);
+    currCol = (currCol - 1 + colleges.length) % colleges.length; 
+    updateCol(); 
+    colAutoSlide = setInterval(nextColAuto, 3000);
+  }
+  function nextColAuto() { currCol = (currCol + 1) % colleges.length; updateCol(); }
   
   // init
   updateCol();
