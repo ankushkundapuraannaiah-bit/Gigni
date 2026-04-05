@@ -83,7 +83,8 @@ app.get('/api/init', async (req, res) => {
             year VARCHAR(255),
             field VARCHAR(255),
             interest VARCHAR(255),
-            intro TEXT
+            intro TEXT,
+            profile_pic TEXT
         );`);
         res.status(200).json({ success: true, message: 'Table initialized' });
     } catch (err) {
@@ -116,15 +117,16 @@ app.post('/api/register', async (req, res) => {
             year VARCHAR(255),
             field VARCHAR(255),
             interest VARCHAR(255),
-            intro TEXT
+            intro TEXT,
+            profile_pic TEXT
         );`);
 
         const query = `
-            INSERT INTO users (fname, lname, email, password, college, year, field, interest, intro)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            INSERT INTO users (fname, lname, email, password, college, year, field, interest, intro, profile_pic)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
             RETURNING id;
         `;
-        const values = [fname, lname, email, password, college, year, field, interest, intro];
+        const values = [fname, lname, email, password, college, year, field, interest, intro, null];
         
         const result = await client.query(query, values);
         
@@ -174,7 +176,7 @@ app.post('/api/login', async (req, res) => {
 });
 
 app.post('/api/user/update', async (req, res) => {
-    const { id, fname, lname, college, year, field, intro } = req.body;
+    const { id, fname, lname, college, year, field, intro, profile_pic } = req.body;
     
     if (!id) return res.status(400).json({ error: 'User ID required' });
 
@@ -185,11 +187,11 @@ app.post('/api/user/update', async (req, res) => {
 
         const query = `
             UPDATE users 
-            SET fname = $1, lname = $2, college = $3, year = $4, field = $5, intro = $6
-            WHERE id = $7
+            SET fname = $1, lname = $2, college = $3, year = $4, field = $5, intro = $6, profile_pic = $7
+            WHERE id = $8
             RETURNING *;
         `;
-        const values = [fname, lname, college, year, field, intro, id];
+        const values = [fname, lname, college, year, field, intro, profile_pic, id];
         
         const result = await client.query(query, values);
         if (result.rowCount === 0) {
