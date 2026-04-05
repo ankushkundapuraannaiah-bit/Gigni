@@ -106,27 +106,63 @@
   .arr:hover { color: #f97316; transform: scale(1.15); }
 
   /* ACHIEVE */
-  .achieve { background: #000; padding: 110px 60px; text-align: center; }
-  .achieve h2 { font-size: clamp(1.5rem,3vw,2.1rem); font-weight: 700; margin-bottom: 60px; }
-
-  .cards-row { display: flex; gap: 16px; justify-content: center; align-items: flex-end; flex-wrap: wrap; }
+  .achieve { background: #000; padding: 120px 60px; text-align: center; }
+  .achieve h2 { 
+    font-size: clamp(2rem,4vw,3.2rem); font-weight: 800; margin-bottom: 72px; 
+    letter-spacing: -0.04em; 
+  }
+  .cards-row { 
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+    gap: 24px; max-width: 1300px; margin: 0 auto; 
+    align-items: stretch; 
+  }
 
   .acard {
-    background: #2b20c8; border-radius: 28px;
-    display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-    padding: 28px 20px 32px;
-    transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+    background: rgba(255,255,255,0.05); 
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.08); 
+    border-radius: 24px;
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    padding: 42px 28px;
+    transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
     cursor: default; position: relative; overflow: hidden;
+    min-height: 380px;
   }
-  .acard:hover { transform: translateY(-10px); box-shadow: 0 28px 70px rgba(59,91,219,0.55); }
-  .acard.c1 { width: 190px; height: 300px; }
-  .acard.c2 { width: 190px; height: 340px; background: #3b5bdb; }
-  .acard.c3 { width: 210px; height: 380px; background: #3b5bdb; box-shadow: 0 0 40px rgba(59,91,219,0.35); }
-  .acard.c4 { width: 190px; height: 270px; }
-  .acard.c5 { width: 190px; height: 320px; background: #1a1ab5; }
-  .acard-icon { font-size: 3.2rem; margin-bottom: 18px; }
-  .acard h3 { font-size: 0.88rem; font-weight: 800; color: #f8d584; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 5px; }
-  .acard p { font-size: 0.68rem; color: rgba(248,213,132,0.65); text-transform: uppercase; letter-spacing: 0.09em; font-weight: 500; }
+  .acard::before {
+    content:''; position: absolute; inset: 0; 
+    background: radial-gradient(600px circle at var(--x) var(--y), rgba(59,91,219,0.1), transparent 40%);
+    opacity: 0; transition: opacity 0.3s; pointer-events: none;
+  }
+  .acard:hover { 
+    transform: translateY(-8px); 
+    border-color: rgba(59,91,219,0.3);
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 20px rgba(59,91,419,0.05);
+  }
+  .acard:hover::before { opacity: 1; }
+
+  .acard-icon { 
+    width: 84px; height: 84px; margin-bottom: 32px; 
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.04); border-radius: 20px;
+    transition: transform 0.3s;
+  }
+  .acard:hover .acard-icon { transform: scale(1.1) rotate(2deg); }
+  .acard-icon svg { width: 44px; height: 44px; }
+
+  .acard h3 { 
+    font-size: 1.5rem; font-weight: 800; color: #fff; 
+    margin-bottom: 12px; letter-spacing: -0.01em; 
+  }
+  .acard p { 
+    font-size: 0.95rem; color: rgba(255,255,255,0.5); 
+    font-weight: 500; line-height: 1.5;
+  }
+
+  .acard.c1 .acard-icon svg { stroke: #f97316; }
+  .acard.c2 .acard-icon svg { stroke: #3b5bdb; }
+  .acard.c3 .acard-icon svg { stroke: #10b981; }
+  .acard.c4 .acard-icon svg { stroke: #8b5cf6; }
+  .acard.c5 .acard-icon svg { stroke: #fbbf24; }
 
   /* GET STARTED */
   .getstarted { background: #000; padding: 0 60px 120px; }
@@ -383,31 +419,62 @@
 <section class="achieve" id="achieve">
   <h2 class="reveal">What you will achieve through Gigni</h2>
   <div class="cards-row reveal">
+    
+    <!-- Event -->
     <div class="acard c1">
-      <div class="acard-icon">🎉</div>
-      <h3>Event</h3>
-      <p>Knowledge to Success</p>
+      <div class="acard-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M10 13l2 2 4-4"/></svg>
+      </div>
+      <div class="acard-text">
+        <h3>Event</h3>
+        <p>Knowledge to Success</p>
+      </div>
     </div>
+
+    <!-- Mentorship -->
     <div class="acard c2">
-      <div class="acard-icon">🤝</div>
-      <h3>Mentorship</h3>
-      <p>By Gigni Team</p>
+      <div class="acard-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div class="acard-text">
+        <h3>Mentorship</h3>
+        <p>By Gigni Team</p>
+      </div>
     </div>
+
+    <!-- Internship -->
     <div class="acard c3">
-      <div class="acard-icon">💼</div>
-      <h3>Internship</h3>
-      <p>Real World Project</p>
+      <div class="acard-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      </div>
+      <div class="acard-text">
+        <h3>Internship</h3>
+        <p>Real World Project</p>
+      </div>
     </div>
+
+    <!-- Competitions -->
     <div class="acard c4">
-      <div class="acard-icon">📢</div>
-      <h3>Competitions</h3>
-      <p>Hackathons For All</p>
+      <div class="acard-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 8 4 4-4 4"/><path d="M2 12h20"/><path d="m6 8-4 4 4 4"/></svg>
+      </div>
+      <div class="acard-text">
+        <h3>Competitions</h3>
+        <p>Hackathons For All</p>
+      </div>
     </div>
+
+    <!-- Paid Internship -->
     <div class="acard c5">
-      <div class="acard-icon">💰</div>
-      <h3>Paid Internship</h3>
-      <p>Get Paid Internships</p>
+      <div class="acard-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <div class="acard-text">
+        <h3>Paid Internship</h3>
+        <p>Get Paid Internships</p>
+      </div>
     </div>
+
   </div>
 </section>
 
@@ -647,6 +714,17 @@
     entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('vis'); io.unobserve(e.target); }});
   }, {threshold: 0.1});
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Card Glow Effect
+  document.querySelectorAll('.acard').forEach(card => {
+    card.onmousemove = e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      card.style.setProperty('--x', `${x}px`);
+      card.style.setProperty('--y', `${y}px`);
+    };
+  });
 
   // Modal
   function openOvl(id){ document.getElementById(id+'-ovl').classList.add('open'); document.body.style.overflow='hidden'; }
