@@ -27,11 +27,42 @@
   <link rel="canonical" href="https://www.gigniconnect.space/">
 
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
-  body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
+  body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; cursor: none; }
   body.loading { overflow: hidden; }
+
+  /* CUSTOM CURSOR */
+  #cursor {
+    position: fixed; top: 0; left: 0; width: 10px; height: 10px;
+    background: #f97316; border-radius: 50%; pointer-events: none;
+    z-index: 10000; mix-blend-mode: difference; transition: transform 0.1s;
+  }
+  #cursor-ring {
+    position: fixed; top: 0; left: 0; width: 44px; height: 44px;
+    border: 1px solid rgba(255,255,255,0.4); border-radius: 50%; 
+    pointer-events: none; z-index: 9999;
+    transition: transform 0.15s cubic-bezier(0.16,1,0.3,1), width 0.3s, height 0.3s, border 0.3s;
+    transform: translate(-50%, -50%);
+  }
+  #cursor-ring.active { width: 80px; height: 80px; border-color: rgba(59,91,219,0.8); background: rgba(59,91,219,0.05); }
+
+  /* FLOATING GLOWS */
+  .glow-bg {
+    position: fixed; inset: 0; pointer-events: none; z-index: -1;
+    filter: blur(120px); opacity: 0.45;
+  }
+  .glow-1 { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, #3b5bdb, transparent 70%); top: -10%; left: -10%; animation: float-glow 20s infinite alternate; }
+  .glow-2 { position: absolute; width: 30vw; height: 30vw; background: radial-gradient(circle, #f97316, transparent 70%); bottom: -5%; right: -5%; animation: float-glow 25s infinite alternate-reverse; }
+  @keyframes float-glow { 0% { transform: translate(0,0); } 100% { transform: translate(15vw, 10vh); } }
+
+  /* TEXT SPLIT REVEAL */
+  .h-line { overflow: hidden; display: block; }
+  .h-word { display: inline-block; transform: translateY(110%); transition: transform 1s cubic-bezier(0.16,1,0.3,1); }
+  .vis .h-word { transform: translateY(0); }
+  .d-1 { transition-delay: 0.1s; } .d-2 { transition-delay: 0.2s; } .d-3 { transition-delay: 0.3s; }
 
   /* LOADING SCREEN */
   #loader-ovl {
@@ -442,6 +473,14 @@
 </head>
 <body class="loading">
 
+<!-- ULTIMATE INTERACTIVITY LAYER -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div class="glow-bg">
+  <div class="glow-1"></div>
+  <div class="glow-2"></div>
+</div>
+
 <!-- LOADING SCREEN -->
 <div id="loader-ovl">
   <div class="loader-logo">GIGNI</div>
@@ -452,10 +491,10 @@
 <nav id="nav">
   <div class="logo">GIGNI</div>
   <ul class="nav-links">
-    <li><a href="about.html">About</a></li>
-    <li><a href="#achieve">Hosting</a></li>
-    <li><a href="#join-sec">Sign Up</a></li>
-    <li><a href="#" onclick="openOvl('signin');return false;">Log In</a></li>
+    <li><a href="about.html" class="mag-btn">About</a></li>
+    <li><a href="#achieve" class="mag-btn">Hosting</a></li>
+    <li><a href="#join-sec" class="mag-btn">Sign Up</a></li>
+    <li><a href="#" class="mag-btn" onclick="openOvl('signin');return false;">Log In</a></li>
   </ul>
   <button class="ham" id="ham-btn" onclick="toggleDrawer()" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -478,7 +517,11 @@
   </div>
 
   <div class="hero-text">
-    <h1 class="hero-h1">BUILD YOUR<br>FUTURE WITH<br>INTERNSHIPS</h1>
+    <h1 class="hero-h1 reveal">
+      <span class="h-line"><span class="h-word d-1">BUILD YOUR</span></span>
+      <span class="h-line"><span class="h-word d-2">FUTURE WITH</span></span>
+      <span class="h-line"><span class="h-word d-3">INTERNSHIPS</span></span>
+    </h1>
   </div>
   <div class="trusted-strip">
     <p class="reveal">Trusted By Students from!</p>
@@ -792,6 +835,40 @@
 <div id="toast"></div>
 
 <script>
+  // LENIS SMOOTH SCROLL
+  const lenis = new Lenis();
+  function raf(time) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+  }
+  requestAnimationFrame(raf);
+
+  // CUSTOM CURSOR
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mouseX = 0, mouseY = 0;
+  let ringX = 0, ringY = 0;
+
+  window.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    if(cursor) cursor.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+  });
+
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.15;
+    ringY += (mouseY - ringY) * 0.15;
+    if(ring) ring.style.left = ringX + 'px';
+    if(ring) ring.style.top = ringY + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button, .acard, .fg input, .fg select, .fg textarea').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('active'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('active'));
+  });
+
   // LOADING SCREEN
   window.addEventListener('load', () => {
     const bar = document.getElementById('loader-bar');
