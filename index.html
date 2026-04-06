@@ -31,13 +31,37 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
   body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
+  body.loading { overflow: hidden; }
+
+  /* LOADING SCREEN */
+  #loader-ovl {
+    position: fixed; inset: 0; background: #000; z-index: 9999;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), visibility 0.8s;
+  }
+  #loader-ovl.hidden { opacity: 0; visibility: hidden; }
+  .loader-logo { font-family: 'Bebas Neue', sans-serif; font-size: 5rem; letter-spacing: 0.1em; color: #fff; position: relative; overflow: hidden; }
+  .loader-logo::after {
+    content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(59,91,219,0.4), transparent);
+    animation: loader-sweep 2s infinite;
+  }
+  @keyframes loader-sweep { 0% { left: -100%; } 100% { left: 100%; } }
+  .loader-bar { width: 200px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 20px; border-radius: 10px; position: relative; overflow: hidden; }
+  .loader-progress { position: absolute; height: 100%; width: 0%; background: #3b5bdb; transition: width 0.4s ease; }
 
   /* NAV */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
     padding: 22px 52px;
     display: flex; align-items: center; justify-content: space-between;
-    transition: background 0.3s;
+    transition: all 0.5s cubic-bezier(0.16,1,0.3,1);
+  }
+  nav.scrolled {
+    padding: 14px 52px;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
   }
   .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; letter-spacing: 0.05em; color: #fff; line-height:1; }
   .nav-links { display: flex; gap: 36px; align-items: center; list-style: none; }
@@ -53,6 +77,11 @@
     display: flex; align-items: flex-end;
     overflow: hidden; background: #000;
   }
+  .hero::after {
+    content:''; position: absolute; inset:0;
+    background: radial-gradient(circle at 10% 90%, rgba(59,91,219,0.1), transparent 40%);
+    pointer-events: none;
+  }
 
   /* big helmet background */
   .hero-helmet-bg {
@@ -62,7 +91,10 @@
     pointer-events: none;
   }
 
-  .hero-helmet-bg img { width: 100%; height: 100%; object-fit: cover; object-position: center right; }
+  .hero-helmet-bg img { 
+    width: 100%; height: 100%; object-fit: cover; object-position: center right; 
+    transition: transform 0.1s linear;
+  }
 
   .hero-text {
     position: absolute; z-index: 1;
@@ -88,7 +120,19 @@
   }
   .trusted-strip p { font-family:'Inter',sans-serif; color: #fff; font-size: 2rem; font-weight: 500; margin-bottom: 24px; text-shadow: 0 2px 10px #000; letter-spacing: -0.01em;}
   
-  .college-carousel { display: flex; align-items: center; gap: 32px; }
+  .college-carousel { 
+    position: relative; width: 100vw; overflow: hidden;
+    padding: 40px 0; margin-top: 20px;
+    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  }
+  .college-track {
+    display: flex; gap: 40px; width: max-content;
+    animation: scroll-track 40s linear infinite;
+  }
+  @keyframes scroll-track {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
   
   .college-card {
     background: #fff; border-radius: 14px; width: 280px; height: 160px;
@@ -129,16 +173,18 @@
     min-height: 380px;
   }
   .acard::before {
-    content:''; position: absolute; inset: 0; 
-    background: radial-gradient(600px circle at var(--x) var(--y), rgba(59,91,219,0.1), transparent 40%);
-    opacity: 0; transition: opacity 0.3s; pointer-events: none;
+    content:''; position: absolute; inset: -1px; 
+    background: radial-gradient(800px circle at var(--x) var(--y), rgba(59,91,219,0.15), transparent 40%);
+    opacity: 0; transition: opacity 0.5s; pointer-events: none;
+    z-index: 1;
   }
   .acard:hover { 
-    transform: translateY(-8px); 
-    border-color: rgba(59,91,219,0.3);
-    box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 20px rgba(59,91,419,0.05);
+    transform: translateY(-12px) scale(1.02); 
+    border-color: rgba(59,91,219,0.4);
+    box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 30px rgba(59,91,219,0.1);
   }
   .acard:hover::before { opacity: 1; }
+  .acard-text, .acard-icon { position: relative; z-index: 2; }
 
   .acard-icon { 
     width: 84px; height: 84px; margin-bottom: 32px; 
@@ -213,10 +259,30 @@
   .community h2 { font-size: clamp(1.6rem,3.5vw,2.5rem); font-weight: 700; margin-bottom: 56px; }
   .comm-fig { max-width: 700px; margin: 0 auto; }
   .comm-btns { margin-top: 48px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-  .btn-blue { background: #3b5bdb; color: #fff; border: none; border-radius: 10px; padding: 15px 32px; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: 'Inter',sans-serif; transition: all 0.3s; }
-  .btn-blue:hover { background: #2f4ec4; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(59,91,219,0.5); }
-  .btn-out { background: transparent; border: 1.5px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 15px 28px; color: rgba(255,255,255,0.65); font-family: 'Inter',sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-  .btn-out:hover { border-color: #f97316; color: #f97316; }
+  .btn-blue { 
+    background: #3b5bdb; color: #fff; border: none; border-radius: 12px; 
+    padding: 16px 36px; font-size: 1rem; font-weight: 700; cursor: pointer; 
+    font-family: 'Inter',sans-serif; transition: all 0.4s cubic-bezier(0.16,1,0.3,1); 
+    position: relative; overflow: hidden;
+  }
+  .btn-blue::after {
+    content:''; position: absolute; inset: 0; background: linear-gradient(rgba(255,255,255,0.2), transparent);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .btn-blue:hover { 
+    background: #2f4ec4; transform: translateY(-4px); 
+    box-shadow: 0 15px 45px rgba(59,91,219,0.6); 
+  }
+  .btn-blue:hover::after { opacity: 1; }
+  .btn-out { 
+    background: transparent; border: 1.5px solid rgba(255,255,255,0.2); 
+    border-radius: 12px; padding: 16px 32px; color: rgba(255,255,255,0.7); 
+    font-family: 'Inter',sans-serif; font-size: 1rem; font-weight: 600; 
+    cursor: pointer; transition: all 0.3s; 
+  }
+  .btn-out:hover { border-color: #f97316; color: #f97316; transform: translateY(-2px); }
+  
+  .mag-btn { transition: transform 0.2s cubic-bezier(0.16,1,0.3,1); }
 
   /* JOIN FORM */
   .join { background: #000; border-top: 1px solid rgba(255,255,255,0.07); padding: 100px 60px; }
@@ -266,8 +332,14 @@
   /* ANIMATIONS */
   @keyframes glow { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
   @keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
-  .reveal { opacity: 0; transform: translateY(30px); transition: all 0.75s cubic-bezier(0.16,1,0.3,1); }
+  .reveal { 
+    opacity: 0; transform: translateY(40px); 
+    transition: transform 1.2s cubic-bezier(0.16,1,0.3,1), opacity 1.2s cubic-bezier(0.16,1,0.3,1); 
+  }
   .reveal.vis { opacity: 1; transform: translateY(0); }
+  .reveal-left { transform: translateX(-40px); }
+  .reveal-right { transform: translateX(40px); }
+  .reveal.vis { opacity: 1; transform: translate(0,0); }
 
   /* HAMBURGER BUTTON */
   .ham {
@@ -368,7 +440,13 @@
   }
 </style>
 </head>
-<body>
+<body class="loading">
+
+<!-- LOADING SCREEN -->
+<div id="loader-ovl">
+  <div class="loader-logo">GIGNI</div>
+  <div class="loader-bar"><div class="loader-progress" id="loader-bar"></div></div>
+</div>
 
 <!-- NAV -->
 <nav id="nav">
@@ -403,14 +481,19 @@
     <h1 class="hero-h1">BUILD YOUR<br>FUTURE WITH<br>INTERNSHIPS</h1>
   </div>
   <div class="trusted-strip">
-    <p>Trusted By Students from!</p>
-    <div class="college-carousel">
-      <button class="arr" onclick="prevCol()">&#10094;</button>
-      <div class="college-card">
-        <img class="college-logo" id="cbadge-logo" src="college-iitb.png" alt="IIT Bombay Logo">
-        <span id="cbadge-name">IIT Bombay</span>
+    <p class="reveal">Trusted By Students from!</p>
+    <div class="college-carousel reveal" style="transition-delay: 0.2s">
+      <div class="college-track">
+        <div class="college-card"><img class="college-logo" src="college-iitb.png" alt="IIT Bombay"><span>IIT Bombay</span></div>
+        <div class="college-card"><img class="college-logo" src="college-nits.png" alt="NIT Surat"><span>NIT Surat</span></div>
+        <div class="college-card"><img class="college-logo" src="college-nitk.png" alt="NIT Surathkal"><span>NIT Surathkal</span></div>
+        <div class="college-card"><img class="college-logo" src="college-iitk.png" alt="IIT Kanpur"><span>IIT Kanpur</span></div>
+        <!-- Duplicate for seamless loop -->
+        <div class="college-card"><img class="college-logo" src="college-iitb.png" alt="IIT Bombay"><span>IIT Bombay</span></div>
+        <div class="college-card"><img class="college-logo" src="college-nits.png" alt="NIT Surat"><span>NIT Surat</span></div>
+        <div class="college-card"><img class="college-logo" src="college-nitk.png" alt="NIT Surathkal"><span>NIT Surathkal</span></div>
+        <div class="college-card"><img class="college-logo" src="college-iitk.png" alt="IIT Kanpur"><span>IIT Kanpur</span></div>
       </div>
-      <button class="arr" onclick="nextCol()">&#10095;</button>
     </div>
   </div>
 </section>
@@ -481,7 +564,7 @@
 <!-- ══════════ GET STARTED ══════════ -->
 <section class="getstarted" id="about">
 
-  <div class="step reveal">
+  <div class="step reveal reveal-left">
     <div class="step-t">
       <h2>Get Started:</h2>
       <p>Register or Sign Up to create your Gigni account. Fill out your profile and become eligible to receive real, verified internship opportunities.</p>
@@ -515,7 +598,7 @@
     </div>
   </div>
 
-  <div class="step reveal" style="transition-delay:0.2s">
+  <div class="step reveal reveal-left" style="transition-delay:0.2s">
     <div class="step-t">
       <h2>Get Certificate:</h2>
       <p>Free Internships, mentorship, Hackathons and Events come with verified certificates that carry real weight with employers.</p>
@@ -599,8 +682,8 @@
   <div class="comm-fig reveal">
     <img src="community.png" style="width:100%; max-width:800px; display:block; margin:0 auto; border-radius:12px;">
     <div class="comm-btns">
-      <button class="btn-blue" onclick="document.getElementById('join-sec').scrollIntoView({behavior:'smooth'})">Join the Community →</button>
-      <button class="btn-out" onclick="document.getElementById('join-sec').scrollIntoView({behavior:'smooth'})">Build Profile</button>
+      <button class="btn-blue mag-btn" onclick="document.getElementById('join-sec').scrollIntoView({behavior:'smooth'})">Join the Community →</button>
+      <button class="btn-out mag-btn" onclick="document.getElementById('join-sec').scrollIntoView({behavior:'smooth'})">Build Profile</button>
     </div>
   </div>
 </section>
@@ -709,68 +792,88 @@
 <div id="toast"></div>
 
 <script>
-  // Reveal
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('vis'); io.unobserve(e.target); }});
-  }, {threshold: 0.1});
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  // LOADING SCREEN
+  window.addEventListener('load', () => {
+    const bar = document.getElementById('loader-bar');
+    if(bar) bar.style.width = '100%';
+    setTimeout(() => {
+      const loader = document.getElementById('loader-ovl');
+      if(loader) loader.classList.add('hidden');
+      document.body.classList.remove('loading');
+    }, 800);
+  });
 
-  // Card Glow Effect
+  // REVEAL ON SCROLL
+  const revealIO = new IntersectionObserver(entries => {
+    entries.forEach(e => { 
+      if(e.isIntersecting){ 
+        e.target.classList.add('vis'); 
+        revealIO.unobserve(e.target); 
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
+
+  // NAV & PARALLAX SCROLL
+  const navEl = document.getElementById('nav');
+  const heroTarget = document.querySelector('.hero-helmet-bg img');
+  
+  window.addEventListener('scroll', () => {
+    // Nav Glass Effect
+    if (navEl) {
+      if (window.scrollY > 60) navEl.classList.add('scrolled');
+      else navEl.classList.remove('scrolled');
+    }
+
+    // Hero Parallax (Desktop Only)
+    if (window.innerWidth > 768 && heroTarget) {
+      const scrollPos = window.scrollY;
+      heroTarget.style.transform = `translateY(${scrollPos * 0.35}px)`;
+    }
+  });
+
+  // MAGNETIC BUTTONS
+  document.querySelectorAll('.mag-btn').forEach(btn => {
+    btn.addEventListener('mousemove', e => {
+      const rect = btn.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      btn.style.transform = `translate(${x * 0.15}px, ${y * 0.3}px)`;
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = '';
+    });
+  });
+
+  // CARD GLOW EFFECT
   document.querySelectorAll('.acard').forEach(card => {
-    card.onmousemove = e => {
+    card.addEventListener('mousemove', e => {
       const rect = card.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
       card.style.setProperty('--x', `${x}px`);
       card.style.setProperty('--y', `${y}px`);
-    };
+    });
   });
 
-  // Modal
-  function openOvl(id){ document.getElementById(id+'-ovl').classList.add('open'); document.body.style.overflow='hidden'; }
-  function closeOvl(e, id){ if(e && e.target!==e.currentTarget) return; document.getElementById(id+'-ovl').classList.remove('open'); document.body.style.overflow=''; }
-
-  const colleges = [
-    { s: 'IITB', n: 'IIT Bombay',     img: 'college-iitb.png' },
-    { s: 'NITS', n: 'NIT Surat',       img: 'college-nits.png' },
-    { s: 'NITK', n: 'NIT Surathkal',   img: 'college-nitk.png' },
-    { s: 'IITK', n: 'IIT Kanpur',      img: 'college-iitk.png' }
-  ];
-  let currCol = 0;
-  function updateCol() {
-    const logo = document.getElementById('cbadge-logo');
-    logo.src = colleges[currCol].img;
-    logo.alt = colleges[currCol].n + ' Logo';
-    document.getElementById('cbadge-name').innerText = colleges[currCol].n;
+  // MODALS
+  function openOvl(id){ 
+    const target = document.getElementById(id+'-ovl');
+    if(target) target.classList.add('open'); 
+    document.body.style.overflow='hidden'; 
   }
-  let colAutoSlide = setInterval(nextColAuto, 3000);
-
-  function nextCol() { 
-    clearInterval(colAutoSlide);
-    currCol = (currCol + 1) % colleges.length; 
-    updateCol(); 
-    colAutoSlide = setInterval(nextColAuto, 3000);
+  function closeOvl(e, id){ 
+    if(e && e.target!==e.currentTarget) return; 
+    const target = document.getElementById(id+'-ovl');
+    if(target) target.classList.remove('open'); 
+    document.body.style.overflow=''; 
   }
-  function prevCol() { 
-    clearInterval(colAutoSlide);
-    currCol = (currCol - 1 + colleges.length) % colleges.length; 
-    updateCol(); 
-    colAutoSlide = setInterval(nextColAuto, 3000);
-  }
-  function nextColAuto() { currCol = (currCol + 1) % colleges.length; updateCol(); }
-  
-  // init
-  updateCol();
 
+  // LOGIN / REGISTER
   async function handleLogin() {
     let email = document.getElementById('l_email')?.value || '';
     let password = document.getElementById('l_password')?.value || '';
-    
-    if (!email || !password) {
-        showToast('Email and Password are required!');
-        return;
-    }
-
+    if (!email || !password) { showToast('Email and Password are required!'); return; }
     try {
         const res = await fetch('/api/login', {
             method: 'POST',
@@ -778,93 +881,75 @@
             body: JSON.stringify({ email, password })
         });
         const data = await res.json();
-
         if (data.success) {
             localStorage.setItem('gigni_user', JSON.stringify(data.user));
             closeOvl(null, 'signin');
             showToast('Logging in...');
-            setTimeout(() => {
-              window.location.href = 'dashboard.html';
-            }, 1000);
-        } else {
-            showToast(data.error || 'Invalid credentials');
-        }
-    } catch (e) {
-        showToast('Error connecting to server. Is it running?');
-    }
+            setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
+        } else { showToast(data.error || 'Invalid credentials'); }
+    } catch (e) { showToast('Error connecting to server.'); }
   }
 
-  // Form
   async function submitForm(){
-    // Gather details
-    let fname = document.getElementById('p_fname')?.value || '';
-    let lname = document.getElementById('p_lname')?.value || '';
-    let email = document.getElementById('p_email')?.value || '';
-    let password = document.getElementById('p_password')?.value || '';
-    let college = document.getElementById('p_college')?.value || '';
-    let year = document.getElementById('p_year')?.value || '';
-    let field = document.getElementById('p_field')?.value || '';
-    let interest = document.getElementById('p_interest')?.value || '';
-    let intro = document.getElementById('p_intro')?.value || '';
+    let fields = {
+      fname: document.getElementById('p_fname')?.value || '',
+      lname: document.getElementById('p_lname')?.value || '',
+      email: document.getElementById('p_email')?.value || '',
+      password: document.getElementById('p_password')?.value || '',
+      college: document.getElementById('p_college')?.value || '',
+      year: document.getElementById('p_year')?.value || '',
+      field: document.getElementById('p_field')?.value || '',
+      interest: document.getElementById('p_interest')?.value || '',
+      intro: document.getElementById('p_intro')?.value || ''
+    };
 
-    if (!email || !password) {
-        showToast('Email and Password are required!');
-        return;
-    }
-
+    if (!fields.email || !fields.password) { showToast('Email and Password are required!'); return; }
     try {
         const res = await fetch('/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ fname, lname, email, password, college, year, field, interest, intro })
+            body: JSON.stringify(fields)
         });
         const data = await res.json();
-        
         if (data.success) {
             document.getElementById('form-body').innerHTML = `
               <div style="text-align:center;padding:28px 0">
                 <div style="width:68px;height:68px;border-radius:50%;background:rgba(59,91,219,0.14);border:2px solid #3b5bdb;display:flex;align-items:center;justify-content:center;font-size:1.9rem;margin:0 auto 22px">🎉</div>
                 <h3 style="font-size:1.25rem;font-weight:800;margin-bottom:10px">Profile Created!</h3>
                 <p style="color:rgba(255,255,255,0.45);font-size:0.88rem;line-height:1.7">Your Gigni profile is created. Please log in to view your dashboard.</p>
-                <div style="margin-top:22px;">
-                  <button onclick="openOvl('signin')" style="padding:12px;width:100%;background:#3b5bdb;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;">Log In Now</button>
-                </div>
+                <div style="margin-top:22px;"><button onclick="openOvl('signin')" style="padding:12px;width:100%;background:#3b5bdb;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;">Log In Now</button></div>
               </div>`;
             showToast('Profile created successfully ✓');
-        } else {
-            showToast(data.error || 'Failed to create profile');
-        }
-    } catch (e) {
-        showToast('Error connecting to server. Is it running?');
-    }
+        } else { showToast(data.error || 'Failed to create profile'); }
+    } catch (e) { showToast('Error connecting to server.'); }
   }
 
-  // Toast
   function showToast(msg){
     const t = document.getElementById('toast');
+    if(!t) return;
     t.textContent = msg;
     t.style.transform = 'translateX(-50%) translateY(0)';
     t.style.opacity = '1';
     setTimeout(()=>{ t.style.transform='translateX(-50%) translateY(80px)'; t.style.opacity='0'; }, 3500);
   }
 
-  // Nav
-  window.addEventListener('scroll', ()=>{
-    document.getElementById('nav').style.background = window.scrollY > 50 ? 'rgba(0,0,0,0.96)' : 'transparent';
-  });
-
-  // Mobile drawer
   function toggleDrawer() {
     const btn = document.getElementById('ham-btn');
     const drawer = document.getElementById('mobile-drawer');
-    btn.classList.toggle('open');
-    drawer.classList.toggle('open');
-    document.body.style.overflow = drawer.classList.contains('open') ? 'hidden' : '';
+    if(btn && drawer) {
+      btn.classList.toggle('open');
+      drawer.classList.toggle('open');
+      document.body.style.overflow = drawer.classList.contains('open') ? 'hidden' : '';
+    }
   }
   function closeDrawer() {
-    document.getElementById('ham-btn').classList.remove('open');
-    document.getElementById('mobile-drawer').classList.remove('open');
-    document.body.style.overflow = '';
+    const btn = document.getElementById('ham-btn');
+    const drawer = document.getElementById('mobile-drawer');
+    if(btn && drawer) {
+      btn.classList.remove('open');
+      drawer.classList.remove('open');
+      document.body.style.overflow = '';
+    }
   }
 </script>
 </body>
