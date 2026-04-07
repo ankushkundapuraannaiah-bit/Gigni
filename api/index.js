@@ -86,7 +86,11 @@ app.get('/api/init', async (req, res) => {
             intro TEXT,
             profile_pic TEXT
         );`);
-        res.status(200).json({ success: true, message: 'Table initialized' });
+
+        // Migration: Ensure profile_pic column exists
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_pic TEXT;`);
+
+        res.status(200).json({ success: true, message: 'Table initialized and updated' });
     } catch (err) {
         res.status(500).json({ error: err.message });
     } finally {
@@ -106,7 +110,7 @@ app.post('/api/register', async (req, res) => {
         client = createClient();
         await client.connect();
 
-        // Ensure the table exists before attempting to insert
+        // Ensure the table and column exists before attempting to insert
         await client.query(`CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
             fname VARCHAR(255),
@@ -120,6 +124,7 @@ app.post('/api/register', async (req, res) => {
             intro TEXT,
             profile_pic TEXT
         );`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_pic TEXT;`);
 
         const query = `
             INSERT INTO users (fname, lname, email, password, college, year, field, interest, intro, profile_pic)
