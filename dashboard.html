@@ -220,7 +220,8 @@
         <h1>Certificates</h1>
         <p>Your verified completion certificates.</p>
       </div>
-      <div class="empty-state">
+      <div id="cert-container" class="grid" style="display:none; margin-bottom: 20px;"></div>
+      <div class="empty-state" id="cert-empty">
         <div class="ico">📜</div>
         <h3>No certificate earned</h3>
         <p style="color:rgba(255,255,255,0.4);">Complete verification of your projects to earn certificates.</p>
@@ -233,7 +234,8 @@
         <h1>Hackathons</h1>
         <p>Your upcoming and past hackathon events.</p>
       </div>
-      <div class="empty-state">
+      <div id="hack-container" class="grid" style="display:none; margin-bottom: 20px;"></div>
+      <div class="empty-state" id="hack-empty">
         <div class="ico">⚡</div>
         <h3>No hackathon updated</h3>
         <p style="color:rgba(255,255,255,0.4);">Check back later for new hackathon opportunities.</p>
@@ -246,7 +248,8 @@
         <h1>Projects</h1>
         <p>Your ongoing project work.</p>
       </div>
-      <div class="empty-state">
+      <div id="proj-container" class="grid" style="display:none; margin-bottom: 20px;"></div>
+      <div class="empty-state" id="proj-empty">
         <div class="ico">💼</div>
         <h3>No active projects</h3>
       </div>
@@ -304,6 +307,34 @@
     if (user.profile_pic) {
         setProfilePic(user.profile_pic);
     }
+
+    // Render Items
+    function parseItems(itemStr) {
+        if (!itemStr) return [];
+        if (typeof itemStr === 'object') return itemStr;
+        try { return JSON.parse(itemStr); } catch(e) { return []; }
+    }
+
+    function renderItems(items, containerId, emptyId, icon) {
+        const container = document.getElementById(containerId);
+        const empty = document.getElementById(emptyId);
+        if (items.length > 0) {
+            empty.style.display = 'none';
+            container.style.display = 'grid';
+            container.innerHTML = items.map(it => `
+                <div class="card">
+                    <div class="cico">${icon}</div>
+                    <h3 style="margin-bottom:4px;">${it.title || 'Untitled'}</h3>
+                    <p style="margin-bottom:12px;">${it.description || ''}</p>
+                    <small style="color:rgba(255,255,255,0.3); font-weight: 600;">${it.date || ''}</small>
+                </div>
+            `).join('');
+        }
+    }
+
+    renderItems(parseItems(user.projects), 'proj-container', 'proj-empty', '💼');
+    renderItems(parseItems(user.certificates), 'cert-container', 'cert-empty', '🏆');
+    renderItems(parseItems(user.hackathons), 'hack-container', 'hack-empty', '⚡');
   });
 
   function setProfilePic(base64) {

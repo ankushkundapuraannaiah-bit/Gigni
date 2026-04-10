@@ -89,6 +89,9 @@ app.get('/api/init', async (req, res) => {
 
         // Migration: Ensure profile_pic column exists
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_pic TEXT;`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS projects JSONB DEFAULT '[]';`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS certificates JSONB DEFAULT '[]';`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS hackathons JSONB DEFAULT '[]';`);
 
         res.status(200).json({ success: true, message: 'Table initialized and updated' });
     } catch (err) {
@@ -125,6 +128,9 @@ app.post('/api/register', async (req, res) => {
             profile_pic TEXT
         );`);
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_pic TEXT;`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS projects JSONB DEFAULT '[]';`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS certificates JSONB DEFAULT '[]';`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS hackathons JSONB DEFAULT '[]';`);
 
         const query = `
             INSERT INTO users (fname, lname, email, password, college, year, field, interest, intro, profile_pic)
@@ -205,6 +211,62 @@ app.post('/api/user/update', async (req, res) => {
         
         const { password, ...safeUser } = result.rows[0];
         res.status(200).json({ success: true, user: safeUser });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    } finally {
+        if (client) await client.end();
+    }
+});
+
+app.get('/api/users', async (req, res) => {
+    let client;
+    try {
+        client = createClient();
+        await client.connect();
+        const result = await client.query(`SELECT id, fname, lname, email, college, year, field, interest, intro, profile_pic, projects, certificates, hackathons FROM users ORDER BY id DESC;`);
+        res.status(200).json({ success: true, users: result.rows });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    } finally {
+        if (client) await client.end();
+    }
+});
+
+app.post('/api/user/add-item', async (req, res) => {
+    const { userId, type, item } = req.body;
+    if (!userId || !type || !item) {
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    let column;
+    if (type === 'project') column = 'projects';
+    else if (type === 'certificate') column = 'certificates';
+    else if (type === 'hackathon') column = 'hackathons';
+    else return res.status(400).json({ error: 'Invalid type' });
+
+    let client;
+    try {
+        client = createClient();
+        await client.connect();
+
+        // Ensure table columns exist
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS projects JSONB DEFAULT '[]';`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS certificates JSONB DEFAULT '[]';`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS hackathons JSONB DEFAULT '[]';`);
+
+        const query = `
+            UPDATE users 
+            SET ${column} = COALESCE(${column}, '[]'::jsonb) || $1::jsonb
+            WHERE id = $2
+            RETURNING *;
+        `;
+        const values = [JSON.stringify([item]), userId];
+        
+        const result = await client.query(query, values);
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.status(200).json({ success: true /* returning partial or full user is optional */ });
     } catch (err) {
         res.status(500).json({ error: err.message });
     } finally {

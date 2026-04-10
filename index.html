@@ -1125,7 +1125,13 @@
             localStorage.setItem('gigni_user', JSON.stringify(data.user));
             closeOvl(null, 'signin');
             showToast('Logging in...');
-            setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
+            setTimeout(() => { 
+                if (data.user.email === 'ankushka2089@gmail.com') {
+                    window.location.href = 'admin.html';
+                } else {
+                    window.location.href = 'dashboard.html'; 
+                }
+            }, 1000);
         } else { showToast(data.error || 'Invalid credentials'); }
     } catch (e) { showToast('Error connecting to server.'); }
   }

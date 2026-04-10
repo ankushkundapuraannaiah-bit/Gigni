@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gigni — Admin Portal</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #080808; color: #fff; overflow-x: hidden; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 18px 48px; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing: 0.05em; color: #fff; line-height:1; }
+    .nav-user { display: flex; align-items: center; gap: 16px; }
+    .logout-btn { background: transparent; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 6px 16px; color: #fff; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+    .logout-btn:hover { border-color: #f97316; color: #f97316; }
+
+    /* CONTENT */
+    .content { padding: 120px 48px 48px; max-width: 1200px; margin: 0 auto; }
+    .header-info { margin-bottom: 40px; }
+    .header-info h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.01em; }
+    .header-info p { color: rgba(255,255,255,0.5); font-size: 1rem; }
+
+    .card { background: #121212; border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 28px; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 16px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    th { font-size: 0.8rem; text-transform: uppercase; color: rgba(255,255,255,0.4); font-weight: 700; letter-spacing: 0.05em; }
+    td { font-size: 0.95rem; }
+    
+    .actions { display: flex; gap: 10px; flex-wrap: wrap;}
+    .btn-act { background: #3b5bdb; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-weight: 600; font-family: 'Inter',sans-serif; cursor: pointer; transition: all 0.2s; font-size: 0.75rem; }
+    .btn-act:hover { background: #2f4ec4; }
+    .btn-cert { background: #10b981; } .btn-cert:hover { background: #059669; }
+    .btn-hack { background: #8b5cf6; } .btn-hack:hover { background: #7c3aed; }
+
+    /* MODALS */
+    .ovl { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+    .ovl.open { opacity: 1; pointer-events: all; }
+    .modal { background: #111; border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 42px 38px; width: 90%; max-width: 480px; transform: translateY(20px); transition: transform 0.3s; position: relative; }
+    .ovl.open .modal { transform: translateY(0); }
+    .mx { position: absolute; top: 14px; right: 14px; background: rgba(255,255,255,0.06); border: none; color: rgba(255,255,255,0.4); width: 30px; height: 30px; border-radius: 7px; cursor: pointer; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .mx:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .modal h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 24px; }
+    
+    .fg { margin-bottom: 16px; }
+    .fg label { display: block; font-size: 0.72rem; font-weight: 700; color: rgba(255,255,255,0.35); text-transform: uppercase; margin-bottom: 7px; }
+    .fg input, .fg textarea { width: 100%; background: #181818; border: 1px solid rgba(255,255,255,0.09); border-radius: 9px; padding: 12px 15px; color: #fff; font-family: 'Inter',sans-serif; font-size: 0.88rem; outline: none; transition: all 0.2s; }
+    .fg input:focus, .fg textarea:focus { border-color: #3b5bdb; box-shadow: 0 0 0 3px rgba(59,91,219,0.2); }
+    
+    .fsub { width: 100%; background: #3b5bdb; color: #fff; border: none; border-radius: 9px; padding: 14px; font-size: 0.93rem; font-weight: 700; cursor: pointer; font-family: 'Inter',sans-serif; margin-top: 6px; transition: all 0.3s; }
+    .fsub:hover { background: #2f4ec4; }
+
+    /* TOAST */
+    #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: #161616; border: 1px solid rgba(59,91,219,0.4); border-radius: 100px; padding: 13px 26px; color: #fff; font-size: 0.86rem; font-weight: 500; z-index: 9999; transition: all 0.4s cubic-bezier(0.16,1,0.3,1); white-space: nowrap; box-shadow: 0 16px 48px rgba(0,0,0,0.5); opacity: 0; }
+    
+    @media(max-width: 768px) {
+      nav { padding: 14px 20px; }
+      .logo { font-size: 1.8rem; }
+      .content { padding: 90px 20px 40px; }
+      .header-info h1 { font-size: 1.8rem; }
+      .card { padding: 16px; border-radius: 12px; }
+      th, td { padding: 10px; font-size: 0.85rem; }
+      .actions { flex-direction: column; }
+      .btn-act { width: 100%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">GIGNI ADMIN</div>
+  <div class="nav-user">
+    <a href="index.html" onclick="localStorage.removeItem('gigni_user')" class="logout-btn">Log Out</a>
+  </div>
+</nav>
+
+<div class="content">
+  <div class="header-info">
+    <h1>User Accounts</h1>
+    <p>Manage all users and add Projects, Certificates, and Hackathons to their profiles.</p>
+  </div>
+  
+  <div class="card" style="overflow-x:auto;">
+    <table id="users-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="users-body">
+        <tr><td colspan="4" style="text-align:center; padding: 40px; color:rgba(255,255,255,0.4);">Loading users...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ITEM MODAL -->
+<div class="ovl" id="item-ovl" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="mx" onclick="closeModal(null)">✕</button>
+    <h3 id="modal-title">Add Item</h3>
+    <input type="hidden" id="m_userId">
+    <input type="hidden" id="m_type">
+    
+    <div class="fg"><label>Title / Name</label><input type="text" id="m_title" placeholder="e.g. Full Stack Dashboard"></div>
+    <div class="fg">
+        <label id="m_desc_label">Description / Organization</label>
+        <textarea id="m_desc" rows="3" placeholder="Provide details..."></textarea>
+    </div>
+    <div class="fg"><label>Date (Optional)</label><input type="text" id="m_date" placeholder="e.g. Aug 2025"></div>
+    
+    <button class="fsub" onclick="submitItem()" id="m_submit">Add to User Profile</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+  // Auth Check
+  document.addEventListener('DOMContentLoaded', () => {
+    const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+    if (user.email !== 'ankushka2089@gmail.com') {
+        window.location.href = 'index.html';
+        return;
+    }
+    fetchUsers();
+  });
+
+  async function fetchUsers() {
+      try {
+          const res = await fetch('/api/users');
+          const data = await res.json();
+          if (data.success) {
+              const tbody = document.getElementById('users-body');
+              tbody.innerHTML = '';
+              if (data.users.length === 0) {
+                  tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No users found</td></tr>';
+                  return;
+              }
+              
+              data.users.forEach(u => {
+                  const tr = document.createElement('tr');
+                  
+                  // Use let to capture variable in closures
+                  const f = u.fname || '';
+                  const l = u.lname || '';
+                  
+                  tr.innerHTML = `
+                    <td>#${u.id}</td>
+                    <td><strong style="margin-right:8px">${f} ${l}</strong><br><small style="color:rgba(255,255,255,0.4)">${u.college || 'No college'}</small></td>
+                    <td>${u.email}</td>
+                    <td>
+                      <div class="actions">
+                        <button class="btn-act" onclick="openModal(${u.id}, 'project', '${f}')">+ Project</button>
+                        <button class="btn-act btn-cert" onclick="openModal(${u.id}, 'certificate', '${f}')">+ Certificate</button>
+                        <button class="btn-act btn-hack" onclick="openModal(${u.id}, 'hackathon', '${f}')">+ Hackathon</button>
+                      </div>
+                    </td>
+                  `;
+                  tbody.appendChild(tr);
+              });
+          } else {
+              showToast(data.error || 'Failed to fetch users');
+          }
+      } catch (err) {
+          showToast('Error connecting to server.');
+      }
+  }
+
+  function openModal(userId, type, userName) {
+      document.getElementById('m_userId').value = userId;
+      document.getElementById('m_type').value = type;
+      
+      document.getElementById('m_title').value = '';
+      document.getElementById('m_desc').value = '';
+      document.getElementById('m_date').value = '';
+      
+      let title = type.charAt(0).toUpperCase() + type.slice(1);
+      document.getElementById('modal-title').innerText = `Add ${title} for ${userName}`;
+      
+      document.getElementById('item-ovl').classList.add('open');
+  }
+
+  function closeModal(e) {
+      if (e && e.target !== e.currentTarget) return;
+      document.getElementById('item-ovl').classList.remove('open');
+  }
+
+  async function submitItem() {
+      const userId = document.getElementById('m_userId').value;
+      const type = document.getElementById('m_type').value;
+      const title = document.getElementById('m_title').value;
+      const desc = document.getElementById('m_desc').value;
+      const date = document.getElementById('m_date').value;
+      
+      if (!title) { showToast('Title is required!'); return; }
+      
+      const item = { title, description: desc, date };
+      
+      const btn = document.getElementById('m_submit');
+      btn.innerText = 'Adding...';
+      btn.disabled = true;
+      
+      try {
+          const res = await fetch('/api/user/add-item', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId, type, item })
+          });
+          const data = await res.json();
+          if (data.success) {
+              showToast(type.charAt(0).toUpperCase() + type.slice(1) + ' added successfully! ✓');
+              closeModal(null);
+          } else {
+              showToast(data.error || 'Failed to add item');
+          }
+      } catch (err) {
+          showToast('Error connecting to sever.');
+      } finally {
+          btn.innerText = 'Add to User Profile';
+          btn.disabled = false;
+      }
+  }
+
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    if(!t) return;
+    t.textContent = msg;
+    t.style.transform = 'translateX(-50%) translateY(0)';
+    t.style.opacity = '1';
+    setTimeout(()=>{ t.style.transform='translateX(-50%) translateY(80px)'; t.style.opacity='0'; }, 3500);
+  }
+</script>
+
+</body>
+</html>
