@@ -876,49 +876,111 @@
     dirLight.position.set(5, 10, 7);
     scene.add(dirLight);
 
-    // Create Paper Airplane Geometry
-    const planeGroup = new THREE.Group();
+    // Create Geometric Lion Face
+    const lionGroup = new THREE.Group();
     
     const geometry = new THREE.BufferGeometry();
     const vertices = new Float32Array([
-      // Right wing
-      0, 0, 2,     // nose 
-      0, -0.5, -2, // bottom back 
-      2, 0.5, -2,  // right wing tip 
+      // FOREHEAD & NOSE
+      0, 2.5, 2,      // 0: top forehead
+      0, 0.5, 3,      // 1: nose bridge
+      0, -1.5, 3.5,   // 2: nose tip
+      0, -2.5, 2,     // 3: chin
+
+      // RIGHT FACE
+      1, 1.5, 1.5,    // 4: right upper brow
+      2, 0.5, 1,      // 5: right cheekbone
+      0.8, -1, 2.5,   // 6: right snout width
+      1.2, -2, 1.5,   // 7: right jaw
       
-      // Left wing
-      0, 0, 2,     // nose 
-      -2, 0.5, -2, // left wing tip 
-      0, -0.5, -2, // bottom back 
-      
-      // Right inner tail
-      0, 0, 2,     // nose 
-      0, 1, -1.5,  // top middle back 
-      0, -0.5, -2, // bottom back 
+      // LEFT FACE
+      -1, 1.5, 1.5,   // 8: left upper brow
+      -2, 0.5, 1,     // 9: left cheekbone
+      -0.8, -1, 2.5,  // 10: left snout width
+      -1.2, -2, 1.5,  // 11: left jaw
+
+      // RIGHT MANE
+      1.5, 3.5, 0,    // 12
+      3.5, 2, 0,      // 13
+      4, -1, 0,       // 14
+      2.5, -3.5, 0,   // 15
+
+      // LEFT MANE
+      -1.5, 3.5, 0,   // 16
+      -3.5, 2, 0,     // 17
+      -4, -1, 0,      // 18
+      -2.5, -3.5, 0   // 19
     ]);
-    
+
+    const indices = [
+      // Right Face (CCW)
+      0, 1, 4,
+      1, 5, 4,
+      1, 6, 5,
+      1, 2, 6,
+      2, 7, 6,
+      2, 3, 7,
+      
+      // Left Face (CCW)
+      0, 8, 1,
+      1, 8, 9,
+      1, 9, 10,
+      1, 10, 2,
+      2, 10, 11,
+      2, 11, 3,
+
+      // Right Mane
+      0, 4, 12,
+      4, 13, 12,
+      4, 5, 13,
+      5, 14, 13,
+      5, 7, 14,
+      7, 15, 14,
+      3, 15, 7,
+
+      // Left Mane
+      0, 16, 8,
+      8, 16, 17,
+      8, 17, 9,
+      9, 17, 18,
+      9, 18, 11,
+      11, 18, 19,
+      3, 11, 19
+    ];
+
+    geometry.setIndex(indices);
     geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
     geometry.computeVertexNormals();
 
     const material = new THREE.MeshStandardMaterial({ 
-      color: 0x3b5bdb, 
-      roughness: 0.3,
-      metalness: 0.2,
+      color: 0xf97316, 
+      roughness: 0.2,
+      metalness: 0.8,
+      flatShading: true,
       side: THREE.DoubleSide
     });
     
-    // Wireframe overlay for tech look
-    const wireMaterial = new THREE.MeshBasicMaterial({ color: 0xf97316, wireframe: true, transparent: true, opacity: 0.3 });
+    // Wireframe overlay
+    const wireMat = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.15 });
     
-    const airplane = new THREE.Mesh(geometry, material);
-    const airplaneWire = new THREE.Mesh(geometry, wireMaterial);
+    const lion = new THREE.Mesh(geometry, material);
+    const lionWire = new THREE.Mesh(geometry, wireMat);
     
-    planeGroup.add(airplane);
-    planeGroup.add(airplaneWire);
+    lionGroup.add(lion);
+    lionGroup.add(lionWire);
+
+    // Glowing Eyes
+    const eyeGeom = new THREE.SphereGeometry(0.15, 8, 8);
+    const eyeMat = new THREE.MeshBasicMaterial({ color: 0x3b5bdb }); // Blue glowing eyes
+    const eyeR = new THREE.Mesh(eyeGeom, eyeMat);
+    eyeR.position.set(0.8, 1.2, 1.7);
+    const eyeL = new THREE.Mesh(eyeGeom, eyeMat);
+    eyeL.position.set(-0.8, 1.2, 1.7);
+    lionGroup.add(eyeR);
+    lionGroup.add(eyeL);
     
-    // Scale and position adjustment
-    planeGroup.scale.set(0.6, 0.6, 0.6);
-    scene.add(planeGroup);
+    lionGroup.scale.set(0.6, 0.6, 0.6);
+    scene.add(lionGroup);
 
     // Add some background floating stars (optional, keeping it minimal)
     const starGeom = new THREE.BufferGeometry();
@@ -958,12 +1020,12 @@
       targetY = mouseY * 0.002;
       
       // Floating animation
-      planeGroup.position.y = Math.sin(time * 2) * 0.5;
+      lionGroup.position.y = Math.sin(time * 2) * 0.2;
       
-      // Rotate towards mouse smoothly
-      planeGroup.rotation.y += (targetX - planeGroup.rotation.y) * 0.05;
-      planeGroup.rotation.x += (targetY * 0.5 - planeGroup.rotation.x) * 0.05;
-      planeGroup.rotation.z = -targetX * 0.5; // Bank into turn
+      // Rotate slowly and track mouse smoothly
+      lionGroup.rotation.y += (targetX - lionGroup.rotation.y) * 0.05;
+      lionGroup.rotation.x += (targetY * 0.5 - lionGroup.rotation.x) * 0.05;
+      lionGroup.rotation.z = -targetX * 0.2;
 
       stars.rotation.y += 0.001;
 
