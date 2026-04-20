@@ -12,7 +12,7 @@
 
     /* PARALLAX / 3D CANVAS */
     #canvas-container {
-      position: absolute; top: 0; left: 0; width: 100%; height: 100vh;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
       z-index: 0; pointer-events: none; opacity: 0.7;
     }
 
@@ -66,6 +66,38 @@
     }
     .apply-btn:hover { background: #f97316; color: #fff; transform: translateY(-4px) scale(1.05); box-shadow: 0 20px 40px rgba(249,115,22,0.4); }
 
+    /* ABOUT SECTION */
+    .about-section {
+      position: relative; z-index: 10; padding: 60px 20px 120px;
+      max-width: 900px; margin: 0 auto;
+    }
+    .about-card {
+      background: rgba(18, 18, 18, 0.4);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 50px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+    }
+    .about-card h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.2rem; margin-bottom: 24px; color: #fff; letter-spacing: 0.02em;
+    }
+    .about-card p {
+      font-size: 1.1rem; line-height: 1.8; color: rgba(255,255,255,0.7);
+      margin-bottom: 20px;
+    }
+    .about-card ul {
+      list-style: none; margin-top: 30px;
+    }
+    .about-card li {
+      position: relative; padding-left: 30px; font-size: 1.1rem;
+      color: rgba(255,255,255,0.85); margin-bottom: 16px; line-height: 1.5;
+    }
+    .about-card li::before {
+      content: '→'; position: absolute; left: 0; color: #f97316; font-weight: bold;
+    }
+
     /* TOAST */
     #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: #161616; border: 1px solid rgba(59,91,219,0.4); border-radius: 100px; padding: 13px 26px; color: #fff; font-size: 0.86rem; font-weight: 500; z-index: 9999; transition: all 0.4s cubic-bezier(0.16,1,0.3,1); white-space: nowrap; box-shadow: 0 16px 48px rgba(0,0,0,0.5); opacity: 0; }
 
@@ -99,6 +131,14 @@
       <strong>15 May 2026</strong>
     </div>
     <div class="hl-box">
+      <span>Duration</span>
+      <strong>3 Months</strong>
+    </div>
+    <div class="hl-box">
+      <span>Projects</span>
+      <strong>3 Real-world Projects</strong>
+    </div>
+    <div class="hl-box">
       <span>Tech Stack</span>
       <strong>Python & Data</strong>
     </div>
@@ -109,6 +149,20 @@
   </div>
   
   <button class="apply-btn" id="apply-btn" onclick="handleApply()">Apply for Internship →</button>
+</section>
+
+<section class="about-section">
+  <div class="about-card">
+    <h2>About Zorus 2.1</h2>
+    <p>Zorus 2.1 by Gigni is an intensive, highly competitive 3-month coding internship designed to bridge the gap between theoretical knowledge and practical industry demands. You will immerse yourself in Python programming while solving actual real-world challenges.</p>
+    <p>Throughout the internship, you will develop 3 major projects from scratch. Our hands-on approach guarantees that you will learn the best practices for problem-solving, architectural design, and logic programming.</p>
+    <ul>
+      <li>Work on hands-on, industry-standard Python systems.</li>
+      <li>Develop 3 robust projects that will significantly boost your resume and portfolio.</li>
+      <li>Receive direct guidance and structured learning pathways.</li>
+      <li>Earn a highly recognized internship certificate upon successful completion.</li>
+    </ul>
+  </div>
 </section>
 
 <!-- TOAST -->
