@@ -92,6 +92,14 @@ app.get('/api/init', async (req, res) => {
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS projects JSONB DEFAULT '[]';`);
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS certificates JSONB DEFAULT '[]';`);
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS hackathons JSONB DEFAULT '[]';`);
+        await client.query(`CREATE TABLE IF NOT EXISTS zorus_applications (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER,
+            email VARCHAR(255),
+            fname VARCHAR(255),
+            lname VARCHAR(255),
+            applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );`);
 
         res.status(200).json({ success: true, message: 'Table initialized and updated' });
     } catch (err) {
@@ -131,6 +139,14 @@ app.post('/api/register', async (req, res) => {
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS projects JSONB DEFAULT '[]';`);
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS certificates JSONB DEFAULT '[]';`);
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS hackathons JSONB DEFAULT '[]';`);
+        await client.query(`CREATE TABLE IF NOT EXISTS zorus_applications (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER,
+            email VARCHAR(255),
+            fname VARCHAR(255),
+            lname VARCHAR(255),
+            applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );`);
 
         const query = `
             INSERT INTO users (fname, lname, email, password, college, year, field, interest, intro, profile_pic)
@@ -267,6 +283,47 @@ app.post('/api/user/add-item', async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
         res.status(200).json({ success: true /* returning partial or full user is optional */ });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    } finally {
+        if (client) await client.end();
+    }
+});
+
+app.post('/api/zorus-apply', async (req, res) => {
+    const { userId, email, fname, lname } = req.body;
+    if (!userId || !email) {
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    let client;
+    try {
+        client = createClient();
+        await client.connect();
+        
+        await client.query(`CREATE TABLE IF NOT EXISTS zorus_applications (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER,
+            email VARCHAR(255),
+            fname VARCHAR(255),
+            lname VARCHAR(255),
+            applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );`);
+
+        // Check if already applied
+        const check = await client.query(`SELECT id FROM zorus_applications WHERE user_id = $1`, [userId]);
+        if (check.rows.length > 0) {
+            return res.status(400).json({ error: 'You have already applied for Zorus 2.1' });
+        }
+
+        const query = `
+            INSERT INTO zorus_applications (user_id, email, fname, lname)
+            VALUES ($1, $2, $3, $4)
+            RETURNING id;
+        `;
+        await client.query(query, [userId, email, fname, lname]);
+        
+        res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
     } finally {

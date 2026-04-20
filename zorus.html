@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zorus 2.1 By Gigni</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
+
+    /* PARALLAX / 3D CANVAS */
+    #canvas-container {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100vh;
+      z-index: 0; pointer-events: none; opacity: 0.7;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 18px 48px; background: rgba(0,0,0,0.4); backdrop-filter: blur(10px);
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .logo, .logo a { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 0.05em; color: #fff; text-decoration: none; line-height: 1; }
+    .nav-links { display: flex; gap: 36px; align-items: center; list-style: none; }
+    .nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: #fff; }
+
+    /* HERO */
+    .hero {
+      position: relative; z-index: 10; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 120px 20px 40px;
+      background: radial-gradient(circle at center, rgba(0,0,0,0) 0%, #000 100%);
+    }
+    .badge {
+      background: rgba(59,91,219,0.15); border: 1px solid #3b5bdb; color: #6a85e6;
+      padding: 6px 16px; border-radius: 100px; font-size: 0.85rem; font-weight: 700;
+      letter-spacing: 0.05em; margin-bottom: 24px; text-transform: uppercase;
+    }
+    .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(4rem, 8vw, 7rem); margin-bottom: 24px; letter-spacing: 0.02em; line-height: 1; text-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+    .hero h1 span { color: transparent; -webkit-text-stroke: 2px #fff; }
+    
+    .hero-desc {
+      font-size: clamp(1.1rem, 2vw, 1.3rem); color: rgba(255,255,255,0.7);
+      max-width: 760px; line-height: 1.7; margin-bottom: 48px;
+    }
+    
+    .highlights {
+      display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; margin-bottom: 50px;
+    }
+    .hl-box {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      padding: 18px 24px; border-radius: 14px; backdrop-filter: blur(8px);
+      text-align: left;
+    }
+    .hl-box span { display: block; font-size: 0.75rem; text-transform: uppercase; color: #f97316; font-weight: 800; margin-bottom: 6px; letter-spacing: 0.05em; }
+    .hl-box strong { font-size: 1.1rem; color: #fff; }
+    
+    .apply-btn {
+      background: #fff; color: #000; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;
+      padding: 18px 48px; border-radius: 100px; font-weight: 800; font-size: 1.1rem;
+      transition: transform 0.3s, box-shadow 0.3s, background 0.3s; border: none; cursor: pointer;
+    }
+    .apply-btn:hover { background: #f97316; color: #fff; transform: translateY(-4px) scale(1.05); box-shadow: 0 20px 40px rgba(249,115,22,0.4); }
+
+    /* TOAST */
+    #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: #161616; border: 1px solid rgba(59,91,219,0.4); border-radius: 100px; padding: 13px 26px; color: #fff; font-size: 0.86rem; font-weight: 500; z-index: 9999; transition: all 0.4s cubic-bezier(0.16,1,0.3,1); white-space: nowrap; box-shadow: 0 16px 48px rgba(0,0,0,0.5); opacity: 0; }
+
+    @media (max-width: 768px) {
+      nav { padding: 14px 20px; }
+      .nav-links { display: none; }
+      .hl-box { width: 100%; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="canvas-container"></div>
+
+<nav>
+  <div class="logo"><a href="index.html">GIGNI</a></div>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="hosting.html">Events</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="badge">Exclusive Application</div>
+  <h1>ZORUS <span>2.1</span></h1>
+  <p class="hero-desc">Zorus is a coding internship using Python to solve real-world problems. It is a great opportunity to elevate your skills and apply your knowledge in practical scenarios.</p>
+  
+  <div class="highlights">
+    <div class="hl-box">
+      <span>Start Date</span>
+      <strong>15 May 2026</strong>
+    </div>
+    <div class="hl-box">
+      <span>Tech Stack</span>
+      <strong>Python & Data</strong>
+    </div>
+    <div class="hl-box">
+      <span>Outcome</span>
+      <strong>Recognized Certificate</strong>
+    </div>
+  </div>
+  
+  <button class="apply-btn" id="apply-btn" onclick="handleApply()">Apply for Internship →</button>
+</section>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- Three.js for 3D Background -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+  // --- 3D PARTICLE NETWORK ANIMATION ---
+  const container = document.getElementById('canvas-container');
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  container.appendChild(renderer.domElement);
+
+  // Particles
+  const particlesGeometry = new THREE.BufferGeometry();
+  const particlesCount = 700;
+  const posArray = new Float32Array(particlesCount * 3);
+  
+  for(let i=0; i<particlesCount * 3; i++) {
+    posArray[i] = (Math.random() - 0.5) * 10;
+  }
+  
+  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+  
+  // Custom Shader Material for tech glow look
+  const particlesMaterial = new THREE.PointsMaterial({
+    size: 0.025,
+    color: 0x3b5bdb,
+    transparent: true,
+    opacity: 0.8,
+    blending: THREE.AdditiveBlending
+  });
+
+  const particleMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+  scene.add(particleMesh);
+  
+  // Connecting Lines (Wireframe sphere to look like network)
+  const sphereGeom = new THREE.IcosahedronGeometry(2, 2);
+  const wireMaterial = new THREE.LineBasicMaterial({ color: 0xf97316, transparent: true, opacity: 0.15 });
+  const wireMesh = new THREE.LineSegments(new THREE.WireframeGeometry(sphereGeom), wireMaterial);
+  scene.add(wireMesh);
+
+  camera.position.z = 3;
+
+  // Interactivity setup
+  let mouseX = 0;
+  let mouseY = 0;
+  let targetX = 0;
+  let targetY = 0;
+  const windowHalfX = window.innerWidth / 2;
+  const windowHalfY = window.innerHeight / 2;
+
+  document.addEventListener('mousemove', (event) => {
+    mouseX = (event.clientX - windowHalfX);
+    mouseY = (event.clientY - windowHalfY);
+  });
+
+  const clock = new THREE.Clock();
+
+  function animate() {
+    requestAnimationFrame(animate);
+    const elapsedTime = clock.getElapsedTime();
+
+    targetX = mouseX * 0.001;
+    targetY = mouseY * 0.001;
+    
+    particleMesh.rotation.y += 0.002;
+    particleMesh.rotation.x += 0.001;
+
+    wireMesh.rotation.y += 0.005;
+    wireMesh.rotation.x += 0.002;
+
+    // Smooth camera follow mouse
+    camera.position.x += (mouseX * 0.001 - camera.position.x) * 0.05;
+    camera.position.y += (-mouseY * 0.001 - camera.position.y) * 0.05;
+    camera.lookAt(scene.position);
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  // --- LOGIC FOR APPLICATION ---
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    if(!t) return;
+    t.textContent = msg;
+    t.style.transform = 'translateX(-50%) translateY(0)';
+    t.style.opacity = '1';
+    setTimeout(()=>{ t.style.transform='translateX(-50%) translateY(80px)'; t.style.opacity='0'; }, 3500);
+  }
+
+  async function handleApply() {
+    const userStr = localStorage.getItem('gigni_user');
+    if (!userStr) {
+      showToast('You must have a Gigni account to apply. Redirecting...');
+      setTimeout(() => {
+        window.location.href = 'index.html#join-sec';
+      }, 2000);
+      return;
+    }
+
+    const user = JSON.parse(userStr);
+    const btn = document.getElementById('apply-btn');
+    const ogText = btn.innerText;
+    btn.innerText = 'Applying...';
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('/api/zorus-apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          email: user.email,
+          fname: user.fname,
+          lname: user.lname
+        })
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        showToast('Application submitted successfully! ✓');
+        btn.innerText = 'Applied!';
+        btn.style.background = '#10b981';
+        btn.style.color = '#fff';
+      } else {
+        showToast(data.error || 'Failed to submit application');
+        btn.innerText = ogText;
+        btn.disabled = false;
+      }
+    } catch(err) {
+      showToast('Error connecting to server.');
+      btn.innerText = ogText;
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>
