@@ -331,6 +331,31 @@ app.post('/api/zorus-apply', async (req, res) => {
     }
 });
 
+// Get Zorus Applications
+app.get('/api/zorus-applications', async (req, res) => {
+    let client;
+    try {
+        client = createClient();
+        await client.connect();
+        
+        await client.query(`CREATE TABLE IF NOT EXISTS zorus_applications (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER,
+            email VARCHAR(255),
+            fname VARCHAR(255),
+            lname VARCHAR(255),
+            applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );`);
+
+        const result = await client.query(`SELECT id, user_id, email, fname, lname, applied_at FROM zorus_applications ORDER BY applied_at DESC;`);
+        res.status(200).json({ success: true, applications: result.rows });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    } finally {
+        if (client) await client.end();
+    }
+});
+
 // Important: Vercel expects an exported app for serverless functions
 module.exports = app;
 
