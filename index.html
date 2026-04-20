@@ -876,111 +876,70 @@
     dirLight.position.set(5, 10, 7);
     scene.add(dirLight);
 
-    // Create Geometric Lion Face
-    const lionGroup = new THREE.Group();
+    // Create Orange Brain with Blue Current
+    const brainGroup = new THREE.Group();
     
-    const geometry = new THREE.BufferGeometry();
-    const vertices = new Float32Array([
-      // FOREHEAD & NOSE
-      0, 2.5, 2,      // 0: top forehead
-      0, 0.5, 3,      // 1: nose bridge
-      0, -1.5, 3.5,   // 2: nose tip
-      0, -2.5, 2,     // 3: chin
+    // Brain Particles
+    const particlesCount = 15000;
+    const posArray = new Float32Array(particlesCount * 3);
+    for(let i=0; i<particlesCount; i++) {
+       let theta = Math.random() * Math.PI * 2;
+       let phi = Math.acos((Math.random() * 2) - 1);
+       
+       let r = 2.0; 
+       let x = r * Math.sin(phi) * Math.cos(theta) * 0.85; // slight width adjust
+       let y = r * Math.sin(phi) * Math.sin(theta) * 0.75; // flatten height
+       let z = r * Math.cos(phi) * 1.0; 
+       
+       // Fissure
+       if (Math.abs(x) < 0.15) {
+           x = (x > 0 ? 0.15 : -0.15) + (Math.random() * 0.05);
+       }
 
-      // RIGHT FACE
-      1, 1.5, 1.5,    // 4: right upper brow
-      2, 0.5, 1,      // 5: right cheekbone
-      0.8, -1, 2.5,   // 6: right snout width
-      1.2, -2, 1.5,   // 7: right jaw
-      
-      // LEFT FACE
-      -1, 1.5, 1.5,   // 8: left upper brow
-      -2, 0.5, 1,     // 9: left cheekbone
-      -0.8, -1, 2.5,  // 10: left snout width
-      -1.2, -2, 1.5,  // 11: left jaw
-
-      // RIGHT MANE
-      1.5, 3.5, 0,    // 12
-      3.5, 2, 0,      // 13
-      4, -1, 0,       // 14
-      2.5, -3.5, 0,   // 15
-
-      // LEFT MANE
-      -1.5, 3.5, 0,   // 16
-      -3.5, 2, 0,     // 17
-      -4, -1, 0,      // 18
-      -2.5, -3.5, 0   // 19
-    ]);
-
-    const indices = [
-      // Right Face (CCW)
-      0, 1, 4,
-      1, 5, 4,
-      1, 6, 5,
-      1, 2, 6,
-      2, 7, 6,
-      2, 3, 7,
-      
-      // Left Face (CCW)
-      0, 8, 1,
-      1, 8, 9,
-      1, 9, 10,
-      1, 10, 2,
-      2, 10, 11,
-      2, 11, 3,
-
-      // Right Mane
-      0, 4, 12,
-      4, 13, 12,
-      4, 5, 13,
-      5, 14, 13,
-      5, 7, 14,
-      7, 15, 14,
-      3, 15, 7,
-
-      // Left Mane
-      0, 16, 8,
-      8, 16, 17,
-      8, 17, 9,
-      9, 17, 18,
-      9, 18, 11,
-      11, 18, 19,
-      3, 11, 19
-    ];
-
-    geometry.setIndex(indices);
-    geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-    geometry.computeVertexNormals();
-
-    const material = new THREE.MeshStandardMaterial({ 
-      color: 0xf97316, 
-      roughness: 0.2,
-      metalness: 0.8,
-      flatShading: true,
-      side: THREE.DoubleSide
+       // Folds noise approximation
+       let foldNoise = Math.sin(x*8)*Math.cos(y*8)*Math.sin(z*8) * 0.15;
+       let radiusFactor = 0.5 + 0.5*Math.pow(Math.random(), 0.6); 
+       
+       posArray[i*3] = (x + foldNoise) * radiusFactor;
+       posArray[i*3+1] = (y + foldNoise) * radiusFactor;
+       posArray[i*3+2] = (z + foldNoise) * radiusFactor;
+    }
+    const brainGeom = new THREE.BufferGeometry();
+    brainGeom.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    const brainMat = new THREE.PointsMaterial({
+       size: 0.035, color: 0xf97316, transparent: true, opacity: 0.75, blending: THREE.AdditiveBlending
     });
-    
-    // Wireframe overlay
-    const wireMat = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.15 });
-    
-    const lion = new THREE.Mesh(geometry, material);
-    const lionWire = new THREE.Mesh(geometry, wireMat);
-    
-    lionGroup.add(lion);
-    lionGroup.add(lionWire);
+    const brainPoints = new THREE.Points(brainGeom, brainMat);
+    brainGroup.add(brainPoints);
 
-    // Glowing Eyes
-    const eyeGeom = new THREE.SphereGeometry(0.15, 8, 8);
-    const eyeMat = new THREE.MeshBasicMaterial({ color: 0x3b5bdb }); // Blue glowing eyes
-    const eyeR = new THREE.Mesh(eyeGeom, eyeMat);
-    eyeR.position.set(0.8, 1.2, 1.7);
-    const eyeL = new THREE.Mesh(eyeGeom, eyeMat);
-    eyeL.position.set(-0.8, 1.2, 1.7);
-    lionGroup.add(eyeR);
-    lionGroup.add(eyeL);
+    // Blue Current Rings
+    const currentPaths = new THREE.Group();
+    const currentMat = new THREE.LineBasicMaterial({ color: 0x3b5bdb, transparent: true, opacity: 0.6 });
+    for(let i = 0; i < 6; i++) {
+        const rad = 2.4 + Math.random() * 0.5;
+        const ringGeom = new THREE.TorusGeometry(rad, 0.01, 8, 64);
+        const ring = new THREE.LineSegments(new THREE.EdgesGeometry(ringGeom), currentMat);
+        ring.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, Math.random()*Math.PI);
+        ring.userData = {
+            rx: (Math.random() - 0.5) * 0.02,
+            ry: (Math.random() - 0.5) * 0.02,
+            rz: (Math.random() - 0.5) * 0.02
+        };
+        currentPaths.add(ring);
+    }
+    brainGroup.add(currentPaths);
     
-    lionGroup.scale.set(0.6, 0.6, 0.6);
-    scene.add(lionGroup);
+    // Add blue floating electrons
+    const electronGeom = new THREE.BufferGeometry();
+    const electronPos = new Float32Array(50 * 3);
+    for(let i=0; i<150; i++) electronPos[i] = (Math.random() - 0.5) * 6;
+    electronGeom.setAttribute('position', new THREE.BufferAttribute(electronPos, 3));
+    const electronMat = new THREE.PointsMaterial({color: 0x3b5bdb, size: 0.1, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending});
+    const electrons = new THREE.Points(electronGeom, electronMat);
+    brainGroup.add(electrons);
+
+    brainGroup.scale.set(0.9, 0.9, 0.9);
+    scene.add(brainGroup);
 
     // Add some background floating stars (optional, keeping it minimal)
     const starGeom = new THREE.BufferGeometry();
@@ -1020,12 +979,23 @@
       targetY = mouseY * 0.002;
       
       // Floating animation
-      lionGroup.position.y = Math.sin(time * 2) * 0.2;
+      brainGroup.position.y = Math.sin(time * 2) * 0.15;
       
       // Rotate slowly and track mouse smoothly
-      lionGroup.rotation.y += (targetX - lionGroup.rotation.y) * 0.05;
-      lionGroup.rotation.x += (targetY * 0.5 - lionGroup.rotation.x) * 0.05;
-      lionGroup.rotation.z = -targetX * 0.2;
+      brainGroup.rotation.y += (targetX - brainGroup.rotation.y) * 0.05;
+      brainGroup.rotation.x += (targetY * 0.5 - brainGroup.rotation.x) * 0.05;
+      
+      // Core continuous slow rotation
+      brainPoints.rotation.y += 0.001;
+      
+      // Rotate currents
+      currentPaths.children.forEach(ring => {
+          ring.rotation.x += ring.userData.rx;
+          ring.rotation.y += ring.userData.ry;
+          ring.rotation.z += ring.userData.rz;
+      });
+      electrons.rotation.y -= 0.01;
+      electrons.rotation.x += 0.005;
 
       stars.rotation.y += 0.001;
 
