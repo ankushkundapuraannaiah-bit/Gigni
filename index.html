@@ -535,7 +535,7 @@
 <!-- ══════════ HERO ══════════ -->
 <section class="hero" id="home">
   <!-- Helmet background -->
-  <div class="hero-helmet-bg" style="width:100%; right:0; opacity:0.85;">
+  <div class="hero-helmet-bg" style="position:fixed; top:0; left:0; width:100%; height:100%; opacity:0.85; z-index:-1; pointer-events:none;">
     <div id="hero-gl" style="width:100%; height:100%;"></div>
   </div>
 
@@ -912,6 +912,13 @@
     const brainPoints = new THREE.Points(brainGeom, brainMat);
     brainGroup.add(brainPoints);
 
+    // Prepare arrays for burst effect
+    const basePosArray = new Float32Array(posArray);
+    const randomDirArray = new Float32Array(particlesCount * 3);
+    for(let i=0; i<particlesCount * 3; i++) {
+        randomDirArray[i] = (Math.random() - 0.5) * 2;
+    }
+
     // Blue Current Rings
     const currentPaths = new THREE.Group();
     const currentMat = new THREE.LineBasicMaterial({ color: 0x3b5bdb, transparent: true, opacity: 0.6 });
@@ -978,8 +985,29 @@
       targetX = mouseX * 0.002;
       targetY = mouseY * 0.002;
       
-      // Floating animation
-      brainGroup.position.y = Math.sin(time * 2) * 0.15;
+      
+      // Calculate Scroll Explosion Factor
+      let bustFactor = Math.max(0, window.scrollY - 300) / 600;
+      bustFactor = Math.min(1, bustFactor); // Constrain 0 to 1
+      
+      const power = bustFactor * 30; // Explosion force intensity
+      
+      const positions = brainGeom.attributes.position.array;
+      for(let i=0; i<particlesCount; i++) {
+         positions[i*3] = basePosArray[i*3] + randomDirArray[i*3] * power;
+         positions[i*3+1] = basePosArray[i*3+1] + randomDirArray[i*3+1] * power;
+         positions[i*3+2] = basePosArray[i*3+2] + randomDirArray[i*3+2] * power;
+      }
+      brainGeom.attributes.position.needsUpdate = true;
+      
+      brainMat.opacity = 0.75 * (1 - bustFactor); // Fade as it busts
+
+      // Scale up the entire group mimicking 3D traversal
+      brainGroup.scale.set(0.9 + bustFactor*2, 0.9 + bustFactor*2, 0.9 + bustFactor*2);
+      brainGroup.position.z = -bustFactor * 5;
+
+      // Floating animation relative to group
+      brainGroup.position.y = Math.sin(time * 2) * 0.15 - (bustFactor * 2);
       
       // Rotate slowly and track mouse smoothly
       brainGroup.rotation.y += (targetX - brainGroup.rotation.y) * 0.05;
@@ -988,14 +1016,16 @@
       // Core continuous slow rotation
       brainPoints.rotation.y += 0.001;
       
-      // Rotate currents
+      // Rotate currents and fade them
+      currentMat.opacity = 0.6 * (1 - bustFactor);
+      electronMat.opacity = 0.9 * (1 - bustFactor);
       currentPaths.children.forEach(ring => {
-          ring.rotation.x += ring.userData.rx;
-          ring.rotation.y += ring.userData.ry;
-          ring.rotation.z += ring.userData.rz;
+          ring.rotation.x += ring.userData.rx + (bustFactor * 0.05);
+          ring.rotation.y += ring.userData.ry + (bustFactor * 0.05);
+          ring.rotation.z += ring.userData.rz + (bustFactor * 0.05);
       });
-      electrons.rotation.y -= 0.01;
-      electrons.rotation.x += 0.005;
+      electrons.rotation.y -= 0.01 + (bustFactor * 0.04);
+      electrons.rotation.x += 0.005 + (bustFactor * 0.04);
 
       stars.rotation.y += 0.001;
 
