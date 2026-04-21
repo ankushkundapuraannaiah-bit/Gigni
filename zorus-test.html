@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zorus 2.1 Selection Test - Gigni</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; scroll-behavior: smooth; }
+
+    /* PARALLAX / 3D CANVAS */
+    #canvas-container {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+      z-index: -1; pointer-events: none; opacity: 0.5;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 15px 40px; background: rgba(0,0,0,0.6); backdrop-filter: blur(15px);
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .logo, .logo a { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 0.05em; color: #fff; text-decoration: none; line-height: 1; }
+    
+    .timer-container {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(249, 115, 22, 0.15); border: 1px solid #f97316;
+      padding: 8px 16px; border-radius: 50px;
+      font-weight: 700; font-size: 1.1rem; color: #f9dbb2;
+      box-shadow: 0 0 15px rgba(249, 115, 22, 0.3);
+    }
+    
+    .timer-container.warning {
+      background: rgba(220, 38, 38, 0.2); border-color: #dc2626; color: #fca5a5;
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { box-shadow: 0 0 10px rgba(220, 38, 38, 0.2); }
+      to { box-shadow: 0 0 20px rgba(220, 38, 38, 0.8); }
+    }
+
+    /* MAIN CONTAINER */
+    main {
+      padding: 100px 20px 60px; max-width: 800px; margin: 0 auto;
+      position: relative; z-index: 10;
+    }
+
+    .test-header {
+      text-align: center; margin-bottom: 40px;
+    }
+    .test-header h1 {
+      font-family: 'Bebas Neue', sans-serif; font-size: 3rem; letter-spacing: 0.02em; margin-bottom: 15px; text-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+    .test-header p {
+      color: rgba(255,255,255,0.7); font-size: 1.1rem;
+    }
+
+    .question-card {
+      background: rgba(20, 20, 20, 0.5);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 25px 30px; margin-bottom: 24px;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .question-card:hover {
+      border-color: rgba(59, 91, 219, 0.5); transform: translateY(-3px);
+    }
+
+    .q-number {
+      font-size: 0.85rem; font-weight: 700; color: #3b5bdb; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px;
+    }
+    .q-text {
+      font-size: 1.2rem; font-weight: 500; margin-bottom: 20px; line-height: 1.5; color: #fff;
+    }
+
+    .options {
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .option-label {
+      display: flex; align-items: center; padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; cursor: pointer; transition: all 0.2s;
+    }
+    .option-label:hover {
+      background: rgba(255, 255, 255, 0.1); border-color: rgba(255,255,255,0.3);
+    }
+    .option-label input[type="radio"] {
+      appearance: none; -webkit-appearance: none;
+      width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.4); border-radius: 50%;
+      margin-right: 15px; position: relative; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .option-label input[type="radio"]:checked {
+      border-color: #f97316;
+    }
+    .option-label input[type="radio"]:checked::after {
+      content: ''; width: 10px; height: 10px; background: #f97316; border-radius: 50%;
+    }
+    .option-label span {
+      font-size: 1rem; color: rgba(255,255,255,0.85); flex: 1;
+    }
+    .option-label:has(input:checked) {
+      background: rgba(249, 115, 22, 0.1); border-color: #f97316;
+    }
+
+    /* SUCCESS / ERROR States for Grading */
+    .option-label.correct { background: rgba(16, 185, 129, 0.15) !important; border-color: #10b981 !important; color: #fff; }
+    .option-label.correct input { border-color: #10b981 !important; }
+    .option-label.correct input::after { background: #10b981 !important; content: ''; width: 10px; height: 10px; border-radius: 50%; display: block; }
+    
+    .option-label.incorrect { background: rgba(220, 38, 38, 0.15) !important; border-color: #dc2626 !important; color: #fff; }
+    .option-label.incorrect input { border-color: #dc2626 !important; }
+    .option-label.incorrect input::after { background: #dc2626 !important; content: ''; width: 10px; height: 10px; border-radius: 50%; display: block; }
+
+    .submit-container {
+      text-align: center; margin-top: 50px;
+    }
+    .submit-btn {
+      background: #fff; color: #000; padding: 18px 60px;
+      border: none; border-radius: 100px; font-weight: 800; font-size: 1.2rem; cursor: pointer;
+      transition: all 0.3s ease; box-shadow: 0 10px 20px rgba(255,255,255,0.2);
+    }
+    .submit-btn:hover {
+      background: #3b5bdb; color: #fff; transform: translateY(-4px); box-shadow: 0 15px 30px rgba(59,91,219,0.4);
+    }
+    .submit-btn:disabled {
+      background: #333; color: #666; cursor: not-allowed; transform: none; box-shadow: none;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+      z-index: 2000; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.4s;
+    }
+    .modal-overlay.active {
+      opacity: 1; pointer-events: auto;
+    }
+    .modal-content {
+      background: #111; border: 1px solid rgba(255,255,255,0.1); border-radius: 24px;
+      padding: 50px 40px; text-align: center; max-width: 450px; width: 90%;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.8); transform: translateY(30px) scale(0.95); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .modal-overlay.active .modal-content {
+      transform: translateY(0) scale(1);
+    }
+    .modal-content h2 { margin-bottom: 15px; font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: #fff; }
+    .score-circle {
+      width: 120px; height: 120px; margin: 0 auto 25px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      background: conic-gradient(#3b5bdb 0%, transparent 0%);
+      position: relative;
+    }
+    .score-circle::before {
+      content: ''; position: absolute; inset: 10px; background: #111; border-radius: 50%;
+    }
+    .score-circle span {
+      position: relative; font-size: 2rem; font-weight: 800; color: #fff; z-index: 10;
+    }
+    .modal-desc { color: rgba(255,255,255,0.7); margin-bottom: 30px; font-size: 1.1rem; line-height: 1.5; }
+    
+    .btn-home {
+      display: inline-block; background: #3b5bdb; color: #fff; text-decoration: none;
+      padding: 14px 32px; border-radius: 50px; font-weight: 600; font-size: 1rem;
+      transition: background 0.2s;
+    }
+    .btn-home:hover { background: #2f49b0; }
+
+    @media (max-width: 600px) {
+      nav { padding: 15px 20px; }
+      .logo, .logo a { font-size: 1.5rem; }
+      .timer-container { font-size: 0.9rem; padding: 6px 12px; }
+      main { padding-top: 80px; }
+      .test-header h1 { font-size: 2.2rem; }
+      .question-card { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="canvas-container"></div>
+
+<nav>
+  <div class="logo"><a href="index.html">GIGNI</a></div>
+  <div class="timer-container" id="timer">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+    <span id="time-display">50:00</span>
+  </div>
+</nav>
+
+<main>
+  <div class="test-header">
+    <h1>Zorus 2.1 Selection Test</h1>
+    <p>Complete all 25 questions within 50 minutes. The test will auto-submit when the timer expires.</p>
+  </div>
+
+  <form id="quiz-form">
+    <div id="questions-container">
+      <!-- Questions injected by JS -->
+    </div>
+    
+    <div class="submit-container">
+      <button type="submit" class="submit-btn" id="submit-btn">Submit Test</button>
+    </div>
+  </form>
+</main>
+
+<div class="modal-overlay" id="result-modal">
+  <div class="modal-content">
+    <h2 id="modal-title">Test Completed!</h2>
+    <div class="score-circle" id="score-circle">
+      <span id="score-text">0%</span>
+    </div>
+    <p class="modal-desc" id="modal-desc">Thank you for taking the Zorus Selection Test. We will review your application along with your score.</p>
+    <a href="index.html" class="btn-home">Return Home</a>
+  </div>
+</div>
+
+<!-- Three.js Background (Subtle) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+  // Very subtle tech background
+  const container = document.getElementById('canvas-container');
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  container.appendChild(renderer.domElement);
+
+  const geometry = new THREE.BufferGeometry();
+  const count = 300;
+  const positions = new Float32Array(count * 3);
+  for(let i=0; i<count*3; i++) {
+    positions[i] = (Math.random() - 0.5) * 15;
+  }
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  
+  const material = new THREE.PointsMaterial({ size: 0.05, color: 0x3b5bdb, transparent: true, opacity: 0.3 });
+  const points = new THREE.Points(geometry, material);
+  scene.add(points);
+  
+  camera.position.z = 5;
+  
+  function animate() {
+    requestAnimationFrame(animate);
+    points.rotation.y += 0.0005;
+    points.rotation.x += 0.0002;
+    renderer.render(scene, camera);
+  }
+  animate();
+  
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+</script>
+
+<script>
+  // QUESTIONS DATA
+  const questionsList = [
+    {
+      q: "Which language is most commonly used for AI development?",
+      options: ["Java", "C++", "Python", "PHP"],
+      ans: 2 // 0-indexed
+    },
+    {
+      q: "Which Python library is mainly used for numerical computations?",
+      options: ["Pandas", "NumPy", "Matplotlib", "Seaborn"],
+      ans: 1
+    },
+    {
+      q: "Which of the following is a popular machine learning library in Python?",
+      options: ["Flask", "Django", "Scikit-learn", "Tkinter"],
+      ans: 2
+    },
+    {
+      q: "What does AI stand for?",
+      options: ["Automated Intelligence", "Artificial Intelligence", "Advanced Internet", "Algorithmic Interface"],
+      ans: 1
+    },
+    {
+      q: "Which of the following is used for data visualization in Python?",
+      options: ["TensorFlow", "Matplotlib", "Keras", "OpenCV"],
+      ans: 1
+    },
+    {
+      q: "Which type of learning uses labeled data?",
+      options: ["Unsupervised Learning", "Reinforcement Learning", "Supervised Learning", "Deep Learning"],
+      ans: 2
+    },
+    {
+      q: "Which Python library is used for deep learning?",
+      options: ["TensorFlow", "BeautifulSoup", "Requests", "Selenium"],
+      ans: 0
+    },
+    {
+      q: "Which of the following is a Python web framework?",
+      options: ["Flask", "NumPy", "SciPy", "Keras"],
+      ans: 0
+    },
+    {
+      q: "What is the extension of a Python file?",
+      options: [".java", ".py", ".cpp", ".html"],
+      ans: 1
+    },
+    {
+      q: "Which algorithm is used for classification problems?",
+      options: ["Linear Regression", "K-Means", "Logistic Regression", "PCA"],
+      ans: 2
+    },
+    {
+      q: "Which of the following is an unsupervised learning algorithm?",
+      options: ["Decision Tree", "K-Means", "Linear Regression", "SVM"],
+      ans: 1
+    },
+    {
+      q: "Which keyword is used to define a function in Python?",
+      options: ["function", "def", "func", "define"],
+      ans: 1
+    },
+    {
+      q: "Which library is used for data manipulation in Python?",
+      options: ["Pandas", "NumPy", "TensorFlow", "Flask"],
+      ans: 0
+    },
+    {
+      q: "What is the output of print(2**3) in Python?",
+      options: ["6", "8", "9", "5"],
+      ans: 1
+    },
+    {
+      q: "Which of the following is used for Natural Language Processing?",
+      options: ["NLTK", "OpenCV", "Matplotlib", "SciPy"],
+      ans: 0
+    },
+    {
+      q: "Which concept allows machines to learn from experience?",
+      options: ["Programming", "Machine Learning", "Networking", "Debugging"],
+      ans: 1
+    },
+    {
+      q: "Which of the following is used in image processing?",
+      options: ["OpenCV", "Pandas", "Flask", "Django"],
+      ans: 0
+    },
+    {
+      q: "Which type of AI mimics human brain structure?",
+      options: ["Expert Systems", "Neural Networks", "Robotics", "Data Mining"],
+      ans: 1
+    },
+    {
+      q: "Which operator is used for comparison in Python?",
+      options: ["=", "==", ":=", "!=!"],
+      ans: 1
+    },
+    {
+      q: "Which of the following is a deep learning framework?",
+      options: ["TensorFlow", "NumPy", "Pandas", "Matplotlib"],
+      ans: 0
+    },
+    {
+      q: "Which of the following is used for model evaluation?",
+      options: ["Accuracy", "Speed", "Size", "Memory"],
+      ans: 0
+    },
+    {
+      q: "Which loop is used when the number of iterations is known?",
+      options: ["while loop", "for loop", "do-while", "foreach"],
+      ans: 1
+    },
+    {
+      q: "Which Python keyword is used for conditional statements?",
+      options: ["loop", "if", "condition", "check"],
+      ans: 1
+    },
+    {
+      q: "Which of the following is a type of reinforcement learning element?",
+      options: ["Agent", "Compiler", "Interpreter", "Debugger"],
+      ans: 0
+    },
+    {
+      q: "Which company developed TensorFlow?",
+      options: ["Microsoft", "Google", "Amazon", "IBM"],
+      ans: 1
+    }
+  ];
+
+  // RENDER QUESTIONS
+  const container = document.getElementById('questions-container');
+  let qHTML = '';
+  questionsList.forEach((q, qIndex) => {
+    qHTML += \`
+      <div class="question-card" id="q-card-\${qIndex}">
+        <div class="q-number">Question \${qIndex + 1} of 25</div>
+        <div class="q-text">\${q.q}</div>
+        <div class="options">
+    \`;
+    q.options.forEach((opt, optIndex) => {
+      qHTML += \`
+        <label class="option-label" id="label-\${qIndex}-\${optIndex}">
+          <input type="radio" name="q\${qIndex}" value="\${optIndex}">
+          <span>\${opt}</span>
+        </label>
+      \`;
+    });
+    qHTML += \`</div></div>\`;
+  });
+  container.innerHTML = qHTML;
+
+  // TIMER LOGIC (50 Minutes)
+  const timerDuration = 50 * 60; // 50 mins in seconds
+  let timeLeft = timerDuration;
+  const timeDisplay = document.getElementById('time-display');
+  const timerContainer = document.getElementById('timer');
+  let timeInterval;
+  let testSubmitted = false;
+
+  function updateTimer() {
+    if(testSubmitted) return;
+    
+    if (timeLeft <= 0) {
+      clearInterval(timeInterval);
+      timeDisplay.textContent = "00:00";
+      alert("Time is up! Submitting your test automatically.");
+      submitTest();
+      return;
+    }
+
+    let min = Math.floor(timeLeft / 60);
+    let sec = timeLeft % 60;
+    timeDisplay.textContent = \`\${min.toString().padStart(2, '0')}:\${sec.toString().padStart(2, '0')}\`;
+
+    if (timeLeft <= 300 && !timerContainer.classList.contains('warning')) {
+      // Last 5 minutes warning
+      timerContainer.classList.add('warning');
+    }
+    timeLeft--;
+  }
+
+  // Start timer
+  timeInterval = setInterval(updateTimer, 1000);
+  updateTimer();
+
+  // SUBMISSION LOGIC
+  const form = document.getElementById('quiz-form');
+  const btn = document.getElementById('submit-btn');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if(testSubmitted) return;
+    
+    if(confirm("Are you sure you want to submit the test? Ensure you have answered all questions.")) {
+      submitTest();
+    }
+  });
+
+  function submitTest() {
+    testSubmitted = true;
+    clearInterval(timeInterval);
+    btn.disabled = true;
+    btn.textContent = "Evaluating...";
+
+    let score = 0;
+    
+    // Evaluate choices
+    questionsList.forEach((q, qIndex) => {
+      const selected = document.querySelector(\`input[name="q\${qIndex}"]:checked\`);
+      const correctAnsIndex = q.ans;
+      
+      // Highlight the correct answer universally
+      const correctLabel = document.getElementById(\`label-\${qIndex}-\${correctAnsIndex}\`);
+      correctLabel.classList.add('correct');
+
+      if (selected) {
+        const selectedVal = parseInt(selected.value);
+        if (selectedVal === correctAnsIndex) {
+          score++;
+        } else {
+          // Highlight incorrect selection
+          const selectedLabel = document.getElementById(\`label-\${qIndex}-\${selectedVal}\`);
+          selectedLabel.classList.add('incorrect');
+        }
+      }
+    });
+
+    // Disable all inputs
+    document.querySelectorAll('input[type="radio"]').forEach(inp => inp.disabled = true);
+
+    const percentage = Math.round((score / questionsList.length) * 100);
+    
+    setTimeout(() => showResult(score, percentage), 1000);
+  }
+
+  function showResult(score, percentage) {
+    const modal = document.getElementById('result-modal');
+    const scoreCircle = document.getElementById('score-circle');
+    const scoreText = document.getElementById('score-text');
+    const modalDesc = document.getElementById('modal-desc');
+    const modalTitle = document.getElementById('modal-title');
+
+    modalTitle.textContent = percentage >= 70 ? "Excellent Job!" : "Test Completed";
+    scoreText.textContent = percentage + "%";
+    
+    // Animate conic gradient to percentage
+    let currentDegree = 0;
+    const targetDegree = (percentage / 100) * 360;
+    const color = percentage >= 70 ? '#10b981' : (percentage >= 40 ? '#f97316' : '#dc2626');
+    scoreCircle.style.background = \`conic-gradient(\${color} 0%, transparent 0%)\`;
+    
+    let animInterval = setInterval(() => {
+      if(currentDegree >= targetDegree) {
+        clearInterval(animInterval);
+      } else {
+        currentDegree += 5;
+        if(currentDegree > targetDegree) currentDegree = targetDegree;
+        scoreCircle.style.background = \`conic-gradient(\${color} \${currentDegree}deg, #333 \${currentDegree}deg)\`;
+      }
+    }, 20);
+
+    modalDesc.innerHTML = \`You scored <strong>\${score} out of \${questionsList.length}</strong>.<br>We will review your performance and get back to you soon.\`;
+    
+    modal.classList.add('active');
+  }
+</script>
+
+</body>
+</html>

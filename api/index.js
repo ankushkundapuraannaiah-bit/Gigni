@@ -64,6 +64,47 @@ async function sendWelcomeEmail(to, fname) {
         console.error('Error sending welcome email:', error);
     }
 }
+
+async function sendZorusTestEmail(to, fname) {
+    const mailOptions = {
+        from: `"Gigni Internships" <${process.env.GMAIL_USER}>`,
+        to: to,
+        subject: 'Zorus 2.1 Internship - Important Test Link 🚀',
+        html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+                <h2 style="color: #3b5bdb;">Hello, ${fname}!</h2>
+                <p>Thank you for applying to the <strong>Zorus 2.1 Internship</strong> at Gigni.</p>
+                <p>To proceed with your application and evaluate your baseline Python skills, we require you to complete a mandatory selection test.</p>
+                
+                <div style="background: #f4f4f4; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                    <h3 style="margin-top: 0; color: #f97316;">Test Details</h3>
+                    <ul style="padding-left: 20px;">
+                        <li><strong>Format:</strong> 25 Multiple Choice Questions (MCQ)</li>
+                        <li><strong>Duration:</strong> 50 Minutes (Strict Timer)</li>
+                        <li><strong>Focus Area:</strong> Python, Machine Learning, and Data Science Fundamentals</li>
+                    </ul>
+                </div>
+                
+                <p style="text-align: center; margin: 30px 0;">
+                    <a href="https://gigniconnect.space/zorus-test.html" style="background: #3b5bdb; color: #fff; padding: 14px 28px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">Take the Test Now</a>
+                </p>
+
+                <p>Please ensure you have a stable internet connection before starting, as the timer cannot be paused.</p>
+                <p>Best of luck!<br><strong>The Gigni Team</strong></p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                <p style="font-size: 12px; color: #777; text-align: center;">&copy; 2026 Gigni. All rights reserved.</p>
+            </div>
+        `
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log('Zorus test email sent to:', to);
+    } catch (error) {
+        console.error('Error sending Zorus test email:', error);
+    }
+}
+
 // Serve local files when running locally
 app.use(express.static(__dirname));
 
@@ -322,6 +363,12 @@ app.post('/api/zorus-apply', async (req, res) => {
             RETURNING id;
         `;
         await client.query(query, [userId, email, fname, lname]);
+        
+        try {
+            await sendZorusTestEmail(email, fname);
+        } catch (e) {
+            console.error("Zorus test email failed to send:", e);
+        }
         
         res.status(200).json({ success: true });
     } catch (err) {
