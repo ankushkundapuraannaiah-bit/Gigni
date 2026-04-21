@@ -8,7 +8,23 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: #080808; color: #fff; overflow-x: hidden; }
+    body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; cursor: auto; }
+
+    /* CUSTOM CURSOR */
+    #cursor {
+      position: fixed; top: 0; left: 0; width: 10px; height: 10px;
+      background: #f97316; border-radius: 50%; pointer-events: none;
+      z-index: 10000; transition: transform 0.1s;
+    }
+    #cursor-ring {
+      position: fixed; top: 0; left: 0; width: 44px; height: 44px;
+      border: 1px solid rgba(255,255,255,0.4); border-radius: 50%; 
+      pointer-events: none; z-index: 9999;
+      transition: transform 0.15s cubic-bezier(0.16,1,0.3,1), width 0.3s, height 0.3s, border 0.3s;
+      transform: translate(-50%, -50%);
+    }
+    #cursor-ring.active { width: 80px; height: 80px; border-color: rgba(59,91,219,0.8); background: rgba(59,91,219,0.1); }
+
 
     /* NAV */
     nav {
@@ -24,40 +40,41 @@
     .logout-btn:hover { border-color: #f97316; color: #f97316; }
 
     /* LAYOUT */
-    .dashboard { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; padding-top: 74px; }
+    .dashboard { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; padding-top: 74px; position: relative; z-index: 1; }
     
     /* SIDEBAR */
-    .sidebar { border-right: 1px solid rgba(255,255,255,0.08); padding: 32px 0; background: #0a0a0a; }
+    .sidebar { border-right: 1px solid rgba(255,255,255,0.05); padding: 32px 0; background: rgba(20,20,20,0.35); backdrop-filter: blur(15px); }
     .nav-item { padding: 14px 32px; display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.6); text-decoration: none; font-weight: 600; transition: all 0.2s; border-left: 3px solid transparent; cursor: pointer; }
-    .nav-item:hover, .nav-item.active { color: #fff; background: rgba(255,255,255,0.03); border-left-color: #f97316; }
+    .nav-item:hover, .nav-item.active { color: #fff; background: rgba(255,255,255,0.05); border-left-color: #f97316; }
 
     /* CONTENT */
     .content { padding: 48px; }
     .header-info { margin-bottom: 40px; }
-    .header-info h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.01em; }
-    .header-info p { color: rgba(255,255,255,0.5); font-size: 1rem; }
+    .header-info h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.01em; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+    .header-info p { color: rgba(255,255,255,0.6); font-size: 1rem; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
 
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
-    .card { background: #121212; border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 28px; transition: transform 0.2s; }
-    .card:hover { transform: translateY(-4px); border-color: rgba(59,91,219,0.3); }
-    .cico { font-size: 2.5rem; margin-bottom: 16px; }
+    .card { background: rgba(255,255,255,0.03); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 28px; transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s; position: relative; overflow: hidden; }
+    .card:hover { transform: translateY(-6px); border-color: rgba(59,91,219,0.5); box-shadow: 0 15px 40px rgba(0,0,0,0.4), 0 0 20px rgba(59,91,219,0.1); }
+    .cico { font-size: 2.5rem; margin-bottom: 16px; transition: transform 0.3s; }
+    .card:hover .cico { transform: scale(1.1) rotate(2deg); }
     .card h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 8px; }
-    .card p { font-size: 0.9rem; color: rgba(255,255,255,0.5); line-height: 1.5; margin-bottom: 20px; }
+    .card p { font-size: 0.9rem; color: rgba(255,255,255,0.6); line-height: 1.5; margin-bottom: 20px; }
     .btn-act { background: #3b5bdb; color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 600; font-family: 'Inter',sans-serif; cursor: pointer; transition: all 0.3s; font-size: 0.85rem; }
-    .btn-act:hover { background: #2f4ec4; }
+    .btn-act:hover { background: #2f4ec4; box-shadow: 0 5px 15px rgba(59,91,219,0.4); transform: translateY(-2px); }
 
     /* TABS */
     .tab-content { display: none; }
-    .tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .tab-content.active { display: block; animation: fadeIn 0.4s cubic-bezier(0.16,1,0.3,1); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
     /* EMPTY STATES */
-    .empty-state { text-align: center; padding: 60px 20px; background: #121212; border-radius: 20px; border: 1px dashed rgba(255,255,255,0.2); max-width: 600px; margin-top: 20px; }
-    .empty-state .ico { font-size: 4rem; margin-bottom: 20px; color: rgba(255,255,255,0.2); }
-    .empty-state h3 { font-size: 1.5rem; margin-bottom: 10px; color: rgba(255,255,255,0.6); }
+    .empty-state { text-align: center; padding: 60px 20px; background: rgba(255,255,255,0.02); backdrop-filter: blur(12px); border-radius: 20px; border: 1px dashed rgba(255,255,255,0.15); max-width: 600px; margin-top: 20px; }
+    .empty-state .ico { font-size: 4rem; margin-bottom: 20px; color: rgba(255,255,255,0.3); }
+    .empty-state h3 { font-size: 1.5rem; margin-bottom: 10px; color: rgba(255,255,255,0.8); }
 
     /* PROFILE FORM */
-    .profile-card { background: #121212; border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 32px; max-width: 800px; }
+    .profile-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 32px; max-width: 800px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
     .fg { margin-bottom: 16px; }
     .fg label { display: block; font-size: 0.72rem; font-weight: 700; color: rgba(255,255,255,0.35); text-transform: uppercase; margin-bottom: 7px; }
     .fg input, .fg select, .fg textarea { width: 100%; background: #181818; border: 1px solid rgba(255,255,255,0.09); border-radius: 9px; padding: 12px 15px; color: #fff; font-family: 'Inter',sans-serif; font-size: 0.88rem; outline: none; transition: all 0.2s; }
@@ -75,7 +92,7 @@
     /* MOBILE BOTTOM TAB BAR */
     .mobile-tab-bar {
       display: none; position: fixed; bottom: 0; left: 0; right: 0;
-      background: #0a0a0a; border-top: 1px solid rgba(255,255,255,0.08);
+      background: rgba(10,10,10,0.7); backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.08);
       z-index: 900; padding: 6px 0 env(safe-area-inset-bottom, 6px);
       justify-content: space-around; align-items: center;
     }
@@ -118,6 +135,11 @@
   </style>
 </head>
 <body>
+
+<!-- 3D BACKGROUND AND CURSOR -->
+<div id="dashboard-gl" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none;"></div>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
 
 <nav>
   <div class="logo">GIGNI</div>
@@ -165,6 +187,12 @@
         <p>Here are your latest internship matches and updates.</p>
       </div>
       <div class="grid">
+        <div class="card">
+          <div class="cico">🚀</div>
+          <h3>Zorus 2.1 Internship</h3>
+          <p>Production-ready development and deployment program. Learn basic to advanced Python and earn a recognized certificate.</p>
+          <button class="btn-act" onclick="window.location.href='zorus.html'">View Zorus 2.1</button>
+        </div>
         <div class="card">
           <div class="cico">🏢</div>
           <h3>New Internship Match</h3>
@@ -409,6 +437,122 @@
     } catch (e) {
         alert('Error connecting to server.');
     }
+  }
+
+  // CUSTOM CURSOR LOGIC
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mouseX = 0, mouseY = 0;
+  let ringX = 0, ringY = 0;
+
+  window.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    if(cursor) cursor.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+  });
+
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.15;
+    ringY += (mouseY - ringY) * 0.15;
+    if(ring) ring.style.left = ringX + 'px';
+    if(ring) ring.style.top = ringY + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button, .card, .profile-card, input, select, textarea').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('active'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('active'));
+  });
+</script>
+
+<!-- THREE.JS 3D BACKGROUND -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+  const canvasContainer = document.getElementById('dashboard-gl');
+  if (canvasContainer) {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    canvasContainer.appendChild(renderer.domElement);
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(2, 5, 5);
+    scene.add(dirLight);
+
+    // Particles Data Network
+    const particlesCount = 2000;
+    const posArray = new Float32Array(particlesCount * 3);
+    for(let i=0; i<particlesCount * 3; i++) {
+        posArray[i] = (Math.random() - 0.5) * 15;
+    }
+    const particlesGeom = new THREE.BufferGeometry();
+    particlesGeom.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    
+    // Use blue/orange mix based on the theme
+    const particlesMat = new THREE.PointsMaterial({
+        size: 0.03, color: 0x3b5bdb, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending
+    });
+    const particleMesh = new THREE.Points(particlesGeom, particlesMat);
+    scene.add(particleMesh);
+
+    // Add some connecting floating rings
+    const ringsGrp = new THREE.Group();
+    const ringMat = new THREE.LineBasicMaterial({ color: 0xf97316, transparent: true, opacity: 0.15 });
+    for(let i=0; i<3; i++){
+        const geom = new THREE.TorusGeometry(3 + i, 0.02, 16, 100);
+        const ring = new THREE.LineSegments(new THREE.EdgesGeometry(geom), ringMat);
+        ring.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, 0);
+        ring.userData = { rx: Math.random()*0.005, ry: Math.random()*0.005 };
+        ringsGrp.add(ring);
+    }
+    scene.add(ringsGrp);
+
+    camera.position.z = 5;
+
+    let targetX = 0;
+    let targetY = 0;
+    const windowHalfX = window.innerWidth / 2;
+    const windowHalfY = window.innerHeight / 2;
+
+    document.addEventListener('mousemove', (event) => {
+      targetX = (event.clientX - windowHalfX) * 0.001;
+      targetY = (event.clientY - windowHalfY) * 0.001;
+    });
+
+    const clock = new THREE.Clock();
+    
+    function render3D() {
+      requestAnimationFrame(render3D);
+      const time = clock.getElapsedTime();
+
+      // Smooth mouse follow
+      particleMesh.rotation.y += 0.0005;
+      particleMesh.rotation.x += (targetY - particleMesh.rotation.x) * 0.02;
+      particleMesh.rotation.y += (targetX - particleMesh.rotation.y) * 0.02;
+
+      // Float effect
+      particleMesh.position.y = Math.sin(time * 0.5) * 0.2;
+
+      // Rotate rings
+      ringsGrp.children.forEach(r => {
+          r.rotation.x += r.userData.rx;
+          r.rotation.y += r.userData.ry;
+      });
+
+      renderer.render(scene, camera);
+    }
+    render3D();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
+    });
   }
 </script>
 
