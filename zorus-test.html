@@ -395,21 +395,21 @@
   const container = document.getElementById('questions-container');
   let qHTML = '';
   questionsList.forEach((q, qIndex) => {
-    qHTML += \`
-      <div class="question-card" id="q-card-\${qIndex}">
-        <div class="q-number">Question \${qIndex + 1} of 25</div>
-        <div class="q-text">\${q.q}</div>
+    qHTML += `
+      <div class="question-card" id="q-card-${qIndex}">
+        <div class="q-number">Question ${qIndex + 1} of 25</div>
+        <div class="q-text">${q.q}</div>
         <div class="options">
-    \`;
+    `;
     q.options.forEach((opt, optIndex) => {
-      qHTML += \`
-        <label class="option-label" id="label-\${qIndex}-\${optIndex}">
-          <input type="radio" name="q\${qIndex}" value="\${optIndex}">
-          <span>\${opt}</span>
+      qHTML += `
+        <label class="option-label" id="label-${qIndex}-${optIndex}">
+          <input type="radio" name="q${qIndex}" value="${optIndex}">
+          <span>${opt}</span>
         </label>
-      \`;
+      `;
     });
-    qHTML += \`</div></div>\`;
+    qHTML += `</div></div>`;
   });
   container.innerHTML = qHTML;
 
@@ -434,7 +434,7 @@
 
     let min = Math.floor(timeLeft / 60);
     let sec = timeLeft % 60;
-    timeDisplay.textContent = \`\${min.toString().padStart(2, '0')}:\${sec.toString().padStart(2, '0')}\`;
+    timeDisplay.textContent = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
 
     if (timeLeft <= 300 && !timerContainer.classList.contains('warning')) {
       // Last 5 minutes warning
@@ -470,11 +470,11 @@
     
     // Evaluate choices
     questionsList.forEach((q, qIndex) => {
-      const selected = document.querySelector(\`input[name="q\${qIndex}"]:checked\`);
+      const selected = document.querySelector(`input[name="q${qIndex}"]:checked`);
       const correctAnsIndex = q.ans;
       
       // Highlight the correct answer universally
-      const correctLabel = document.getElementById(\`label-\${qIndex}-\${correctAnsIndex}\`);
+      const correctLabel = document.getElementById(`label-${qIndex}-${correctAnsIndex}`);
       correctLabel.classList.add('correct');
 
       if (selected) {
@@ -483,7 +483,7 @@
           score++;
         } else {
           // Highlight incorrect selection
-          const selectedLabel = document.getElementById(\`label-\${qIndex}-\${selectedVal}\`);
+          const selectedLabel = document.getElementById(`label-${qIndex}-${selectedVal}`);
           selectedLabel.classList.add('incorrect');
         }
       }
@@ -504,14 +504,15 @@
     const modalDesc = document.getElementById('modal-desc');
     const modalTitle = document.getElementById('modal-title');
 
-    modalTitle.textContent = percentage >= 70 ? "Excellent Job!" : "Test Completed";
+    const passed = percentage >= 85;
+    modalTitle.textContent = passed ? "Test Passed!" : "Test Failed";
     scoreText.textContent = percentage + "%";
     
     // Animate conic gradient to percentage
     let currentDegree = 0;
     const targetDegree = (percentage / 100) * 360;
-    const color = percentage >= 70 ? '#10b981' : (percentage >= 40 ? '#f97316' : '#dc2626');
-    scoreCircle.style.background = \`conic-gradient(\${color} 0%, transparent 0%)\`;
+    const color = passed ? '#10b981' : '#dc2626';
+    scoreCircle.style.background = `conic-gradient(${color} 0%, transparent 0%)`;
     
     let animInterval = setInterval(() => {
       if(currentDegree >= targetDegree) {
@@ -519,11 +520,11 @@
       } else {
         currentDegree += 5;
         if(currentDegree > targetDegree) currentDegree = targetDegree;
-        scoreCircle.style.background = \`conic-gradient(\${color} \${currentDegree}deg, #333 \${currentDegree}deg)\`;
+        scoreCircle.style.background = `conic-gradient(${color} ${currentDegree}deg, #333 ${currentDegree}deg)`;
       }
     }, 20);
 
-    modalDesc.innerHTML = \`You scored <strong>\${score} out of \${questionsList.length}</strong>.<br>We will review your performance and get back to you soon.\`;
+    modalDesc.innerHTML = `You scored <strong>${score} out of ${questionsList.length}</strong>.<br>${passed ? 'Congratulations, you cleared the test! We will review your application and get back to you soon.' : 'Unfortunately, you did not meet the 85% requirement to clear the test.'}`;
     
     modal.classList.add('active');
   }
