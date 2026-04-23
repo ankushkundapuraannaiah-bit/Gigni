@@ -392,7 +392,7 @@
   ];
 
   // RENDER QUESTIONS
-  const container = document.getElementById('questions-container');
+  const questionsContainer = document.getElementById('questions-container');
   let qHTML = '';
   questionsList.forEach((q, qIndex) => {
     qHTML += `
@@ -411,7 +411,7 @@
     });
     qHTML += `</div></div>`;
   });
-  container.innerHTML = qHTML;
+  questionsContainer.innerHTML = qHTML;
 
   // TIMER LOGIC (50 Minutes)
   const timerDuration = 50 * 60; // 50 mins in seconds
@@ -460,7 +460,7 @@
     }
   });
 
-  function submitTest() {
+  async function submitTest() {
     testSubmitted = true;
     clearInterval(timeInterval);
     btn.disabled = true;
@@ -493,7 +493,21 @@
     document.querySelectorAll('input[type="radio"]').forEach(inp => inp.disabled = true);
 
     const percentage = Math.round((score / questionsList.length) * 100);
-    
+
+    // Submit score to backend
+    try {
+      const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+      if (user && user.id) {
+        await fetch('/api/zorus-submit-score', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: user.id, score: percentage })
+        });
+      }
+    } catch (e) {
+      console.warn('Could not save score:', e);
+    }
+
     setTimeout(() => showResult(score, percentage), 1000);
   }
 
