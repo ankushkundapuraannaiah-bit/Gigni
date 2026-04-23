@@ -141,6 +141,7 @@ app.get('/api/init', async (req, res) => {
             lname VARCHAR(255),
             applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );`);
+        await client.query(`ALTER TABLE zorus_applications ADD COLUMN IF NOT EXISTS score INTEGER;`);
 
         res.status(200).json({ success: true, message: 'Table initialized and updated' });
     } catch (err) {
@@ -188,6 +189,7 @@ app.post('/api/register', async (req, res) => {
             lname VARCHAR(255),
             applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );`);
+        await client.query(`ALTER TABLE zorus_applications ADD COLUMN IF NOT EXISTS score INTEGER;`);
 
         const query = `
             INSERT INTO users (fname, lname, email, password, college, year, field, interest, intro, profile_pic)
@@ -350,6 +352,7 @@ app.post('/api/zorus-apply', async (req, res) => {
             lname VARCHAR(255),
             applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );`);
+        await client.query(`ALTER TABLE zorus_applications ADD COLUMN IF NOT EXISTS score INTEGER;`);
 
         // Check if already applied
         const check = await client.query(`SELECT id FROM zorus_applications WHERE user_id = $1`, [userId]);
@@ -393,9 +396,33 @@ app.get('/api/zorus-applications', async (req, res) => {
             lname VARCHAR(255),
             applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );`);
+        await client.query(`ALTER TABLE zorus_applications ADD COLUMN IF NOT EXISTS score INTEGER;`);
 
-        const result = await client.query(`SELECT id, user_id, email, fname, lname, applied_at FROM zorus_applications ORDER BY applied_at DESC;`);
+        const result = await client.query(`SELECT id, user_id, email, fname, lname, score, applied_at FROM zorus_applications ORDER BY applied_at DESC;`);
         res.status(200).json({ success: true, applications: result.rows });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    } finally {
+        if (client) await client.end();
+    }
+});
+
+// Submit Zorus test score
+app.post('/api/zorus-submit-score', async (req, res) => {
+    const { userId, score } = req.body;
+    if (userId === undefined || score === undefined) {
+        return res.status(400).json({ error: 'Missing userId or score' });
+    }
+
+    let client;
+    try {
+        client = createClient();
+        await client.connect();
+        await client.query(
+            `UPDATE zorus_applications SET score = $1 WHERE user_id = $2;`,
+            [score, userId]
+        );
+        res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
     } finally {

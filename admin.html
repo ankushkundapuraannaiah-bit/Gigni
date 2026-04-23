@@ -41,6 +41,12 @@
     .btn-cert { background: #10b981; } .btn-cert:hover { background: #059669; }
     .btn-hack { background: #8b5cf6; } .btn-hack:hover { background: #7c3aed; }
 
+    /* SCORE BADGES */
+    .badge { display: inline-block; padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; }
+    .badge-pass { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.35); }
+    .badge-fail { background: rgba(220,38,38,0.15); color: #f87171; border: 1px solid rgba(220,38,38,0.35); }
+    .badge-pending { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.1); }
+
     /* MODALS */
     .ovl { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
     .ovl.open { opacity: 1; pointer-events: all; }
@@ -117,11 +123,12 @@
           <th>User ID</th>
           <th>Name</th>
           <th>Email</th>
+          <th>Score</th>
           <th>Applied At</th>
         </tr>
       </thead>
       <tbody id="zorus-body">
-        <tr><td colspan="5" style="text-align:center; padding: 40px; color:rgba(255,255,255,0.4);">Loading applications...</td></tr>
+        <tr><td colspan="6" style="text-align:center; padding: 40px; color:rgba(255,255,255,0.4);">Loading applications...</td></tr>
       </tbody>
     </table>
   </div>
@@ -274,7 +281,7 @@
               const tbody = document.getElementById('zorus-body');
               tbody.innerHTML = '';
               if (data.applications.length === 0) {
-                  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:rgba(255,255,255,0.4);">No applications yet</td></tr>';
+                  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:rgba(255,255,255,0.4);">No applications yet</td></tr>';
                   return;
               }
               
@@ -282,12 +289,22 @@
                   const tr = document.createElement('tr');
                   const dateOpts = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
                   const dateStr = new Date(a.applied_at).toLocaleDateString(undefined, dateOpts);
+
+                  let scoreBadge;
+                  if (a.score === null || a.score === undefined) {
+                      scoreBadge = `<span class="badge badge-pending">Pending</span>`;
+                  } else if (a.score >= 85) {
+                      scoreBadge = `<span class="badge badge-pass">${a.score}% &nbsp;✓ PASS</span>`;
+                  } else {
+                      scoreBadge = `<span class="badge badge-fail">${a.score}% &nbsp;✗ FAIL</span>`;
+                  }
                   
                   tr.innerHTML = `
                     <td>#${a.id}</td>
                     <td>${a.user_id}</td>
                     <td><strong>${a.fname || ''} ${a.lname || ''}</strong></td>
                     <td>${a.email}</td>
+                    <td>${scoreBadge}</td>
                     <td>${dateStr}</td>
                   `;
                   tbody.appendChild(tr);
