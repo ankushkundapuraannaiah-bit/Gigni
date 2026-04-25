@@ -294,10 +294,21 @@
       const data = await res.json();
       
       if (data.success) {
-        showToast('Application submitted successfully! ✓');
-        btn.innerText = 'Applied!';
+        showToast('Application submitted! Redirecting to test... ✓');
+        btn.innerText = 'Redirecting to Test...';
         btn.style.background = '#10b981';
         btn.style.color = '#fff';
+        setTimeout(() => {
+          window.location.href = 'zorus-test.html';
+        }, 2000);
+      } else if (data.error && data.error.toLowerCase().includes('already applied')) {
+        showToast('Already applied! Redirecting to your test... →');
+        btn.innerText = 'Go to Test →';
+        btn.style.background = '#3b5bdb';
+        btn.style.color = '#fff';
+        setTimeout(() => {
+          window.location.href = 'zorus-test.html';
+        }, 2000);
       } else {
         showToast(data.error || 'Failed to submit application');
         btn.innerText = ogText;
