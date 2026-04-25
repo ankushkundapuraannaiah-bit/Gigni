@@ -66,7 +66,121 @@
 
     /* TOAST */
     #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: #161616; border: 1px solid rgba(59,91,219,0.4); border-radius: 100px; padding: 13px 26px; color: #fff; font-size: 0.86rem; font-weight: 500; z-index: 9999; transition: all 0.4s cubic-bezier(0.16,1,0.3,1); white-space: nowrap; box-shadow: 0 16px 48px rgba(0,0,0,0.5); opacity: 0; }
-    
+
+    /* ── BULK EMAIL SECTION ─────────────────────────────── */
+    .section-divider { border: none; border-top: 1px solid rgba(255,255,255,0.05); margin: 60px 0; }
+
+    .email-compose-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media(max-width: 900px) { .email-compose-grid { grid-template-columns: 1fr; } }
+
+    .email-tag-wrap {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      min-height: 48px; background: #181818;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 9px; padding: 10px 12px;
+      cursor: text;
+    }
+    .email-tag {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(59,91,219,0.18); border: 1px solid rgba(59,91,219,0.35);
+      color: #93a8ff; border-radius: 50px;
+      padding: 4px 12px; font-size: 0.78rem; font-weight: 600;
+    }
+    .email-tag button {
+      background: none; border: none; color: #93a8ff;
+      cursor: pointer; padding: 0; font-size: 0.85rem; line-height: 1;
+      opacity: 0.7; transition: opacity 0.2s;
+    }
+    .email-tag button:hover { opacity: 1; }
+
+    .email-input-row {
+      display: flex; gap: 10px; margin-top: 10px;
+    }
+    .email-input-row input {
+      flex: 1; background: #181818;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 9px; padding: 11px 14px;
+      color: #fff; font-family: 'Inter',sans-serif;
+      font-size: 0.88rem; outline: none;
+      transition: border-color 0.2s;
+    }
+    .email-input-row input:focus { border-color: #3b5bdb; }
+    .email-input-row input::placeholder { color: rgba(255,255,255,0.25); }
+    .btn-add-email {
+      background: #3b5bdb; color: #fff; border: none;
+      border-radius: 9px; padding: 11px 18px;
+      font-weight: 700; font-size: 0.82rem;
+      cursor: pointer; font-family: 'Inter',sans-serif;
+      transition: background 0.2s; white-space: nowrap;
+    }
+    .btn-add-email:hover { background: #2f4ec4; }
+
+    .template-area {
+      width: 100%; min-height: 200px;
+      background: #181818; border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 9px; padding: 14px 16px;
+      color: #fff; font-family: 'Inter',sans-serif;
+      font-size: 0.88rem; outline: none; resize: vertical;
+      transition: border-color 0.2s; line-height: 1.6;
+    }
+    .template-area:focus { border-color: #3b5bdb; }
+
+    .send-bulk-btn {
+      width: 100%; padding: 16px;
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      border: none; border-radius: 12px;
+      color: #fff; font-size: 1rem; font-weight: 800;
+      font-family: 'Inter',sans-serif; cursor: pointer;
+      transition: all 0.3s; margin-top: 8px;
+      letter-spacing: 0.02em;
+    }
+    .send-bulk-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(249,115,22,0.35); }
+    .send-bulk-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* Progress Feed */
+    #bulk-progress-wrap { margin-top: 28px; display: none; }
+    .prog-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .prog-header h4 { font-size: 0.85rem; font-weight: 700; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.06em; }
+    .prog-bar-track { height: 4px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; margin-bottom: 20px; }
+    .prog-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #3b5bdb, #f97316); border-radius: 4px; transition: width 0.6s ease; }
+
+    .prog-feed { display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto; }
+    .prog-item {
+      display: flex; align-items: center; gap: 14px;
+      background: #161616; border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 10px; padding: 12px 16px;
+      animation: fadeUp 0.3s ease;
+    }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(8px);} to { opacity:1; transform:translateY(0);} }
+    .prog-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; }
+    .prog-icon.sent { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+    .prog-icon.failed { background: rgba(220,38,38,0.15); color: #f87171; border: 1px solid rgba(220,38,38,0.3); }
+    .prog-icon.waiting { background: rgba(249,115,22,0.12); color: #f97316; border: 1px solid rgba(249,115,22,0.25); }
+    .prog-email { font-size: 0.88rem; flex: 1; word-break: break-all; }
+    .prog-status { font-size: 0.76rem; font-weight: 700; }
+    .prog-status.sent { color: #10b981; }
+    .prog-status.failed { color: #f87171; }
+    .prog-status.waiting { color: #f97316; }
+
+    /* Countdown ring */
+    .countdown-ring { position: relative; width: 32px; height: 32px; flex-shrink: 0; }
+    .countdown-ring svg { transform: rotate(-90deg); }
+    .countdown-ring circle { fill: none; stroke-width: 3; }
+    .countdown-ring .track { stroke: rgba(249,115,22,0.15); }
+    .countdown-ring .fill { stroke: #f97316; stroke-dasharray: 88; stroke-dashoffset: 88; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+    .countdown-ring .num { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 800; color: #f97316; }
+
+    /* Summary */
+    .prog-summary { margin-top: 16px; display: flex; gap: 12px; }
+    .sum-pill { flex: 1; text-align: center; padding: 12px; border-radius: 10px; font-size: 0.82rem; font-weight: 700; }
+    .sum-pill.ok { background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2); }
+    .sum-pill.err { background: rgba(220,38,38,0.1); color: #f87171; border: 1px solid rgba(220,38,38,0.2); }
+
     @media(max-width: 768px) {
       nav { padding: 14px 20px; }
       .logo { font-size: 1.8rem; }
@@ -131,6 +245,80 @@
         <tr><td colspan="6" style="text-align:center; padding: 40px; color:rgba(255,255,255,0.4);">Loading applications...</td></tr>
       </tbody>
     </table>
+  </div>
+</div>
+
+<!-- ═══════════════════ BULK EMAIL SENDER ═══════════════════ -->
+<hr class="section-divider">
+<div class="content" style="padding-top:0;">
+  <div class="header-info">
+    <h1>📧 Bulk Email Sender</h1>
+    <p>Compose a message, add recipient emails, and send with an automatic 20-second interval between each delivery.</p>
+  </div>
+
+  <div class="card">
+    <div class="email-compose-grid">
+
+      <!-- LEFT: Recipients + Subject -->
+      <div>
+        <div class="fg">
+          <label>Email Subject</label>
+          <input type="text" id="bulk-subject" placeholder="e.g. Important Update from Gigni 🚀" style="width:100%;background:#181818;border:1px solid rgba(255,255,255,0.09);border-radius:9px;padding:12px 15px;color:#fff;font-family:'Inter',sans-serif;font-size:.88rem;outline:none;transition:border-color .2s;">
+        </div>
+
+        <div class="fg">
+          <label>Recipient Emails <span id="email-count" style="color:rgba(255,255,255,0.25);font-weight:400;"> — 0 added</span></label>
+          <!-- Tag display -->
+          <div class="email-tag-wrap" id="email-tags"></div>
+          <!-- Add row -->
+          <div class="email-input-row" style="margin-top:10px;">
+            <input type="email" id="new-email-input" placeholder="Add an email address and press Enter or click Add">
+            <button class="btn-add-email" onclick="addEmail()">+ Add</button>
+          </div>
+          <p style="font-size:0.74rem;color:rgba(255,255,255,0.25);margin-top:8px;">Tip: Press <kbd style="background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px;">Enter</kbd> to quickly add emails.</p>
+        </div>
+
+        <div class="fg">
+          <label>Email Format / Template Type</label>
+          <select id="template-preset" onchange="applyTemplatePreset()" style="width:100%;background:#181818;border:1px solid rgba(255,255,255,0.09);border-radius:9px;padding:12px 15px;color:#fff;font-family:'Inter',sans-serif;font-size:.88rem;outline:none;appearance:none;cursor:pointer;">
+            <option value="custom">✏️ Custom (write your own HTML)</option>
+            <option value="announcement">📢 Announcement</option>
+            <option value="internship">🎓 Internship Opportunity</option>
+            <option value="reminder">🔔 Gentle Reminder</option>
+          </select>
+        </div>
+
+        <button class="send-bulk-btn" id="send-bulk-btn" onclick="startBulkSend()">
+          🚀 Send to All Recipients
+        </button>
+      </div>
+
+      <!-- RIGHT: Template Editor -->
+      <div>
+        <div class="fg">
+          <label>Email Body <span style="color:rgba(255,255,255,0.25);font-weight:400;">(HTML supported)</span></label>
+          <textarea class="template-area" id="bulk-body" placeholder="Write your email HTML here..."></textarea>
+        </div>
+        <div style="background:#0f0f0f;border:1px solid rgba(255,255,255,0.05);border-radius:9px;padding:12px 16px;margin-top:4px;">
+          <p style="font-size:0.72rem;color:rgba(255,255,255,0.3);margin-bottom:4px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Preview</p>
+          <iframe id="email-preview" style="width:100%;height:220px;border:none;border-radius:6px;background:#fff;"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress Feed -->
+    <div id="bulk-progress-wrap">
+      <div class="prog-bar-track"><div class="prog-bar-fill" id="prog-bar"></div></div>
+      <div class="prog-header">
+        <h4 id="prog-label">Sending…</h4>
+        <span id="prog-count" style="font-size:0.82rem;color:rgba(255,255,255,0.4);"></span>
+      </div>
+      <div class="prog-feed" id="prog-feed"></div>
+      <div class="prog-summary" id="prog-summary" style="display:none;">
+        <div class="sum-pill ok" id="sum-sent">0 Sent</div>
+        <div class="sum-pill err" id="sum-failed">0 Failed</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -313,6 +501,217 @@
       } catch (err) {
           console.error("Failed to fetch Zorus applications.");
       }
+  }
+  // ─── BULK EMAIL LOGIC ───────────────────────────────────────
+  let bulkEmails = [];
+  const bodyInput = document.getElementById('bulk-body');
+  const previewFrame = document.getElementById('email-preview');
+  const emailInput = document.getElementById('new-email-input');
+
+  // Live Preview
+  bodyInput.addEventListener('input', updatePreview);
+  function updatePreview() {
+    const doc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+    doc.open();
+    doc.write(bodyInput.value || '<p style="color:#999;font-family:sans-serif;padding:20px;">Email body preview will appear here...</p>');
+    doc.close();
+  }
+
+  // Add Email Tag
+  emailInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') addEmail(); });
+  function addEmail() {
+    const val = emailInput.value.trim();
+    if (!val) return;
+    if (!val.includes('@')) { showToast('Invalid email address'); return; }
+    if (bulkEmails.includes(val)) { showToast('Email already added'); return; }
+    
+    bulkEmails.push(val);
+    emailInput.value = '';
+    updateEmailTags();
+  }
+
+  function removeEmail(idx) {
+    bulkEmails.splice(idx, 1);
+    updateEmailTags();
+  }
+
+  function updateEmailTags() {
+    const wrap = document.getElementById('email-tags');
+    const count = document.getElementById('email-count');
+    wrap.innerHTML = '';
+    bulkEmails.forEach((email, i) => {
+      const tag = document.createElement('div');
+      tag.className = 'email-tag';
+      tag.innerHTML = `${email} <button onclick="removeEmail(${i})">✕</button>`;
+      wrap.appendChild(tag);
+    });
+    count.innerText = ` — ${bulkEmails.length} added`;
+  }
+
+  // Template Presets
+  function applyTemplatePreset() {
+    const preset = document.getElementById('template-preset').value;
+    const subject = document.getElementById('bulk-subject');
+    let body = '';
+
+    if (preset === 'announcement') {
+      subject.value = "Big News from Gigni! 📢";
+      body = `<div style="font-family:sans-serif;max-width:600px;margin:auto;padding:30px;border:1px solid #eee;border-radius:12px;">
+        <h2 style="color:#3b5bdb;">Major Update</h2>
+        <p>Hello! We have some exciting news to share regarding our platform...</p>
+        <p>Best regards,<br>Team Gigni</p>
+      </div>`;
+    } else if (preset === 'internship') {
+      subject.value = "New Internship Opportunity Available 🎓";
+      body = `<div style="font-family:sans-serif;max-width:600px;margin:auto;padding:30px;border:1px solid #eee;border-radius:12px;">
+        <h2 style="color:#f97316;">Apply Now</h2>
+        <p>A new project matching your interests has just been posted. Check your dashboard to apply!</p>
+        <a href="https://gigniconnect.space/dashboard.html" style="display:inline-block;background:#f97316;color:#fff;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:bold;">View Project</a>
+      </div>`;
+    } else if (preset === 'reminder') {
+      subject.value = "Gentle Reminder: Complete your profile 🔔";
+      body = `<div style="font-family:sans-serif;max-width:600px;margin:auto;padding:30px;border:1px solid #eee;border-radius:12px;">
+        <p>Hi there, we noticed your profile is incomplete. To get verified for internships, please fill in all details.</p>
+        <p>Cheers!</p>
+      </div>`;
+    }
+
+    if (body) {
+      bodyInput.value = body;
+      updatePreview();
+    }
+  }
+
+  // Start Bulk Send
+  async function startBulkSend() {
+    const subject = document.getElementById('bulk-subject').value;
+    const htmlBody = bodyInput.value;
+    const btn = document.getElementById('send-bulk-btn');
+
+    if (bulkEmails.length === 0) { showToast('Add at least one recipient'); return; }
+    if (!subject || !htmlBody) { showToast('Subject and body are required'); return; }
+
+    if (!confirm(`Are you sure you want to send this email to ${bulkEmails.length} recipients? This will take ~${(bulkEmails.length - 1) * 20} seconds.`)) return;
+
+    btn.disabled = true;
+    btn.innerText = 'Sending Bulk...';
+    
+    const wrap = document.getElementById('bulk-progress-wrap');
+    const feed = document.getElementById('prog-feed');
+    const bar = document.getElementById('prog-bar');
+    const label = document.getElementById('prog-label');
+    const summary = document.getElementById('prog-summary');
+    
+    wrap.style.display = 'block';
+    feed.innerHTML = '';
+    bar.style.width = '0%';
+    summary.style.display = 'none';
+    label.innerText = 'Initializing...';
+
+    let sentCount = 0;
+    let failCount = 0;
+
+    try {
+      const admin = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+      const response = await fetch('/api/admin/send-bulk-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emails: bulkEmails, subject, htmlBody, adminEmail: admin.email })
+      });
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop(); // Keep partial line in buffer
+
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          const msg = JSON.parse(line);
+
+          if (msg.type === 'waiting') {
+            updateWaitingItem(msg.index, msg.secondsLeft);
+            label.innerText = `Waiting ${msg.secondsLeft}s for next send...`;
+          } else if (msg.type === 'sent') {
+            sentCount++;
+            addFeedItem(msg.email, 'sent');
+            updateProgress(msg.index + 1, msg.total);
+          } else if (msg.type === 'failed') {
+            failCount++;
+            addFeedItem(msg.email, 'failed', msg.error);
+            updateProgress(msg.index + 1, msg.total);
+          }
+        }
+      }
+
+      label.innerText = 'Bulk Send Complete';
+      summary.style.display = 'flex';
+      document.getElementById('sum-sent').innerText = `${sentCount} Sent`;
+      document.getElementById('sum-failed').innerText = `${failCount} Failed`;
+      showToast('Bulk process completed!');
+
+    } catch (err) {
+      console.error(err);
+      showToast('Connection error during bulk send.');
+    } finally {
+      btn.disabled = false;
+      btn.innerText = '🚀 Send to All Recipients';
+    }
+  }
+
+  function addFeedItem(email, status, error = '') {
+    const feed = document.getElementById('prog-feed');
+    const icon = status === 'sent' ? '✓' : '✗';
+    const statusText = status === 'sent' ? 'Sent' : 'Failed';
+    
+    // Remove any "waiting" item for this email if it exists
+    const existing = document.querySelector(`[data-email="${email}"]`);
+    if (existing) existing.remove();
+
+    const div = document.createElement('div');
+    div.className = 'prog-item';
+    div.innerHTML = `
+      <div class="prog-icon ${status}">${icon}</div>
+      <div class="prog-email">${email}${error ? `<br><small style="color:#f87171">${error}</small>` : ''}</div>
+      <div class="prog-status ${status}">${statusText}</div>
+    `;
+    feed.prepend(div);
+  }
+
+  function updateWaitingItem(index, seconds) {
+    const email = bulkEmails[index];
+    const feed = document.getElementById('prog-feed');
+    let item = document.querySelector(`[data-wait-idx="${index}"]`);
+    
+    if (!item) {
+      item = document.createElement('div');
+      item.className = 'prog-item';
+      item.setAttribute('data-wait-idx', index);
+      item.setAttribute('data-email', email);
+      feed.prepend(item);
+    }
+
+    const offset = 88 - (seconds / 20) * 88;
+    item.innerHTML = `
+      <div class="countdown-ring">
+        <svg width="32" height="32"><circle class="track" cx="16" cy="16" r="14"/><circle class="fill" cx="16" cy="16" r="14" style="stroke-dashoffset:${offset}"/></svg>
+        <div class="num">${seconds}</div>
+      </div>
+      <div class="prog-email" style="color:rgba(255,255,255,0.4)">Next: ${email}</div>
+      <div class="prog-status waiting">Waiting</div>
+    `;
+  }
+
+  function updateProgress(current, total) {
+    const pct = (current / total) * 100;
+    document.getElementById('prog-bar').style.width = pct + '%';
+    document.getElementById('prog-count').innerText = `${current} / ${total}`;
   }
 </script>
 

@@ -430,6 +430,64 @@ app.post('/api/zorus-submit-score', async (req, res) => {
     }
 });
 
+// ─── Bulk Email Sender (Admin Only) ─────────────────────────────────────────
+// Sends emails to a list with a 20-second gap between each send.
+// Uses Server-Sent Events so the frontend can show real-time progress.
+app.post('/api/admin/send-bulk-email', async (req, res) => {
+    const { emails, subject, htmlBody, adminEmail } = req.body;
+
+    // Simple admin guard
+    if (adminEmail !== 'ankushka2089@gmail.com') {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    if (!emails || !Array.isArray(emails) || emails.length === 0) {
+        return res.status(400).json({ error: 'No email addresses provided' });
+    }
+    if (!subject || !htmlBody) {
+        return res.status(400).json({ error: 'Subject and body are required' });
+    }
+
+    // Stream progress back as NDJSON lines
+    res.setHeader('Content-Type', 'application/x-ndjson');
+    res.setHeader('Transfer-Encoding', 'chunked');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.flushHeaders();
+
+    const DELAY_MS = 20000; // 20 seconds between sends
+    const results = [];
+
+    for (let i = 0; i < emails.length; i++) {
+        const email = emails[i].trim();
+
+        if (i > 0) {
+            // Send a countdown tick every second for the 20s wait
+            for (let s = DELAY_MS / 1000; s > 0; s--) {
+                res.write(JSON.stringify({ type: 'waiting', index: i, secondsLeft: s }) + '\n');
+                await new Promise(r => setTimeout(r, 1000));
+            }
+        }
+
+        try {
+            await transporter.sendMail({
+                from: `"Gigni" <${process.env.GMAIL_USER}>`,
+                to: email,
+                subject: subject,
+                html: htmlBody
+            });
+            console.log(`[BulkEmail] Sent to: ${email}`);
+            results.push({ email, status: 'sent' });
+            res.write(JSON.stringify({ type: 'sent', index: i, email, total: emails.length }) + '\n');
+        } catch (err) {
+            console.error(`[BulkEmail] Failed for ${email}:`, err.message);
+            results.push({ email, status: 'failed', error: err.message });
+            res.write(JSON.stringify({ type: 'failed', index: i, email, error: err.message, total: emails.length }) + '\n');
+        }
+    }
+
+    res.write(JSON.stringify({ type: 'done', results }) + '\n');
+    res.end();
+});
+
 // Important: Vercel expects an exported app for serverless functions
 module.exports = app;
 
