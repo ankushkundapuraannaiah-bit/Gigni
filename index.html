@@ -263,19 +263,24 @@
   .acard.c4 .acard-icon svg { stroke: #8b5cf6; }
   .acard.c5 .acard-icon svg { stroke: #fbbf24; }
 
-  /* CONVERSATION REVEAL */
-  .agentic-convo { background: #000; padding: 120px 60px; min-height: 150vh; position: relative; }
-  .convo-wrap { max-width: 900px; margin: 0 auto; position: sticky; top: 30vh; }
-  .convo-text { font-family: 'Inter', sans-serif; font-size: clamp(2rem, 5vw, 4.5rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; color: rgba(255,255,255,0.15); display: flex; flex-wrap: wrap; gap: 0.3em; margin-bottom: 60px; }
-  .c-word { transition: color 0.4s ease, transform 0.4s ease; }
-  .c-word.lit { color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.3); transform: translateY(-2px); }
-  .convo-reply { display: flex; justify-content: flex-end; opacity: 0; transform: translateY(20px); transition: opacity 0.8s, transform 0.8s; }
-  .convo-reply.vis { opacity: 1; transform: translateY(0); }
-  .reply-bubble { background: rgba(20,20,20,0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; border-top-right-radius: 4px; padding: 32px 40px; max-width: 500px; box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 40px rgba(59,91,219,0.15); position: relative; }
-  .reply-bubble::before { content:''; position:absolute; inset:0; border-radius:inherit; padding:2px; background:linear-gradient(135deg, #3b5bdb, #f97316); -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0.5; pointer-events:none; }
-  .reply-bubble p { font-size: 1.1rem; color: #fff; line-height: 1.6; margin-bottom: 12px; }
-  .reply-bubble strong { color: #f97316; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.02em; }
-  .reply-status { display: inline-block; margin-top: 16px; font-size: 0.85rem; font-weight: 700; color: #10b981; background: rgba(16,185,129,0.1); padding: 8px 16px; border-radius: 100px; border: 1px solid rgba(16,185,129,0.2); }
+  /* MAINLABS SCROLLYTELLING */
+  .mainlabs-scroll { height: 800vh; background: #000; position: relative; z-index: 10; }
+  .ml-sticky { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #000; }
+  .ml-text-wrap { position: relative; width: 100%; max-width: 1200px; padding: 0 40px; height: 100%; }
+  .ml-sentence { 
+    position: absolute; top: 50%; left: 50%; width: 100%; padding: 0 20px;
+    transform: translate(-50%, calc(-50% + 100px));
+    font-family: 'Inter', sans-serif; font-size: clamp(2rem, 5vw, 4.5rem); font-weight: 500; line-height: 1.15; letter-spacing: -0.03em;
+    color: #fff; text-align: center; opacity: 0; pointer-events: none;
+    will-change: transform, opacity;
+  }
+  .ml-sentence .dim { color: rgba(255,255,255,0.3); transition: color 0.3s; }
+  .ml-sentence .glow { color: transparent; background: linear-gradient(135deg, #fff, #a5b4fc); -webkit-background-clip: text; text-shadow: 0 0 40px rgba(165,180,252,0.4); font-weight: 700; }
+  
+  @media(max-width:768px){
+    .ml-text-wrap { padding: 0 16px; }
+    .ml-sentence { font-size: clamp(1.8rem, 8vw, 2.5rem); }
+  }
 
   /* GET STARTED */
   .getstarted { background: #000; padding: 0 60px 120px; }
@@ -483,12 +488,6 @@
     .acard h3 { font-size: 1.15rem; }
     .acard p { font-size: 0.85rem; }
 
-    /* CONVERSATION */
-    .agentic-convo { padding: 60px 20px; min-height: 120vh; }
-    .convo-text { font-size: clamp(1.8rem, 8vw, 2.5rem); margin-bottom: 40px; }
-    .reply-bubble { padding: 24px; }
-    .reply-bubble p { font-size: 1rem; }
-
     /* GET STARTED */
     .getstarted { padding: 60px 16px; }
     .step { grid-template-columns: 1fr; gap: 24px; }
@@ -590,29 +589,18 @@
   </div>
 </section>
 
-<!-- ══════════ CONVERSATION REVEAL ══════════ -->
-<section class="agentic-convo" id="convo">
-  <div class="convo-wrap">
-    <div class="convo-text">
-      <span class="c-word">Hi</span> <span class="c-word">Gigni!</span>
-      <span class="c-word">Every</span> <span class="c-word">Monday,</span>
-      <span class="c-word">find</span> <span class="c-word">me</span>
-      <span class="c-word">the</span> <span class="c-word">best</span>
-      <span class="c-word">verified</span> <span class="c-word">internship</span>
-      <span class="c-word">in</span> <span class="c-word">Software</span>
-      <span class="c-word">Engineering</span> <span class="c-word">and</span>
-      <span class="c-word">send</span> <span class="c-word">me</span>
-      <span class="c-word">an</span> <span class="c-word">email</span>
-      <span class="c-word">with</span> <span class="c-word">a</span>
-      <span class="c-word">summary</span> <span class="c-word">of</span>
-      <span class="c-word">the</span> <span class="c-word">project.</span>
-    </div>
-    <div class="convo-reply" id="convo-reply">
-      <div class="reply-bubble">
-        <p><strong>Absolutely!</strong></p>
-        <p>I will handle your personalized internship matching and notifications going forward.</p>
-        <div class="reply-status">✓ Agent Deployed</div>
-      </div>
+<!-- ══════════ MAINLABS SCROLLYTELLING ══════════ -->
+<section class="mainlabs-scroll" id="ml-scroll">
+  <div class="ml-sticky">
+    <div class="ml-text-wrap">
+      <h2 class="ml-sentence">We built platforms that could list internships,<br><span class="dim">but not remember your goals.</span></h2>
+      <h2 class="ml-sentence">They know every application you sent,<br><span class="dim">and nothing of who you are.</span></h2>
+      <h2 class="ml-sentence">They simulate connection,<br><span class="dim">but have never touched understanding.</span></h2>
+      <h2 class="ml-sentence">Real career growth isn't automated.<br><span class="glow">It's personalized.</span></h2>
+      <h2 class="ml-sentence">It's the mentorship you receive.<br>It's the invisible skills that make you unique.</h2>
+      <h2 class="ml-sentence">These were never captured.<br><span class="glow">Until Gigni.</span></h2>
+      <h2 class="ml-sentence">Gigni captures your intent and transforms it into the only signal that matters:<br><span class="glow">Your true potential.</span></h2>
+      <h2 class="ml-sentence">This is the next iteration of student success,<br>where growth becomes <span class="glow">personal.</span></h2>
     </div>
   </div>
 </section>
@@ -1151,10 +1139,9 @@
   }, { threshold: 0.15 });
   document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
 
-  // CONVERSATION SCROLL REVEAL
-  const convoSection = document.getElementById('convo');
-  const cWords = document.querySelectorAll('.c-word');
-  const convoReply = document.getElementById('convo-reply');
+  // MAINLABS SCROLL LOGIC
+  const mlScroll = document.getElementById('ml-scroll');
+  const sentences = document.querySelectorAll('.ml-sentence');
   const navEl = document.getElementById('nav');
   const heroTarget = document.querySelector('.hero-helmet-bg img');
   
@@ -1171,22 +1158,45 @@
       heroTarget.style.transform = `translateY(${scrollPos * 0.35}px)`;
     }
 
-    // Convo Reveal
-    if (convoSection && cWords.length > 0) {
-      const rect = convoSection.getBoundingClientRect();
-      // start revealing when top of section is 80% down the viewport, finish when it's 20% down
-      let scrollPercent = (window.innerHeight * 0.8 - rect.top) / (window.innerHeight * 0.6);
-      scrollPercent = Math.max(0, Math.min(1, scrollPercent));
+    // Mainlabs Scrollytelling
+    if (mlScroll && sentences.length > 0) {
+      const rect = mlScroll.getBoundingClientRect();
+      let scrollPercent = -rect.top / (rect.height - window.innerHeight);
       
-      const wordsToLight = Math.floor(scrollPercent * (cWords.length + 2)); 
-      cWords.forEach((word, index) => {
-        if(index < wordsToLight) word.classList.add('lit');
-        else word.classList.remove('lit');
-      });
+      const total = sentences.length;
+      const step = 1 / total;
+      
+      sentences.forEach((sentence, i) => {
+        const start = i * step;
+        const end = start + step;
+        const center = start + (step / 2);
+        
+        let opacity = 0;
+        let yOffset = 50; 
+        
+        if (scrollPercent >= start - step && scrollPercent <= end + step) {
+           const dist = scrollPercent - center; 
+           const normDist = dist / (step / 1.5); // 1.5 factor controls fade spread
+           
+           opacity = 1 - Math.abs(normDist);
+           if (opacity < 0) opacity = 0;
+           
+           // Apply a smooth ease-out curve to the movement
+           yOffset = normDist * -30; 
+        }
+        
+        // Round for performance and reduce jitter
+        opacity = Math.round(opacity * 1000) / 1000;
+        yOffset = Math.round(yOffset * 100) / 100;
 
-      if (scrollPercent >= 0.9 && convoReply && !convoReply.classList.contains('vis')) {
-        convoReply.classList.add('vis');
-      }
+        if (opacity > 0) {
+          sentence.style.opacity = opacity;
+          sentence.style.transform = `translate(-50%, calc(-50% + ${yOffset}px)) scale(${1 + (1-opacity)*0.02})`;
+        } else {
+          sentence.style.opacity = 0;
+          sentence.style.transform = `translate(-50%, calc(-50% + 50px)) scale(1.02)`;
+        }
+      });
     }
   });
 
