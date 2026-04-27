@@ -1132,54 +1132,60 @@
       const loader = document.getElementById('loader-ovl');
       if(loader) loader.classList.add('hidden');
       document.body.classList.remove('loading');
+      
+      // Initialize animations AFTER loading screen is gone
+      initGSAPAnimations();
     }, 800);
   });
 
-  // GSAP SCROLL REVEALS
-  gsap.registerPlugin(ScrollTrigger);
+  function initGSAPAnimations() {
+    gsap.registerPlugin(ScrollTrigger);
 
-  // PEACHWEB SLIDE PARALLAX EFFECT
-  gsap.utils.toArray('section:not(.hero)').forEach(sec => {
-    gsap.fromTo(sec, 
-      { y: 150 }, 
-      { 
-        y: 0, 
-        ease: "none",
-        scrollTrigger: {
-          trigger: sec,
-          start: "top bottom",
-          end: "top top",
-          scrub: 0.5
+    // PEACHWEB SLIDE PARALLAX EFFECT
+    gsap.utils.toArray('section:not(.hero)').forEach(sec => {
+      gsap.fromTo(sec, 
+        { y: 150 }, 
+        { 
+          y: 0, 
+          ease: "none",
+          scrollTrigger: {
+            trigger: sec,
+            start: "top bottom",
+            end: "top top",
+            scrub: 0.5
+          }
         }
-      }
-    );
-  });
+      );
+    });
 
-  gsap.utils.toArray('.reveal').forEach(el => {
-    let xOff = 0;
-    if(el.classList.contains('reveal-left')) xOff = -40;
-    if(el.classList.contains('reveal-right')) xOff = 40;
+    gsap.utils.toArray('.reveal').forEach(el => {
+      let xOff = 0;
+      if(el.classList.contains('reveal-left')) xOff = -40;
+      if(el.classList.contains('reveal-right')) xOff = 40;
+      
+      gsap.fromTo(el, 
+        { opacity: 0, y: xOff === 0 ? 40 : 0, x: xOff }, 
+        { 
+          opacity: 1, y: 0, x: 0, 
+          duration: 1.2, 
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            toggleActions: "play none none none"
+          }
+        }
+      );
+    });
+
+    // GSAP HERO ANIMATION
+    gsap.fromTo(".h-word", 
+      { y: 100, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1.2, stagger: 0.15, ease: "power4.out", delay: 0.2 }
+    );
     
-    gsap.fromTo(el, 
-      { opacity: 0, y: xOff === 0 ? 40 : 0, x: xOff }, 
-      { 
-        opacity: 1, y: 0, x: 0, 
-        duration: 1.2, 
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: el,
-          start: "top 85%",
-          toggleActions: "play none none none"
-        }
-      }
-    );
-  });
-
-  // GSAP HERO ANIMATION
-  gsap.fromTo(".h-word", 
-    { y: 100, opacity: 0 },
-    { y: 0, opacity: 1, duration: 1.2, stagger: 0.15, ease: "power4.out", delay: 0.2 }
-  );
+    ScrollTrigger.refresh();
+  }
 
   // HOWLER SOUND EFFECTS
   const hoverSound = new Howl({
