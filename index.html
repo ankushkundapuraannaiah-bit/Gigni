@@ -75,9 +75,7 @@
 
   /* TEXT SPLIT REVEAL */
   .h-line { overflow: hidden; display: block; }
-  .h-word { display: inline-block; transform: translateY(110%); transition: transform 1s cubic-bezier(0.16,1,0.3,1); }
-  .vis .h-word { transform: translateY(0); }
-  .d-1 { transition-delay: 0.1s; } .d-2 { transition-delay: 0.2s; } .d-3 { transition-delay: 0.3s; }
+  .h-word { display: inline-block; opacity: 0; transform: translateY(100px); }
 
   /* LOADING SCREEN */
   #loader-ovl {
@@ -148,10 +146,10 @@
   }
 
   .hero-h1 {
-    font-family: 'Inter', sans-serif;
-    font-size: clamp(3.5rem, 7vw, 6.5rem);
-    font-weight: 900;
-    line-height: 1; letter-spacing: -0.03em;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 9vw, 8rem);
+    font-weight: 400;
+    line-height: 0.9; letter-spacing: 0.05em;
     color: #fff;
     text-shadow: 0 10px 40px rgba(0,0,0,0.6);
     margin-top: 32px;
@@ -202,48 +200,69 @@
   .arr { width: 44px; height: 44px; border-radius: 50%; border: none; background: transparent; color: #fff; cursor: pointer; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
   .arr:hover { color: #f97316; transform: scale(1.15); }
 
-  /* MAINLABS HORIZONTAL SLIDER */
-  .ml-slider-sec { height: 300vh; background: #000; position: relative; border-top: 1px solid rgba(255,255,255,0.05); }
-  .ml-slider-sticky { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; padding-left: 10vw; }
-  .ml-slider-header { margin-bottom: 60px; max-width: 600px; }
-  .ml-slider-header h2 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; letter-spacing: -0.03em; color: #fff; line-height: 1.1; margin-bottom: 16px; }
-  .ml-slider-header p { font-size: 1.2rem; color: rgba(255,255,255,0.5); line-height: 1.6; }
-  .ml-slider-track { display: flex; gap: 40px; width: max-content; will-change: transform; padding-right: 10vw; }
-  .ml-card { 
-    width: 400px; height: 500px; background: rgba(15,15,15,0.8); backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.08); border-radius: 20px;
-    padding: 50px 40px; display: flex; flex-direction: column; justify-content: space-between;
-    transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
-    box-shadow: inset 0 0 40px rgba(255,255,255,0.02), 0 30px 60px rgba(0,0,0,0.8);
-    position: relative; overflow: hidden;
+  /* ACHIEVE (PEACHWEB HOVER THEME) */
+  .achieve { background: #000; padding: 120px 60px; text-align: center; }
+  .achieve h2 { 
+    font-family: 'Inter', sans-serif; font-size: clamp(2rem,4vw,3.2rem); font-weight: 800; margin-bottom: 72px; 
+    letter-spacing: -0.04em; 
   }
-  .ml-card::before {
-    content:''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
-    background: linear-gradient(90deg, #3b5bdb, transparent); opacity: 0.5;
+  .cards-row { 
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+    gap: 32px; max-width: 1300px; margin: 0 auto; 
+    align-items: stretch; 
   }
-  .ml-card:hover { border-color: rgba(255,255,255,0.25); transform: scale(1.02) translateY(-10px); box-shadow: 0 40px 80px rgba(0,0,0,0.9), 0 0 40px rgba(59,91,219,0.15); }
-  .ml-card h3 { font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 16px; letter-spacing: -0.02em; }
-  .ml-card p { font-size: 1.05rem; color: rgba(255,255,255,0.5); line-height: 1.6; }
-  .ml-card-num { font-family: 'Bebas Neue', sans-serif; font-size: 5rem; color: rgba(255,255,255,0.05); position: absolute; bottom: 20px; right: 30px; line-height: 1; pointer-events: none; }
 
-  /* MAINLABS SCROLLYTELLING */
-  .mainlabs-scroll { height: 800vh; background: #000; position: relative; z-index: 10; }
-  .ml-sticky { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #000; }
-  .ml-text-wrap { position: relative; width: 100%; max-width: 1200px; padding: 0 40px; height: 100%; }
-  .ml-sentence { 
-    position: absolute; top: 50%; left: 50%; width: 100%; padding: 0 20px;
-    transform: translate(-50%, calc(-50% + 100px));
-    font-family: 'Inter', sans-serif; font-size: clamp(2rem, 5vw, 4.5rem); font-weight: 500; line-height: 1.15; letter-spacing: -0.03em;
-    color: #fff; text-align: center; opacity: 0; pointer-events: none;
-    will-change: transform, opacity;
+  .acard {
+    background: rgba(255,255,255,0.02); 
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255,255,255,0.06); 
+    border-radius: 32px;
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    padding: 48px 32px;
+    transition: transform 0.6s cubic-bezier(0.16,1,0.3,1), border-color 0.6s ease, box-shadow 0.6s ease;
+    cursor: pointer; position: relative; overflow: hidden;
+    min-height: 400px;
   }
-  .ml-sentence .dim { color: rgba(255,255,255,0.3); transition: color 0.3s; }
-  .ml-sentence .glow { color: transparent; background: linear-gradient(135deg, #fff, #a5b4fc); -webkit-background-clip: text; text-shadow: 0 0 40px rgba(165,180,252,0.4); font-weight: 700; }
-  
-  @media(max-width:768px){
-    .ml-text-wrap { padding: 0 16px; }
-    .ml-sentence { font-size: clamp(1.8rem, 8vw, 2.5rem); }
+  .acard:hover { 
+    transform: translateY(-12px) scale(1.03); 
+    border-color: rgba(59,91,219,0.3);
+    box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 40px rgba(59,91,219,0.15);
   }
+  .video-hover-bg {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at center, rgba(59,91,219,0.2) 0%, transparent 70%);
+    opacity: 0; transform: scale(0.8);
+    transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1);
+    pointer-events: none; z-index: 0;
+  }
+  .acard:hover .video-hover-bg {
+    opacity: 1; transform: scale(1.2);
+  }
+  .acard-text, .acard-icon { position: relative; z-index: 2; }
+
+  .acard-icon { 
+    width: 84px; height: 84px; margin-bottom: 32px; 
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.04); border-radius: 24px;
+    transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+  }
+  .acard:hover .acard-icon { transform: scale(1.15) rotate(4deg); }
+  .acard-icon svg { width: 44px; height: 44px; }
+
+  .acard h3 { 
+    font-size: 1.6rem; font-weight: 800; color: #fff; 
+    margin-bottom: 16px; letter-spacing: -0.02em; 
+  }
+  .acard p { 
+    font-size: 0.95rem; color: rgba(255,255,255,0.6); 
+    font-weight: 500; line-height: 1.6;
+  }
+
+  .acard.c1 .acard-icon svg { stroke: #f97316; }
+  .acard.c2 .acard-icon svg { stroke: #3b5bdb; }
+  .acard.c3 .acard-icon svg { stroke: #10b981; }
+  .acard.c4 .acard-icon svg { stroke: #8b5cf6; }
+  .acard.c5 .acard-icon svg { stroke: #fbbf24; }
 
   /* GET STARTED */
   .getstarted { background: #000; padding: 0 60px 120px; }
@@ -253,14 +272,18 @@
   .step-t h2 { font-size: clamp(2.2rem,4.5vw,3.2rem); font-weight: 900; color: #fff; line-height: 1.05; margin-bottom: 18px; letter-spacing: -0.02em; }
   .step-t p { font-size: 1rem; color: rgba(255,255,255,0.65); line-height: 1.65; }
   .step-v {
-    background: rgba(20,20,20,0.6); backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.1); border-radius: 22px;
+    background: rgba(20,20,20,0.6); backdrop-filter: blur(24px);
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 32px;
     min-height: 260px; display: flex; align-items: center; justify-content: center;
     position: relative; overflow: hidden;
     box-shadow: inset 0 0 40px rgba(255,255,255,0.02), 0 20px 40px rgba(0,0,0,0.5);
-    transition: transform 0.4s ease, border-color 0.4s ease;
+    transition: transform 0.6s cubic-bezier(0.16,1,0.3,1), border-color 0.6s ease, box-shadow 0.6s ease;
   }
-  .step-v:hover { transform: translateY(-5px); border-color: rgba(59,91,219,0.5); }
+  .step-v:hover { 
+    transform: translateY(-10px) scale(1.02); 
+    border-color: rgba(59,91,219,0.4); 
+    box-shadow: 0 40px 80px rgba(0,0,0,0.7), 0 0 30px rgba(59,91,219,0.15);
+  }
   .step-v-inner { text-align: center; position: relative; z-index: 1; }
   .step-v-inner .ico { font-size: 5rem; display: block; }
   .step-v-inner .lbl { font-size: 0.9rem; font-weight: 700; color: rgba(255,255,255,0.75); margin-top: 10px; display: block; }
@@ -274,12 +297,16 @@
   }
   .hcard {
     display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-    min-height: 280px; transition: transform 0.4s, box-shadow 0.4s, border-color 0.4s;
-    overflow: hidden; position: relative; border-radius: 24px;
+    min-height: 280px; transition: transform 0.6s cubic-bezier(0.16,1,0.3,1), box-shadow 0.6s ease, border-color 0.6s ease;
+    overflow: hidden; position: relative; border-radius: 32px;
     border: 1px solid rgba(255,255,255,0.08);
-    background: rgba(15,15,15,0.8); backdrop-filter: blur(12px);
+    background: rgba(15,15,15,0.8); backdrop-filter: blur(20px);
   }
-  .hcard:hover { transform: translateY(-8px); box-shadow: 0 30px 60px rgba(0,0,0,0.8); z-index: 1; border-color: rgba(255,255,255,0.2); }
+  .hcard:hover { 
+    transform: translateY(-10px) scale(1.02); 
+    box-shadow: 0 40px 80px rgba(0,0,0,0.8); z-index: 1; 
+    border-color: rgba(255,255,255,0.3); 
+  }
   .hcard-img { width: 100%; flex: 1; object-fit: contain; object-position: center; display: block; padding: 20px; }
   .hcard-svg { width: 100%; flex: 1; display: flex; align-items: center; justify-content: center; }
   .hcard-label {
@@ -366,14 +393,7 @@
   /* ANIMATIONS */
   @keyframes glow { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
   @keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
-  .reveal { 
-    opacity: 0; transform: translateY(40px); 
-    transition: transform 1.2s cubic-bezier(0.16,1,0.3,1), opacity 1.2s cubic-bezier(0.16,1,0.3,1); 
-  }
-  .reveal.vis { opacity: 1; transform: translateY(0); }
-  .reveal-left { transform: translateX(-40px); }
-  .reveal-right { transform: translateX(40px); }
-  .reveal.vis { opacity: 1; transform: translate(0,0); }
+  .reveal, .reveal-left, .reveal-right { opacity: 0; }
 
   /* HAMBURGER BUTTON */
   .ham {
@@ -432,11 +452,21 @@
     .college-carousel { gap: 10px; margin-top: 10px; }
     .college-card { width: 200px; height: 120px; }
 
-    .ml-slider-sec { height: 200vh; }
-    .ml-slider-sticky { padding-left: 20px; }
-    .ml-slider-header h2 { font-size: 2.2rem; }
-    .ml-card { width: 280px; height: 380px; padding: 30px 24px; }
-    .ml-card h3 { font-size: 1.3rem; }
+    /* ACHIEVE */
+    .achieve { padding: 80px 16px; }
+    .achieve h2 { padding: 0 20px; font-size: 2.2rem; margin-bottom: 50px; }
+    .cards-row {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .acard { 
+      min-height: auto; 
+      padding: 32px 24px; border-radius: 24px;
+    }
+    .acard-icon { width: 64px; height: 64px; margin-bottom: 24px; border-radius: 18px; }
+    .acard-icon svg { width: 34px; height: 34px; }
+    .acard h3 { font-size: 1.4rem; }
+    .acard p { font-size: 0.9rem; }
 
     /* GET STARTED */
     .getstarted { padding: 60px 16px; }
@@ -539,71 +569,71 @@
   </div>
 </section>
 
-<!-- ══════════ MAINLABS SCROLLYTELLING ══════════ -->
-<section class="mainlabs-scroll" id="ml-scroll">
-  <div class="ml-sticky">
-    <div class="ml-text-wrap">
-      <h2 class="ml-sentence">We built platforms that could list internships,<br><span class="dim">but not remember your goals.</span></h2>
-      <h2 class="ml-sentence">They know every application you sent,<br><span class="dim">and nothing of who you are.</span></h2>
-      <h2 class="ml-sentence">They simulate connection,<br><span class="dim">but have never touched understanding.</span></h2>
-      <h2 class="ml-sentence">Real career growth isn't automated.<br><span class="glow">It's personalized.</span></h2>
-      <h2 class="ml-sentence">It's the mentorship you receive.<br>It's the invisible skills that make you unique.</h2>
-      <h2 class="ml-sentence">These were never captured.<br><span class="glow">Until Gigni.</span></h2>
-      <h2 class="ml-sentence">Gigni captures your intent and transforms it into the only signal that matters:<br><span class="glow">Your true potential.</span></h2>
-      <h2 class="ml-sentence">This is the next iteration of student success,<br>where growth becomes <span class="glow">personal.</span></h2>
+<!-- ══════════ ACHIEVE ══════════ -->
+<section class="achieve" id="achieve">
+  <h2 class="reveal">What you will achieve through Gigni</h2>
+  <div class="cards-row reveal">
+    
+    <!-- Event -->
+    <div class="acard c1">
+      <div class="video-hover-bg"></div>
+      <div class="acard-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M10 13l2 2 4-4"/></svg>
+      </div>
+      <div class="acard-text">
+        <h3>Event</h3>
+        <p>Knowledge to Success</p>
+      </div>
     </div>
-  </div>
-</section>
 
-<!-- ══════════ MAINLABS SLIDER (ACHIEVE) ══════════ -->
-<section class="ml-slider-sec" id="achieve">
-  <div class="ml-slider-sticky">
-    <div class="ml-slider-header reveal">
-      <h2>The Network of Opportunities</h2>
-      <p>Continuous context across your entire career path, aligning your skills with exactly what the industry needs.</p>
-    </div>
-    <div class="ml-slider-track" id="slider-track">
-      <!-- Card 1 -->
-      <div class="ml-card">
-        <div>
-          <h3>/ Global Events /</h3>
-          <p>Access exclusive knowledge networks, workshops, and industry seminars.</p>
-        </div>
-        <div class="ml-card-num">01</div>
+    <!-- Mentorship -->
+    <div class="acard c2">
+      <div class="video-hover-bg" style="background: radial-gradient(circle at center, rgba(59,91,219,0.2) 0%, transparent 60%);"></div>
+      <div class="acard-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       </div>
-      <!-- Card 2 -->
-      <div class="ml-card">
-        <div>
-          <h3>/ Semantic Profiles /</h3>
-          <p>Your unique skills and intent perfectly matched with 1-on-1 expert mentorship.</p>
-        </div>
-        <div class="ml-card-num">02</div>
-      </div>
-      <!-- Card 3 -->
-      <div class="ml-card">
-        <div>
-          <h3>/ Live Internships /</h3>
-          <p>Verified, real-world projects that adapt to your growth trajectory.</p>
-        </div>
-        <div class="ml-card-num">03</div>
-      </div>
-      <!-- Card 4 -->
-      <div class="ml-card">
-        <div>
-          <h3>/ Cross-Domain /</h3>
-          <p>Collaborate in Hackathons, building collective intelligence with peers.</p>
-        </div>
-        <div class="ml-card-num">04</div>
-      </div>
-      <!-- Card 5 -->
-      <div class="ml-card">
-        <div>
-          <h3>/ Paid Roles /</h3>
-          <p>Monetize your expertise instantly. No cold starts, just perfectly matched paid opportunities.</p>
-        </div>
-        <div class="ml-card-num">05</div>
+      <div class="acard-text">
+        <h3>Mentorship</h3>
+        <p>By Gigni Team</p>
       </div>
     </div>
+
+    <!-- Internship -->
+    <div class="acard c3">
+      <div class="video-hover-bg" style="background: radial-gradient(circle at center, rgba(16,185,129,0.2) 0%, transparent 60%);"></div>
+      <div class="acard-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      </div>
+      <div class="acard-text">
+        <h3>Internship</h3>
+        <p>Real World Project</p>
+      </div>
+    </div>
+
+    <!-- Competitions -->
+    <div class="acard c4">
+      <div class="video-hover-bg" style="background: radial-gradient(circle at center, rgba(139,92,246,0.2) 0%, transparent 60%);"></div>
+      <div class="acard-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 8 4 4-4 4"/><path d="M2 12h20"/><path d="m6 8-4 4 4 4"/></svg>
+      </div>
+      <div class="acard-text">
+        <h3>Competitions</h3>
+        <p>Hackathons For All</p>
+      </div>
+    </div>
+
+    <!-- Paid Internship -->
+    <div class="acard c5">
+      <div class="video-hover-bg" style="background: radial-gradient(circle at center, rgba(251,191,36,0.2) 0%, transparent 60%);"></div>
+      <div class="acard-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <div class="acard-text">
+        <h3>Paid Internship</h3>
+        <p>Get Paid Internships</p>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -838,6 +868,9 @@
 <div id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
 <script>
   // 3D AIRPLANE ANIMATION
   const canvasContainer = document.getElementById('hero-gl');
@@ -849,54 +882,100 @@
     renderer.setPixelRatio(window.devicePixelRatio);
     canvasContainer.appendChild(renderer.domElement);
 
-    // 3D MAINLABS STYLE NETWORK ANIMATION
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    // Add lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambientLight);
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
     dirLight.position.set(5, 10, 7);
     scene.add(dirLight);
 
-    const networkGroup = new THREE.Group();
+    // Create Orange Brain with Blue Current
+    const brainGroup = new THREE.Group();
     
-    // Abstract geometric nodes
-    const geom1 = new THREE.IcosahedronGeometry(3.5, 1);
-    const mat1 = new THREE.MeshBasicMaterial({ color: 0x3b5bdb, wireframe: true, transparent: true, opacity: 0.12 });
-    const mesh1 = new THREE.Mesh(geom1, mat1);
-    networkGroup.add(mesh1);
-    
-    const geom2 = new THREE.IcosahedronGeometry(2.8, 2);
-    const mat2 = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.1 });
-    const mesh2 = new THREE.Mesh(geom2, mat2);
-    networkGroup.add(mesh2);
-
-    // Floating particles (Nodes)
-    const particlesCount = 3000;
+    // Brain Particles
+    const particlesCount = 15000;
     const posArray = new Float32Array(particlesCount * 3);
     for(let i=0; i<particlesCount; i++) {
-        const theta = Math.random() * 2 * Math.PI;
-        const phi = Math.acos((Math.random() * 2) - 1);
-        const r = 2.5 + Math.random() * 2.0;
-        posArray[i*3] = r * Math.sin(phi) * Math.cos(theta);
-        posArray[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
-        posArray[i*3+2] = r * Math.cos(phi);
+       let theta = Math.random() * Math.PI * 2;
+       let phi = Math.acos((Math.random() * 2) - 1);
+       
+       let r = 2.0; 
+       let x = r * Math.sin(phi) * Math.cos(theta) * 0.85; // slight width adjust
+       let y = r * Math.sin(phi) * Math.sin(theta) * 0.75; // flatten height
+       let z = r * Math.cos(phi) * 1.0; 
+       
+       // Fissure
+       if (Math.abs(x) < 0.15) {
+           x = (x > 0 ? 0.15 : -0.15) + (Math.random() * 0.05);
+       }
+
+       // Folds noise approximation
+       let foldNoise = Math.sin(x*8)*Math.cos(y*8)*Math.sin(z*8) * 0.15;
+       let radiusFactor = 0.5 + 0.5*Math.pow(Math.random(), 0.6); 
+       
+       posArray[i*3] = (x + foldNoise) * radiusFactor;
+       posArray[i*3+1] = (y + foldNoise) * radiusFactor;
+       posArray[i*3+2] = (z + foldNoise) * radiusFactor;
     }
-    const pointsGeom = new THREE.BufferGeometry();
-    pointsGeom.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-    const pointsMat = new THREE.PointsMaterial({ size: 0.025, color: 0xffffff, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending });
-    const points = new THREE.Points(pointsGeom, pointsMat);
-    networkGroup.add(points);
+    const brainGeom = new THREE.BufferGeometry();
+    brainGeom.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    const brainMat = new THREE.PointsMaterial({
+       size: 0.035, color: 0xf97316, transparent: true, opacity: 0.75, blending: THREE.AdditiveBlending
+    });
+    const brainPoints = new THREE.Points(brainGeom, brainMat);
+    brainGroup.add(brainPoints);
 
-    // Core pulsing center
-    const coreGeom = new THREE.SphereGeometry(1.5, 32, 32);
-    const coreMat = new THREE.MeshBasicMaterial({ color: 0x3b5bdb, transparent: true, opacity: 0.05, blending: THREE.AdditiveBlending });
-    const core = new THREE.Mesh(coreGeom, coreMat);
-    networkGroup.add(core);
+    // Prepare arrays for burst effect
+    const basePosArray = new Float32Array(posArray);
+    const randomDirArray = new Float32Array(particlesCount * 3);
+    for(let i=0; i<particlesCount * 3; i++) {
+        randomDirArray[i] = (Math.random() - 0.5) * 2;
+    }
 
-    networkGroup.scale.set(1.2, 1.2, 1.2);
-    scene.add(networkGroup);
+    // Blue Current Rings
+    const currentPaths = new THREE.Group();
+    const currentMat = new THREE.LineBasicMaterial({ color: 0x3b5bdb, transparent: true, opacity: 0.6 });
+    for(let i = 0; i < 6; i++) {
+        const rad = 2.4 + Math.random() * 0.5;
+        const ringGeom = new THREE.TorusGeometry(rad, 0.01, 8, 64);
+        const ring = new THREE.LineSegments(new THREE.EdgesGeometry(ringGeom), currentMat);
+        ring.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, Math.random()*Math.PI);
+        ring.userData = {
+            rx: (Math.random() - 0.5) * 0.02,
+            ry: (Math.random() - 0.5) * 0.02,
+            rz: (Math.random() - 0.5) * 0.02
+        };
+        currentPaths.add(ring);
+    }
+    brainGroup.add(currentPaths);
+    
+    // Add blue floating electrons
+    const electronGeom = new THREE.BufferGeometry();
+    const electronPos = new Float32Array(50 * 3);
+    for(let i=0; i<150; i++) electronPos[i] = (Math.random() - 0.5) * 6;
+    electronGeom.setAttribute('position', new THREE.BufferAttribute(electronPos, 3));
+    const electronMat = new THREE.PointsMaterial({color: 0x3b5bdb, size: 0.1, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending});
+    const electrons = new THREE.Points(electronGeom, electronMat);
+    brainGroup.add(electrons);
+
+    brainGroup.scale.set(0.9, 0.9, 0.9);
+    scene.add(brainGroup);
+
+    // Add some background floating stars
+    const starGeom = new THREE.BufferGeometry();
+    const starCount = 150;
+    const starPos = new Float32Array(starCount * 3);
+    for(let i=0; i<starCount * 3; i++) {
+        starPos[i] = (Math.random() - 0.5) * 40;
+    }
+    starGeom.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+    const starMat = new THREE.PointsMaterial({color: 0xffffff, size: 0.05, transparent: true, opacity: 0.4});
+    const stars = new THREE.Points(starGeom, starMat);
+    scene.add(stars);
 
     camera.position.z = 8;
-    camera.position.y = 0;
+    camera.position.y = 2;
+    camera.lookAt(0,0,0);
 
     let mouseX = 0;
     let mouseY = 0;
@@ -916,30 +995,51 @@
       requestAnimationFrame(render3D);
       const time = clock.getElapsedTime();
 
-      targetX = mouseX * 0.001;
-      targetY = mouseY * 0.001;
+      targetX = mouseX * 0.002;
+      targetY = mouseY * 0.002;
       
-      let bustFactor = Math.max(0, window.scrollY) / 800;
-      bustFactor = Math.min(1, bustFactor); 
-
-      // Rotation & Interaction
-      networkGroup.rotation.y += 0.001 + (targetX - networkGroup.rotation.y) * 0.05;
-      networkGroup.rotation.x += 0.001 + (targetY - networkGroup.rotation.x) * 0.05;
+      // Calculate Scroll Explosion Factor
+      let bustFactor = Math.max(0, window.scrollY - 300) / 600;
+      bustFactor = Math.min(1, bustFactor); // Constrain 0 to 1
       
-      mesh1.rotation.y -= 0.002;
-      mesh1.rotation.x += 0.001;
-      mesh2.rotation.y += 0.001;
-      mesh2.rotation.z -= 0.001;
+      const power = bustFactor * 30; // Explosion force intensity
+      
+      const positions = brainGeom.attributes.position.array;
+      for(let i=0; i<particlesCount; i++) {
+         positions[i*3] = basePosArray[i*3] + randomDirArray[i*3] * power;
+         positions[i*3+1] = basePosArray[i*3+1] + randomDirArray[i*3+1] * power;
+         positions[i*3+2] = basePosArray[i*3+2] + randomDirArray[i*3+2] * power;
+      }
+      brainGeom.attributes.position.needsUpdate = true;
+      
+      brainMat.opacity = 0.75 * (1 - bustFactor); // Fade as it busts
 
-      // Pulse core
-      const pulse = 1 + Math.sin(time * 2) * 0.05;
-      core.scale.set(pulse, pulse, pulse);
+      // Scale up the entire group mimicking 3D traversal
+      brainGroup.scale.set(0.9 + bustFactor*2, 0.9 + bustFactor*2, 0.9 + bustFactor*2);
+      brainGroup.position.z = -bustFactor * 5;
 
-      // On scroll effect: fade out and push back
-      networkGroup.position.z = -bustFactor * 10;
-      pointsMat.opacity = 0.7 * (1 - bustFactor);
-      mat1.opacity = 0.12 * (1 - bustFactor);
-      mat2.opacity = 0.1 * (1 - bustFactor);
+      // Floating animation relative to group
+      brainGroup.position.y = Math.sin(time * 2) * 0.15 - (bustFactor * 2);
+      
+      // Rotate slowly and track mouse smoothly
+      brainGroup.rotation.y += (targetX - brainGroup.rotation.y) * 0.05;
+      brainGroup.rotation.x += (targetY * 0.5 - brainGroup.rotation.x) * 0.05;
+      
+      // Core continuous slow rotation
+      brainPoints.rotation.y += 0.001;
+      
+      // Rotate currents and fade them
+      currentMat.opacity = 0.6 * (1 - bustFactor);
+      electronMat.opacity = 0.9 * (1 - bustFactor);
+      currentPaths.children.forEach(ring => {
+          ring.rotation.x += ring.userData.rx + (bustFactor * 0.05);
+          ring.rotation.y += ring.userData.ry + (bustFactor * 0.05);
+          ring.rotation.z += ring.userData.rz + (bustFactor * 0.05);
+      });
+      electrons.rotation.y -= 0.01 + (bustFactor * 0.04);
+      electrons.rotation.x += 0.005 + (bustFactor * 0.04);
+
+      stars.rotation.y += 0.001;
 
       renderer.render(scene, camera);
     }
@@ -999,24 +1099,49 @@
     }, 800);
   });
 
-  // REVEAL ON SCROLL
-  const revealIO = new IntersectionObserver(entries => {
-    entries.forEach(e => { 
-      if(e.isIntersecting){ 
-        e.target.classList.add('vis'); 
-        revealIO.unobserve(e.target); 
-      }
-    });
-  }, { threshold: 0.15 });
-  document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
+  // GSAP SCROLL REVEALS
+  gsap.registerPlugin(ScrollTrigger);
 
-  // MAINLABS SCROLL LOGIC
-  const mlScroll = document.getElementById('ml-scroll');
-  const sentences = document.querySelectorAll('.ml-sentence');
-  
-  // MAINLABS HORIZONTAL SLIDER LOGIC
-  const sliderSec = document.querySelector('.ml-slider-sec');
-  const sliderTrack = document.getElementById('slider-track');
+  gsap.utils.toArray('.reveal').forEach(el => {
+    let xOff = 0;
+    if(el.classList.contains('reveal-left')) xOff = -40;
+    if(el.classList.contains('reveal-right')) xOff = 40;
+    
+    gsap.fromTo(el, 
+      { opacity: 0, y: xOff === 0 ? 40 : 0, x: xOff }, 
+      { 
+        opacity: 1, y: 0, x: 0, 
+        duration: 1.2, 
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: el,
+          start: "top 85%",
+          toggleActions: "play none none none"
+        }
+      }
+    );
+  });
+
+  // GSAP HERO ANIMATION
+  gsap.fromTo(".h-word", 
+    { y: 100, opacity: 0 },
+    { y: 0, opacity: 1, duration: 1.2, stagger: 0.15, ease: "power4.out", delay: 0.2 }
+  );
+
+  // HOWLER SOUND EFFECTS
+  const hoverSound = new Howl({
+    src: ['https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3'],
+    volume: 0.1
+  });
+  const clickSound = new Howl({
+    src: ['https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3'],
+    volume: 0.3
+  });
+
+  document.querySelectorAll('a, button, .acard, .hcard, .step-v').forEach(el => {
+    el.addEventListener('mouseenter', () => hoverSound.play());
+    el.addEventListener('click', () => clickSound.play());
+  });
 
   const navEl = document.getElementById('nav');
   const heroTarget = document.querySelector('.hero-helmet-bg img');
@@ -1032,57 +1157,6 @@
     if (window.innerWidth > 768 && heroTarget) {
       const scrollPos = window.scrollY;
       heroTarget.style.transform = `translateY(${scrollPos * 0.35}px)`;
-    }
-
-    // Mainlabs Horizontal Slider
-    if (sliderSec && sliderTrack) {
-      const rect = sliderSec.getBoundingClientRect();
-      let scrollP = -rect.top / (rect.height - window.innerHeight);
-      scrollP = Math.max(0, Math.min(1, scrollP));
-      // Calculate max translate
-      const maxTranslate = sliderTrack.scrollWidth - window.innerWidth + (window.innerWidth * 0.15); // padding allowance
-      sliderTrack.style.transform = `translateX(-${scrollP * maxTranslate}px)`;
-    }
-
-    // Mainlabs Scrollytelling
-    if (mlScroll && sentences.length > 0) {
-      const rect = mlScroll.getBoundingClientRect();
-      let scrollPercent = -rect.top / (rect.height - window.innerHeight);
-      
-      const total = sentences.length;
-      const step = 1 / total;
-      
-      sentences.forEach((sentence, i) => {
-        const start = i * step;
-        const end = start + step;
-        const center = start + (step / 2);
-        
-        let opacity = 0;
-        let yOffset = 50; 
-        
-        if (scrollPercent >= start - step && scrollPercent <= end + step) {
-           const dist = scrollPercent - center; 
-           const normDist = dist / (step / 1.5); // 1.5 factor controls fade spread
-           
-           opacity = 1 - Math.abs(normDist);
-           if (opacity < 0) opacity = 0;
-           
-           // Apply a smooth ease-out curve to the movement
-           yOffset = normDist * -30; 
-        }
-        
-        // Round for performance and reduce jitter
-        opacity = Math.round(opacity * 1000) / 1000;
-        yOffset = Math.round(yOffset * 100) / 100;
-
-        if (opacity > 0) {
-          sentence.style.opacity = opacity;
-          sentence.style.transform = `translate(-50%, calc(-50% + ${yOffset}px)) scale(${1 + (1-opacity)*0.02})`;
-        } else {
-          sentence.style.opacity = 0;
-          sentence.style.transform = `translate(-50%, calc(-50% + 50px)) scale(1.02)`;
-        }
-      });
     }
   });
 
