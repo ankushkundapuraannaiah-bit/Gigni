@@ -51,6 +51,7 @@
     display: block;
   }
   .logo:hover { transform: scale(1.05); color: #fff; }
+  .hamburger { display: none; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; padding: 10px; }
   .nav-links { display: flex; align-items: center; gap: 32px; }
   .nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: 0.2s; }
   .nav-links a:hover { color: #fff; }
@@ -209,7 +210,9 @@
   @media (max-width: 768px) {
     nav { padding: 16px 20px; }
     .logo { font-size: 2.2rem; }
-    .nav-links { flex-direction: column; gap: 16px; position: absolute; top: 100%; left: 0; right: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); padding: 20px; display: flex; }
+    .hamburger { display: block; }
+    .nav-links { flex-direction: column; gap: 16px; position: absolute; top: 100%; left: 0; right: 0; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); padding: 20px; display: none; }
+    .nav-links.active { display: flex; }
     .nav-links a, button { font-size: 0.9rem; }
     .p-flow-modal { flex-direction: column; }
     .p-flow-sidebar { width: 100%; padding: 32px; }
@@ -235,6 +238,7 @@
 
   <nav id="nav">
     <a href="index.html" class="logo">GIGNI</a>
+    <button class="hamburger" onclick="toggleMenu()">☰</button>
     <div class="nav-links">
       <a href="hosting.html">Hosting</a>
       <a href="zorus.html">Zorus 2.1</a>
@@ -547,6 +551,9 @@
       invalidateOnRefresh: true
     }
   });
+
+  // ─── MENU TOGGLE ────────────────────────────────────────────────
+  function toggleMenu() { document.querySelector('.nav-links').classList.toggle('active'); }
 
   // ─── AUTH LOGIC ────────────────────────────────────────────────
   function openOvl(id) { document.getElementById(id + '-ovl').classList.add('active'); document.body.style.overflow = 'hidden'; }
