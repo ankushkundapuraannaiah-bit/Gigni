@@ -555,6 +555,29 @@
   // ─── MENU TOGGLE ────────────────────────────────────────────────
   function toggleMenu() { document.querySelector('.nav-links').classList.toggle('active'); }
 
+  // ─── TYPEWRITER EFFECT ───────────────────────────────────────────
+  function typeWriter(element, text, speed = 100) {
+    let i = 0;
+    element.textContent = '';
+    function type() {
+      if (i < text.length) {
+        element.textContent += text.charAt(i);
+        i++;
+        setTimeout(type, speed);
+      }
+    }
+    type();
+  }
+
+  window.addEventListener('load', () => {
+    const h1 = document.querySelector('.hero-h1');
+    const p = document.querySelector('.hero-p');
+    const h1Text = 'THE FUTURE\nIS Ai-Driven.';
+    const pText = 'Gigni bridges the gap between ambition and reality with real-world AI internships and high-performance hosting.';
+    typeWriter(h1, h1Text.replace('\n', ' '), 50); // Faster for h1
+    setTimeout(() => typeWriter(p, pText, 30), 2000); // Start p after h1
+  });
+
   // ─── AUTH LOGIC ────────────────────────────────────────────────
   function openOvl(id) { document.getElementById(id + '-ovl').classList.add('active'); document.body.style.overflow = 'hidden'; }
   function closeOvl(e, id) { if (e && e.target !== e.currentTarget) return; document.getElementById(id + '-ovl').classList.remove('active'); document.body.style.overflow = 'auto'; }
