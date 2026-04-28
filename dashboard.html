@@ -199,12 +199,16 @@
     el.classList.add('active');
   }
 
-  // Hydrate local data into the profile (if they login from the main page)
+  // Hydrate local data into the profile
   document.addEventListener('DOMContentLoaded', () => {
-    // Get user from local storage placed by the login flow
-    const user = JSON.parse(localStorage.getItem('gigni_user') || '{"fname":"Guest", "email":"guest@example.com"}');
+    const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+    if (!user.email) {
+      window.location.href = 'index.html';
+      return;
+    }
     
-    document.getElementById('welcome-msg').innerText = 'Welcome back, ' + user.fname + '!';
+    // Update UI
+    document.getElementById('welcome-msg').innerText = 'Welcome back, ' + (user.fname || 'User') + '!';
     if(user.fname) document.getElementById('nav-av').innerText = user.fname.charAt(0).toUpperCase();
 
     // Fill profile fields
@@ -215,10 +219,47 @@
     document.getElementById('prof-year').value = user.year || '';
     document.getElementById('prof-field').value = user.field || '';
     document.getElementById('prof-intro').value = user.intro || '';
+
+    // Render Items
+    renderItems('proj', user.projects || []);
+    renderItems('cert', user.certificates || []);
+    renderItems('hack', user.hackathons || []);
   });
 
-  function saveProfile() {
-    // This updates the local storage cache so it persists locally
+  function renderItems(tabId, items) {
+    const container = document.getElementById('tab-' + tabId);
+    // Find the content section (not the header)
+    let listDiv = container.querySelector('.grid') || container.querySelector('.items-list');
+    
+    if (!listDiv) {
+      listDiv = document.createElement('div');
+      listDiv.className = 'grid';
+      container.appendChild(listDiv);
+    }
+
+    // Remove empty state if items exist
+    const empty = container.querySelector('.empty-state');
+    if (items.length > 0 && empty) empty.style.display = 'none';
+    if (items.length === 0 && empty) empty.style.display = 'block';
+
+    listDiv.innerHTML = items.map(item => `
+      <div class="card">
+        <div class="cico">${getIcon(tabId)}</div>
+        <h3>${item.title || item.name}</h3>
+        <p>${item.desc || item.description || ''}</p>
+        ${item.link ? `<a href="${item.link}" target="_blank" class="btn-act" style="text-decoration:none;display:inline-block">View Link</a>` : ''}
+      </div>
+    `).join('');
+  }
+
+  function getIcon(type) {
+    if (type === 'proj') return '💼';
+    if (type === 'cert') return '📜';
+    if (type === 'hack') return '⚡';
+    return '📦';
+  }
+
+  async function saveProfile() {
     const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
     user.fname = document.getElementById('prof-fname').value;
     user.lname = document.getElementById('prof-lname').value;
@@ -228,8 +269,6 @@
     user.intro = document.getElementById('prof-intro').value;
 
     localStorage.setItem('gigni_user', JSON.stringify(user));
-    
-    // Update top UI Elements
     document.getElementById('welcome-msg').innerText = 'Welcome back, ' + user.fname + '!';
     document.getElementById('nav-av').innerText = user.fname.charAt(0).toUpperCase();
     
