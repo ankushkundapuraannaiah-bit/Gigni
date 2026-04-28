@@ -1,1349 +1,291 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gigni — Real Internships & Verified Success for Students</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2">
-  <meta name="description" content="Gigni connects students with verified, project-based internships, mentorship, and hackathons. Build your professional profile and get matched with real-world opportunities.">
-  <meta name="keywords" content="internships, student mentorship, hackathons, real-world projects, verified internships, career growth, Gigni, Gigni Connect">
-  <meta name="author" content="Gigni">
-  <meta name="robots" content="index, follow">
-  
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.gigniconnect.space/">
-  <meta property="og:title" content="Gigni — Real Internships & Verified Success">
-  <meta property="og:description" content="Get matched with verified internships and real-world projects. Build your future with Gigni.">
-  <meta property="og:image" content="https://www.gigniconnect.space/community.png">
-
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content="https://www.gigniconnect.space/">
-  <meta property="twitter:title" content="Gigni — Real Internships & Verified Success">
-  <meta property="twitter:description" content="Get matched with verified internships and real-world projects. Build your future with Gigni.">
-  <meta property="twitter:image" content="https://www.gigniconnect.space/community.png">
-
-  <link rel="canonical" href="https://www.gigniconnect.space/">
-
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; cursor: none; }
-  body.loading { overflow: hidden; }
-
-  /* CUSTOM CURSOR */
-  #cursor {
-    position: fixed; top: 0; left: 0; width: 10px; height: 10px;
-    background: #f97316; border-radius: 50%; pointer-events: none;
-    z-index: 10000; mix-blend-mode: difference; transition: transform 0.1s;
-  }
-  #cursor-ring {
-    position: fixed; top: 0; left: 0; width: 44px; height: 44px;
-    border: 1px solid rgba(255,255,255,0.4); border-radius: 50%; 
-    pointer-events: none; z-index: 9999;
-    transition: transform 0.15s cubic-bezier(0.16,1,0.3,1), width 0.3s, height 0.3s, border 0.3s;
-    transform: translate(-50%, -50%);
-  }
-  #cursor-ring.active { width: 80px; height: 80px; border-color: rgba(59,91,219,0.8); background: rgba(59,91,219,0.05); }
-
-  /* FLOATING GLOWS */
-  .glow-bg {
-    position: fixed; inset: 0; pointer-events: none; z-index: -1;
-    filter: blur(120px); opacity: 0.45;
-  }
-  .glow-1 { position: absolute; width: 40vw; height: 40vw; background: radial-gradient(circle, #3b5bdb, transparent 70%); top: -10%; left: -10%; animation: float-glow 20s infinite alternate; }
-  .glow-2 { position: absolute; width: 30vw; height: 30vw; background: radial-gradient(circle, #f97316, transparent 70%); bottom: -5%; right: -5%; animation: float-glow 25s infinite alternate-reverse; }
-  @keyframes float-glow { 0% { transform: translate(0,0); } 100% { transform: translate(15vw, 10vh); } }
-
-  /* CUSTOM CURSOR & RIPPLE */
-  #cursor-ring {
-    position: fixed; top: 0; left: 0; width: 44px; height: 44px;
-    border: 1px solid rgba(255,255,255,0.4); border-radius: 50%; 
-    pointer-events: none; z-index: 9999;
-    transition: transform 0.15s cubic-bezier(0.16,1,0.3,1), width 0.3s, height 0.3s, border 0.3s;
-    transform: translate(-50%, -50%);
-  }
-  #cursor-ring.active { width: 80px; height: 80px; border-color: rgba(59,91,219,0.8); background: rgba(59,91,219,0.05); }
-
-  .hero-helmet-bg img { 
-    width: 100%; height: 100%; object-fit: cover; object-position: center right; 
-    transition: transform 0.1s linear;
-  }
-
-  /* TEXT SPLIT REVEAL */
-  .h-line { overflow: hidden; display: block; }
-  .h-word { display: inline-block; opacity: 0; transform: translateY(100px); }
-
-  /* LOADING SCREEN */
-  #loader-ovl {
-    position: fixed; inset: 0; background: #000; z-index: 9999;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), visibility 0.8s;
-  }
-  #loader-ovl.hidden { opacity: 0; visibility: hidden; }
-  .loader-logo { font-family: 'Bebas Neue', sans-serif; font-size: 5rem; letter-spacing: 0.1em; color: #fff; position: relative; overflow: hidden; }
-  .loader-logo::after {
-    content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(59,91,219,0.4), transparent);
-    animation: loader-sweep 2s infinite;
-  }
-  @keyframes loader-sweep { 0% { left: -100%; } 100% { left: 100%; } }
-  .loader-bar { width: 200px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 20px; border-radius: 10px; position: relative; overflow: hidden; }
-  .loader-progress { position: absolute; height: 100%; width: 0%; background: #3b5bdb; transition: width 0.4s ease; }
-
-  /* NAV */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-    padding: 22px 52px;
-    display: flex; align-items: center; justify-content: space-between;
-    transition: all 0.5s cubic-bezier(0.16,1,0.3,1);
-  }
-  nav.scrolled {
-    padding: 14px 52px;
-    background: rgba(10,10,10,0.85);
-    backdrop-filter: blur(24px);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; letter-spacing: 0.05em; color: #fff; line-height:1; }
-  .nav-links { display: flex; gap: 36px; align-items: center; list-style: none; }
-  .nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; }
-  .nav-links a:hover { color: #fff; }
-  .nav-links a.blue { color: #3b5bdb; }
-  .nav-btn { background: transparent; border: 1.5px solid rgba(255,255,255,0.25); border-radius: 8px; padding: 8px 22px; color: #fff !important; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-  .nav-btn:hover { border-color: #3b5bdb; color: #3b5bdb !important; }
-
-  /* HERO */
-  .hero {
-    position: relative; min-height: 100vh;
-    display: flex; align-items: flex-end;
-    overflow: hidden; background: transparent; z-index: 1;
-  }
-  .hero::after {
-    content:''; position: absolute; inset:0;
-    background: radial-gradient(circle at 10% 90%, rgba(59,91,219,0.1), transparent 40%);
-    pointer-events: none;
-  }
-
-  /* big helmet background */
-  .hero-helmet-bg {
-    position: fixed; left: 0; top: 0;
-    width: 100vw; height: 100vh;
-    display: flex; align-items: center; justify-content: center;
-    pointer-events: none; z-index: 0; opacity: 0.8;
-  }
-
-  .hero-helmet-bg img { 
-    width: 100%; height: 100%; object-fit: cover; object-position: center right; 
-    transition: transform 0.1s linear;
-  }
-
-  .hero-text {
-    position: absolute; z-index: 1;
-    bottom: 20px; left: 60px;
-  }
-
-  .hero-h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(4rem, 9vw, 8rem);
-    font-weight: 400;
-    line-height: 0.9; letter-spacing: 0.05em;
-    color: #fff;
-    text-shadow: 0 10px 40px rgba(0,0,0,0.6);
-    margin-top: 32px;
-    z-index: 1;
-  }
-  .hero-h1 em {
-    font-style: normal;
-    color: transparent;
-    -webkit-text-stroke: 1.5px rgba(255,255,255,0.5);
-    background: linear-gradient(135deg, #3b5bdb, #f97316);
-    -webkit-background-clip: text;
-  }
-
-  .trusted-strip {
-    position: absolute; z-index: 3;
-    bottom: 50px; left: 50%;
-    transform: translateX(-50%);
-    display: flex; flex-direction: column; align-items: center;
-  }
-  .trusted-strip p { font-family:'Inter',sans-serif; color: #fff; font-size: 2rem; font-weight: 500; margin-bottom: 24px; text-shadow: 0 2px 10px #000; letter-spacing: -0.01em;}
-  
-  .college-carousel { 
-    position: relative; width: 100vw; overflow: hidden;
-    padding: 40px 0; margin-top: 20px;
-    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-  }
-  .college-track {
-    display: flex; gap: 40px; width: max-content;
-    animation: scroll-track 40s linear infinite;
-  }
-  @keyframes scroll-track {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-  
-  .college-card {
-    background: #fff; border-radius: 14px; width: 280px; height: 160px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    color: #000; padding: 16px; gap: 10px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .college-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,0,0,0.9); }
-  .college-logo {
-    width: 80px; height: 80px; object-fit: contain; flex-shrink: 0;
-  }
-  .college-card span { font-weight: 800; font-size: 0.95rem; color: #111; text-align: center; }
-
-  .arr { width: 44px; height: 44px; border-radius: 50%; border: none; background: transparent; color: #fff; cursor: pointer; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
-  .arr:hover { color: #f97316; transform: scale(1.15); }
-
-  /* ACHIEVE (PEACHWEB HOVER THEME) */
-  .achieve { position: relative; z-index: 1; background: rgba(5,5,5,0.65); backdrop-filter: blur(28px); padding: 120px 60px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); }
-  .achieve h2 { 
-    font-family: 'Inter', sans-serif; font-size: clamp(2rem,4vw,3.2rem); font-weight: 800; margin-bottom: 72px; 
-    letter-spacing: -0.04em; 
-  }
-  .cards-row { 
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
-    gap: 32px; max-width: 1300px; margin: 0 auto; 
-    align-items: stretch; 
-  }
-
-  .acard {
-    background: rgba(255,255,255,0.02); 
-    backdrop-filter: blur(24px);
-    border: 1px solid rgba(255,255,255,0.06); 
-    border-radius: 32px;
-    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-    padding: 48px 32px;
-    transition: transform 0.6s cubic-bezier(0.16,1,0.3,1), border-color 0.6s ease, box-shadow 0.6s ease;
-    cursor: pointer; position: relative; overflow: hidden;
-    min-height: 400px;
-  }
-  .acard:hover { 
-    transform: translateY(-12px) scale(1.03); 
-    border-color: rgba(59,91,219,0.3);
-    box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 40px rgba(59,91,219,0.15);
-  }
-  .video-hover-bg {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle at center, rgba(59,91,219,0.2) 0%, transparent 70%);
-    opacity: 0; transform: scale(0.8);
-    transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1);
-    pointer-events: none; z-index: 0;
-  }
-  .acard:hover .video-hover-bg {
-    opacity: 1; transform: scale(1.2);
-  }
-  .acard-text, .acard-icon { position: relative; z-index: 2; }
-
-  .acard-icon { 
-    width: 84px; height: 84px; margin-bottom: 32px; 
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(255,255,255,0.04); border-radius: 24px;
-    transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
-  }
-  .acard:hover .acard-icon { transform: scale(1.15) rotate(4deg); }
-  .acard-icon svg { width: 44px; height: 44px; }
-
-  .acard h3 { 
-    font-size: 1.6rem; font-weight: 800; color: #fff; 
-    margin-bottom: 16px; letter-spacing: -0.02em; 
-  }
-  .acard p { 
-    font-size: 0.95rem; color: rgba(255,255,255,0.6); 
-    font-weight: 500; line-height: 1.6;
-  }
-
-  .acard.c1 .acard-icon svg { stroke: #f97316; }
-  .acard.c2 .acard-icon svg { stroke: #3b5bdb; }
-  .acard.c3 .acard-icon svg { stroke: #10b981; }
-  .acard.c4 .acard-icon svg { stroke: #8b5cf6; }
-  .acard.c5 .acard-icon svg { stroke: #fbbf24; }
-
-  /* GET STARTED */
-  .getstarted { position: relative; z-index: 1; background: rgba(5,5,5,0.65); backdrop-filter: blur(28px); padding: 0 60px 120px; border-top: 1px solid rgba(255,255,255,0.05); }
-  .step { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; max-width: 920px; margin: 0 auto 52px; align-items: center; }
-  .step.flip { direction: rtl; }
-  .step.flip > * { direction: ltr; }
-  .step-t h2 { font-size: clamp(2.2rem,4.5vw,3.2rem); font-weight: 900; color: #fff; line-height: 1.05; margin-bottom: 18px; letter-spacing: -0.02em; }
-  .step-t p { font-size: 1rem; color: rgba(255,255,255,0.65); line-height: 1.65; }
-  .step-v {
-    background: rgba(20,20,20,0.6); backdrop-filter: blur(24px);
-    border: 1px solid rgba(255,255,255,0.1); border-radius: 32px;
-    min-height: 260px; display: flex; align-items: center; justify-content: center;
-    position: relative; overflow: hidden;
-    box-shadow: inset 0 0 40px rgba(255,255,255,0.02), 0 20px 40px rgba(0,0,0,0.5);
-    transition: transform 0.6s cubic-bezier(0.16,1,0.3,1), border-color 0.6s ease, box-shadow 0.6s ease;
-  }
-  .step-v:hover { 
-    transform: translateY(-10px) scale(1.02); 
-    border-color: rgba(59,91,219,0.4); 
-    box-shadow: 0 40px 80px rgba(0,0,0,0.7), 0 0 30px rgba(59,91,219,0.15);
-  }
-  .step-v-inner { text-align: center; position: relative; z-index: 1; }
-  .step-v-inner .ico { font-size: 5rem; display: block; }
-  .step-v-inner .lbl { font-size: 0.9rem; font-weight: 700; color: rgba(255,255,255,0.75); margin-top: 10px; display: block; }
-
-  /* HOWTO GRID */
-  .howto { position: relative; z-index: 1; background: rgba(5,5,5,0.65); backdrop-filter: blur(28px); padding: 0 60px 120px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); }
-  .howto h2 { font-size: clamp(1.6rem,3.2vw,2.4rem); font-weight: 800; margin-bottom: 44px; }
-  .h4grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
-    max-width: 800px; margin: 0 auto;
-  }
-  .hcard {
-    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-    min-height: 280px; transition: transform 0.6s cubic-bezier(0.16,1,0.3,1), box-shadow 0.6s ease, border-color 0.6s ease;
-    overflow: hidden; position: relative; border-radius: 32px;
-    border: 1px solid rgba(255,255,255,0.08);
-    background: rgba(15,15,15,0.8); backdrop-filter: blur(20px);
-  }
-  .hcard:hover { 
-    transform: translateY(-10px) scale(1.02); 
-    box-shadow: 0 40px 80px rgba(0,0,0,0.8); z-index: 1; 
-    border-color: rgba(255,255,255,0.3); 
-  }
-  .hcard-img { width: 100%; flex: 1; object-fit: contain; object-position: center; display: block; padding: 20px; }
-  .hcard-svg { width: 100%; flex: 1; display: flex; align-items: center; justify-content: center; }
-  .hcard-label {
-    width: 100%; padding: 20px 24px;
-    font-size: 1.3rem; font-weight: 800; letter-spacing: -0.02em;
-    text-align: left; color: #fff; background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.05);
-  }
-
-  /* COMMUNITY */
-  .community { position: relative; z-index: 1; background: rgba(5,5,5,0.65); backdrop-filter: blur(28px); padding: 80px 60px 110px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); }
-  .community h2 { font-size: clamp(1.6rem,3.5vw,2.5rem); font-weight: 700; margin-bottom: 56px; }
-  .comm-fig { max-width: 700px; margin: 0 auto; }
-  .comm-btns { margin-top: 48px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-  .btn-blue { 
-    background: linear-gradient(135deg, #3b5bdb, #2f4ec4); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; 
-    padding: 16px 36px; font-size: 1rem; font-weight: 700; cursor: pointer; 
-    font-family: 'Inter',sans-serif; transition: all 0.4s cubic-bezier(0.16,1,0.3,1); 
-    position: relative; overflow: hidden;
-  }
-  .btn-blue::after {
-    content:''; position: absolute; inset: 0; background: linear-gradient(rgba(255,255,255,0.2), transparent);
-    opacity: 0; transition: opacity 0.3s;
-  }
-  .btn-blue:hover { 
-    background: linear-gradient(135deg, #4b6bfb, #3b5bdb); transform: translateY(-4px); 
-    box-shadow: 0 15px 45px rgba(59,91,219,0.4); 
-  }
-  .btn-blue:hover::after { opacity: 1; }
-  .btn-out { 
-    background: transparent; border: 1.5px solid rgba(255,255,255,0.2); 
-    border-radius: 12px; padding: 16px 32px; color: rgba(255,255,255,0.7); 
-    font-family: 'Inter',sans-serif; font-size: 1rem; font-weight: 600; 
-    cursor: pointer; transition: all 0.3s; 
-  }
-  .btn-out:hover { border-color: #f97316; color: #f97316; transform: translateY(-2px); }
-  
-  .mag-btn { transition: transform 0.2s cubic-bezier(0.16,1,0.3,1); }
-
-  /* JOIN FORM */
-  .join { position: relative; z-index: 1; background: rgba(5,5,5,0.65); backdrop-filter: blur(28px); border-top: 1px solid rgba(255,255,255,0.07); padding: 100px 60px; }
-  .join-wrap { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
-  .jleft h2 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem,5vw,4.5rem); line-height: 0.95; letter-spacing: 0.04em; margin-bottom: 20px; }
-  .jleft h2 em { font-style: normal; color: #f97316; }
-  .jleft p { color: rgba(255,255,255,0.5); font-size: 0.98rem; line-height: 1.7; margin-bottom: 36px; }
-  .plist { display: flex; flex-direction: column; gap: 16px; }
-  .prow { display: flex; gap: 14px; align-items: center; }
-  .pdot { width: 34px; height: 34px; border-radius: 9px; background: #1a1ab5; border: 1px solid #3b5bdb; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0; }
-  .prow span { color: rgba(255,255,255,0.65); font-size: 0.9rem; }
-
-  .jform { background: rgba(20,20,20,0.7); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.1); border-radius: 22px; padding: 38px 34px; box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
-  .jform h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 28px; letter-spacing: -0.01em; }
-  .fg { margin-bottom: 16px; }
-  .fg label { display: block; font-size: 0.72rem; font-weight: 700; color: rgba(255,255,255,0.5); letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 7px; }
-  .fg input, .fg select, .fg textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 9px; padding: 12px 15px; color: #fff; font-family: 'Inter',sans-serif; font-size: 0.88rem; outline: none; transition: all 0.2s; }
-  .fg input::placeholder, .fg textarea::placeholder { color: rgba(255,255,255,0.2); }
-  .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: #3b5bdb; box-shadow: 0 0 0 3px rgba(59,91,219,0.2); }
-  .fg select option { background: #181818; }
-  .frow2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .fsub { width: 100%; background: #3b5bdb; color: #fff; border: none; border-radius: 9px; padding: 14px; font-size: 0.93rem; font-weight: 700; cursor: pointer; font-family: 'Inter',sans-serif; margin-top: 6px; transition: all 0.3s; letter-spacing: 0.02em; }
-  .fsub:hover { background: #2f4ec4; transform: translateY(-2px); box-shadow: 0 12px 36px rgba(59,91,219,0.5); }
-
-  /* FOOTER */
-  footer { background: #000; border-top: 1px solid rgba(255,255,255,0.07); padding: 44px 60px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
-  .flogo { font-family: 'Bebas Neue', sans-serif; font-size: 1.9rem; letter-spacing: 0.05em; }
-  .flinks { display: flex; gap: 24px; flex-wrap: wrap; }
-  .flinks a { color: rgba(255,255,255,0.35); text-decoration: none; font-size: 0.83rem; transition: color 0.2s; }
-  .flinks a:hover { color: #fff; }
-  .femail a { color: #3b5bdb; text-decoration: none; font-size: 0.83rem; font-weight: 600; }
-  .fcopy { color: rgba(255,255,255,0.2); font-size: 0.75rem; }
-
-  /* MODALS */
-  .ovl { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-  .ovl.open { opacity: 1; pointer-events: all; }
-  .modal { background: #111; border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 42px 38px; width: 90%; max-width: 420px; transform: translateY(20px); transition: transform 0.3s; position: relative; }
-  .ovl.open .modal { transform: translateY(0); }
-  .mx { position: absolute; top: 14px; right: 14px; background: rgba(255,255,255,0.06); border: none; color: rgba(255,255,255,0.4); width: 30px; height: 30px; border-radius: 7px; cursor: pointer; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-  .mx:hover { background: rgba(255,255,255,0.1); color: #fff; }
-  .modal h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 4px; }
-  .modal .ms { color: rgba(255,255,255,0.4); font-size: 0.85rem; margin-bottom: 26px; }
-
-  /* TOAST */
-  #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: #161616; border: 1px solid rgba(59,91,219,0.4); border-radius: 100px; padding: 13px 26px; color: #fff; font-size: 0.86rem; font-weight: 500; z-index: 9999; transition: all 0.4s cubic-bezier(0.16,1,0.3,1); white-space: nowrap; box-shadow: 0 16px 48px rgba(0,0,0,0.5); opacity: 0; }
-
-  /* ANIMATIONS */
-  @keyframes glow { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
-  @keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
-  .reveal, .reveal-left, .reveal-right { opacity: 0; }
-
-  /* HAMBURGER BUTTON */
-  .ham {
-    display: none; flex-direction: column; justify-content: center; align-items: center;
-    gap: 5px; width: 40px; height: 40px; background: transparent; border: none;
-    cursor: pointer; z-index: 1100;
-  }
-  .ham span {
-    display: block; width: 22px; height: 2px; background: #fff;
-    border-radius: 2px; transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
-    transform-origin: center;
-  }
-  .ham.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-  .ham.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
-  .ham.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-  /* MOBILE DRAWER */
-  .mobile-drawer {
-    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.97); z-index: 1050;
-    flex-direction: column; align-items: center; justify-content: center;
-    gap: 36px; opacity: 0; transform: translateY(-10px);
-    transition: opacity 0.3s, transform 0.3s;
-    pointer-events: none;
-  }
-  .mobile-drawer.open { opacity: 1; transform: translateY(0); pointer-events: all; }
-  .mobile-drawer a {
-    color: rgba(255,255,255,0.85); text-decoration: none; font-size: 1.6rem;
-    font-weight: 700; letter-spacing: -0.01em; transition: color 0.2s;
-  }
-  .mobile-drawer a:hover { color: #f97316; }
-
-  @media(max-width:768px){
-    nav { padding: 14px 18px; }
-    .logo { font-size: 2.2rem; }
-    .nav-links { display: none; }
-    .ham { display: flex; }
-
-    /* HERO */
-    .hero { min-height: 100svh; align-items: center; justify-content: flex-start; flex-direction: column; text-align: center; }
-    .hero-helmet-bg { width: 100%; height: 50%; top: auto; bottom: 0; opacity: 0.35; }
-    .hero-text {
-      position: relative; z-index: 2;
-      padding: 100px 20px 20px;
-      width: 100%;
-      display: flex; flex-direction: column; align-items: center;
-    }
-    .hero-h1 { font-size: clamp(2.8rem, 12vw, 4.5rem); margin-bottom: 10px; }
-    .trusted-strip {
-      position: relative; bottom: auto; left: auto;
-      transform: none;
-      width: 100%; padding: 20px 16px 40px;
-      z-index: 3;
-    }
-    .trusted-strip p { font-size: 1rem; margin-bottom: 12px; text-align:center; }
-    .college-carousel { gap: 10px; margin-top: 10px; }
-    .college-card { width: 200px; height: 120px; }
-
-    /* ACHIEVE */
-    .achieve { padding: 80px 16px; }
-    .achieve h2 { padding: 0 20px; font-size: 2.2rem; margin-bottom: 50px; }
-    .cards-row {
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
-    .acard { 
-      min-height: auto; 
-      padding: 32px 24px; border-radius: 24px;
-    }
-    .acard-icon { width: 64px; height: 64px; margin-bottom: 24px; border-radius: 18px; }
-    .acard-icon svg { width: 34px; height: 34px; }
-    .acard h3 { font-size: 1.4rem; }
-    .acard p { font-size: 0.9rem; }
-
-    /* GET STARTED */
-    .getstarted { padding: 60px 16px; }
-    .step { grid-template-columns: 1fr; gap: 24px; }
-    .step.flip { direction: ltr; }
-    .step-t h2 { font-size: clamp(1.8rem,7vw,2.5rem); }
-    .step-v { min-height: 180px; }
-
-    /* HOWTO */
-    .howto { padding: 60px 16px; }
-    .h4grid { grid-template-columns: 1fr; max-width: 100%; gap: 8px; }
-    .hcard { min-height: 200px; }
-
-    /* COMMUNITY */
-    .community { padding: 60px 16px; }
-    .community h2 { margin-bottom: 32px; font-size: 1.8rem; }
-    .comm-btns { flex-direction: column; align-items: stretch; padding: 0 20px; }
-
-    /* JOIN */
-    .join { padding: 60px 16px; }
-    .join-wrap { grid-template-columns: 1fr; gap: 40px; }
-    .jleft h2 { font-size: clamp(2.4rem,9vw,3.5rem); }
-    .frow2 { grid-template-columns: 1fr; }
-    .jform { padding: 28px 20px; }
-
-    /* FOOTER */
-    footer { flex-direction: column; align-items: center; text-align: center; padding: 32px 16px; gap: 20px; }
-    .flinks { justify-content: center; }
-    .mobile-drawer { display: flex; }
-  }
-</style>
-</head>
-<body class="loading">
-
-<!-- ULTIMATE INTERACTIVITY LAYER -->
-<div id="cursor"></div>
-<div id="cursor-ring"></div>
-<div class="glow-bg">
-  <div class="glow-1"></div>
-  <div class="glow-2"></div>
-</div>
-
-<!-- LOADING SCREEN -->
-<div id="loader-ovl">
-  <div class="loader-logo">GIGNI</div>
-  <div class="loader-bar"><div class="loader-progress" id="loader-bar"></div></div>
-</div>
-
-<!-- NAV -->
-<nav id="nav">
-  <div class="logo">GIGNI</div>
-  <ul class="nav-links">
-    <li><a href="about.html" class="mag-btn">About</a></li>
-    <li><a href="hosting.html" class="mag-btn">Hosting</a></li>
-    <li><a href="#join-sec" class="mag-btn">Sign Up</a></li>
-    <li><a href="#" class="mag-btn" onclick="openOvl('signin');return false;">Log In</a></li>
-  </ul>
-  <button class="ham" id="ham-btn" onclick="toggleDrawer()" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
-</nav>
-
-<!-- MOBILE DRAWER -->
-<div class="mobile-drawer" id="mobile-drawer">
-  <a href="about.html" onclick="closeDrawer()">About</a>
-  <a href="hosting.html" onclick="closeDrawer()">Hosting</a>
-  <a href="#join-sec" onclick="closeDrawer()">Sign Up</a>
-  <a href="#" onclick="closeDrawer();openOvl('signin');return false;">Log In</a>
-</div>
-
-<!-- ══════════ HERO ══════════ -->
-<section class="hero" id="home">
-  <!-- Helmet background -->
-  <div class="hero-helmet-bg" style="position:fixed; top:0; left:0; width:100%; height:100%; opacity:0.85; z-index:0; pointer-events:none;">
-    <div id="hero-gl" style="width:100%; height:100%;"></div>
-  </div>
-
-  <div class="hero-text">
-    <h1 class="hero-h1 reveal">
-      <span class="h-line"><span class="h-word d-1">BUILD YOUR</span></span>
-      <span class="h-line"><span class="h-word d-2">FUTURE WITH</span></span>
-      <span class="h-line"><span class="h-word d-3"><em>INTERNSHIPS</em></span></span>
-    </h1>
-  </div>
-  <div class="trusted-strip">
-    <p class="reveal">Trusted By Students from!</p>
-    <div class="college-carousel reveal" style="transition-delay: 0.2s">
-      <div class="college-track">
-        <div class="college-card"><img class="college-logo" src="college-iitb.png" alt="IIT Bombay"><span>IIT Bombay</span></div>
-        <div class="college-card"><img class="college-logo" src="college-nits.png" alt="NIT Surat"><span>NIT Surat</span></div>
-        <div class="college-card"><img class="college-logo" src="college-nitk.png" alt="NIT Surathkal"><span>NIT Surathkal</span></div>
-        <div class="college-card"><img class="college-logo" src="college-iitk.png" alt="IIT Kanpur"><span>IIT Kanpur</span></div>
-        <!-- Duplicate for seamless loop -->
-        <div class="college-card"><img class="college-logo" src="college-iitb.png" alt="IIT Bombay"><span>IIT Bombay</span></div>
-        <div class="college-card"><img class="college-logo" src="college-nits.png" alt="NIT Surat"><span>NIT Surat</span></div>
-        <div class="college-card"><img class="college-logo" src="college-nitk.png" alt="NIT Surathkal"><span>NIT Surathkal</span></div>
-        <div class="college-card"><img class="college-logo" src="college-iitk.png" alt="IIT Kanpur"><span>IIT Kanpur</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ ACHIEVE ══════════ -->
-<section class="achieve" id="achieve">
-  <h2 class="reveal">What you will achieve through Gigni</h2>
-  <div class="cards-row reveal">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIGNI | Real Internships. Real Growth.</title>
     
-    <!-- Event -->
-    <div class="acard c1">
-      <div class="video-hover-bg"></div>
-      <div class="acard-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M10 13l2 2 4-4"/></svg>
-      </div>
-      <div class="acard-text">
-        <h3>Event</h3>
-        <p>Knowledge to Success</p>
-      </div>
-    </div>
-
-    <!-- Mentorship -->
-    <div class="acard c2">
-      <div class="video-hover-bg" style="background: radial-gradient(circle at center, rgba(59,91,219,0.2) 0%, transparent 60%);"></div>
-      <div class="acard-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      </div>
-      <div class="acard-text">
-        <h3>Mentorship</h3>
-        <p>By Gigni Team</p>
-      </div>
-    </div>
-
-    <!-- Internship -->
-    <div class="acard c3">
-      <div class="video-hover-bg" style="background: radial-gradient(circle at center, rgba(16,185,129,0.2) 0%, transparent 60%);"></div>
-      <div class="acard-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-      </div>
-      <div class="acard-text">
-        <h3>Internship</h3>
-        <p>Real World Project</p>
-      </div>
-    </div>
-
-    <!-- Competitions -->
-    <div class="acard c4">
-      <div class="video-hover-bg" style="background: radial-gradient(circle at center, rgba(139,92,246,0.2) 0%, transparent 60%);"></div>
-      <div class="acard-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 8 4 4-4 4"/><path d="M2 12h20"/><path d="m6 8-4 4 4 4"/></svg>
-      </div>
-      <div class="acard-text">
-        <h3>Competitions</h3>
-        <p>Hackathons For All</p>
-      </div>
-    </div>
-
-    <!-- Paid Internship -->
-    <div class="acard c5">
-      <div class="video-hover-bg" style="background: radial-gradient(circle at center, rgba(251,191,36,0.2) 0%, transparent 60%);"></div>
-      <div class="acard-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-      </div>
-      <div class="acard-text">
-        <h3>Paid Internship</h3>
-        <p>Get Paid Internships</p>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<!-- ══════════ GET STARTED ══════════ -->
-<section class="getstarted" id="about">
-
-  <div class="step reveal reveal-left">
-    <div class="step-t">
-      <h2>Get Started:</h2>
-      <p>Register or Sign Up to create your Gigni account. Fill out your profile and become eligible to receive real, verified internship opportunities.</p>
-    </div>
-    <div class="step-v" onclick="document.getElementById('join-sec').scrollIntoView({behavior:'smooth'})" style="cursor:pointer;" title="Go to Sign Up">
-      <div class="step-v-inner">
-        <svg width="190" height="130" viewBox="0 0 190 130" fill="none">
-          <rect x="18" y="22" width="154" height="82" rx="18" fill="#3b5bdb" opacity="0.9"/>
-          <text x="95" y="60" text-anchor="middle" font-family="Inter" font-weight="900" font-size="26" fill="#fbbf24">JOIN</text>
-          <rect x="28" y="72" width="134" height="22" rx="11" fill="#2a4bc7"/>
-          <text x="95" y="88" text-anchor="middle" font-family="Inter" font-weight="900" font-size="16" fill="#fbbf24">NOW</text>
-          <text x="20" y="22" font-size="16">⭐</text>
-          <text x="155" y="24" font-size="14">💫</text>
-          <text x="8" y="110" font-size="13">✨</text>
-          <text x="168" y="115" font-size="14">🌟</text>
-        </svg>
-      </div>
-    </div>
-  </div>
-
-  <div class="step flip reveal" style="transition-delay:0.1s">
-    <div class="step-v" onclick="window.location.href='mailto:gigniconnect@gmail.com'" style="cursor:pointer;" title="Email Us">
-      <div class="step-v-inner">
-        <span class="ico">📧</span>
-        <span class="lbl">Inbox → Opportunities</span>
-      </div>
-    </div>
-    <div class="step-t">
-      <h2>Get email or Apply:</h2>
-      <p>Related to Internships, Mentor sessions, Hackathons and events — everything lands in your inbox. No hunting, no stress.</p>
-    </div>
-  </div>
-
-  <div class="step reveal reveal-left" style="transition-delay:0.2s">
-    <div class="step-t">
-      <h2>Get Certificate:</h2>
-      <p>Free Internships, mentorship, Hackathons and Events come with verified certificates that carry real weight with employers.</p>
-    </div>
-    <div class="step-v">
-      <div class="step-v-inner">
-        <span class="ico">🎓</span>
-        <span class="lbl">Verified Certificate</span>
-      </div>
-    </div>
-  </div>
-
-</section>
-
-<!-- ══════════ HOW TO GET (4-GRID) ══════════ -->
-<section class="howto" id="howto">
-  <h2 class="reveal">How to get free Internship of Gigni ?</h2>
-  <div class="h4grid reveal">
-
-    <!-- Card 1: Receive Project -->
-    <div class="hcard">
-      <img class="hcard-img" src="card-receive.png" alt="Receive Project illustration">
-      <div class="hcard-label">Receive Project</div>
-    </div>
-
-    <!-- Card 2: Work on it -->
-    <div class="hcard">
-      <img class="hcard-img" src="card-work.png" alt="Work on it illustration">
-      <div class="hcard-label">Work on it</div>
-    </div>
-
-    <!-- Card 3: Get verified -->
-    <div class="hcard">
-      <div class="hcard-svg">
-        <svg viewBox="0 0 160 140" width="160" height="140" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <ellipse cx="80" cy="75" rx="52" ry="52" fill="rgba(255,255,255,0.05)"/>
-          <path d="M50 75 L70 96 L112 54" stroke="url(#vg)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-          <defs><linearGradient id="vg" x1="50" y1="54" x2="112" y2="96" gradientUnits="userSpaceOnUse"><stop stop-color="#3b5bdb"/><stop offset="1" stop-color="#10b981"/></linearGradient></defs>
-        </svg>
-      </div>
-      <div class="hcard-label">Get verified</div>
-    </div>
-
-    <!-- Card 4: Get Certificate -->
-    <div class="hcard">
-      <div class="hcard-svg">
-        <svg viewBox="0 0 160 140" width="160" height="140" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Robot body -->
-          <rect x="52" y="62" width="56" height="46" rx="12" fill="#fff" opacity="0.05"/>
-          <rect x="52" y="62" width="56" height="46" rx="12" fill="rgba(255,255,255,0.8)"/>
-          <!-- Robot head -->
-          <rect x="58" y="36" width="44" height="34" rx="10" fill="rgba(255,255,255,0.8)"/>
-          <!-- Eyes -->
-          <circle cx="72" cy="52" r="5" fill="#3b5bdb"/>
-          <circle cx="88" cy="52" r="5" fill="#3b5bdb"/>
-          <circle cx="72" cy="52" r="2.5" fill="#fff"/>
-          <circle cx="88" cy="52" r="2.5" fill="#fff"/>
-          <!-- Smile -->
-          <path d="M72 62 Q80 68 88 62" stroke="#3b5bdb" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-          <!-- Antenna -->
-          <line x1="80" y1="36" x2="80" y2="26" stroke="rgba(255,255,255,0.8)" stroke-width="3" stroke-linecap="round"/>
-          <circle cx="80" cy="22" r="5" fill="#f97316"/>
-          <!-- Stars -->
-          <text x="36" y="50" font-size="14" fill="#f97316">★</text>
-          <text x="110" y="46" font-size="18" fill="#f97316">★</text>
-          <text x="44" y="72" font-size="10" fill="#f97316">★</text>
-          <!-- Arms -->
-          <rect x="36" y="68" width="16" height="10" rx="5" fill="rgba(255,255,255,0.8)"/>
-          <rect x="108" y="68" width="16" height="10" rx="5" fill="rgba(255,255,255,0.8)"/>
-        </svg>
-      </div>
-      <div class="hcard-label">Get Certificate</div>
-    </div>
-
-  </div>
-</section>
-
-<!-- ══════════ COMMUNITY ══════════ -->
-<section class="community">
-  <h2 class="reveal">Become part of Gigni community</h2>
-  <div class="comm-fig reveal">
-    <img src="community.png" style="width:100%; max-width:800px; display:block; margin:0 auto; border-radius:12px;">
-    <div class="comm-btns">
-      <button class="btn-blue mag-btn" onclick="document.getElementById('join-sec').scrollIntoView({behavior:'smooth'})">Join the Community →</button>
-      <button class="btn-out mag-btn" onclick="document.getElementById('join-sec').scrollIntoView({behavior:'smooth'})">Build Profile</button>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ JOIN / PROFILE ══════════ -->
-<section class="join" id="join-sec">
-  <div class="join-wrap">
-    <div class="jleft reveal">
-      <h2>BUILD YOUR<br><em>PROFILE.</em><br>GET MATCHED.</h2>
-      <p>Create your free Gigni profile and start receiving verified internships, mentorship sessions, hackathon invites, and more — straight to your email.</p>
-      <div class="plist">
-        <div class="prow"><div class="pdot">💼</div><span>100% Verified Internships — manually vetted</span></div>
-        <div class="prow"><div class="pdot">🧠</div><span>1-on-1 Mentorship by industry professionals</span></div>
-        <div class="prow"><div class="pdot">⚡</div><span>Hackathons & Events access</span></div>
-        <div class="prow"><div class="pdot">🎓</div><span>Free verified certificates on completion</span></div>
-        <div class="prow"><div class="pdot">📬</div><span>gigniconnect@gmail.com</span></div>
-      </div>
-    </div>
-    <div class="jform reveal" style="transition-delay:0.15s" id="form-wrap">
-      <h3>Create Your Profile</h3>
-      <div id="form-body">
-        <div class="frow2">
-          <div class="fg"><label>First Name</label><input type="text" id="p_fname" placeholder="Aryan"></div>
-          <div class="fg"><label>Last Name</label><input type="text" id="p_lname" placeholder="Mehta"></div>
-        </div>
-        <div class="fg"><label>Email Address</label><input type="email" id="p_email" placeholder="aryan@college.edu"></div>
-        <div class="fg"><label>Password</label><input type="password" id="p_password" placeholder="Create a password"></div>
-        <div class="fg"><label>College / University</label><input type="text" id="p_college" placeholder="NIT Trichy"></div>
-        <div class="frow2">
-          <div class="fg">
-            <label>Year of Study</label>
-            <select id="p_year">
-              <option value="">Select</option>
-              <option>1st Year</option><option>2nd Year</option>
-              <option>3rd Year</option><option>4th Year</option>
-              <option>Postgraduate</option>
-            </select>
-          </div>
-          <div class="fg">
-            <label>Field</label>
-            <select id="p_field">
-              <option value="">Select</option>
-              <option>Computer Science</option>
-              <option>Engineering</option>
-              <option>Design / UX</option>
-              <option>Data Science / AI</option>
-              <option>Business / Management</option>
-              <option>Marketing</option>
-              <option>Other</option>
-            </select>
-          </div>
-        </div>
-        <div class="fg">
-          <label>Area of Interest</label>
-          <select id="p_interest">
-            <option value="">Select interest</option>
-            <option>Frontend Development</option>
-            <option>Backend Development</option>
-            <option>Full Stack Development</option>
-            <option>Data Science / ML</option>
-            <option>Product Management</option>
-            <option>UI/UX Design</option>
-            <option>Digital Marketing</option>
-            <option>Content Creation</option>
-            <option>Business Development</option>
-          </select>
-        </div>
-        <div class="fg">
-          <label>Brief Introduction (optional)</label>
-          <textarea id="p_intro" rows="3" placeholder="Your goals, skills, or what makes you stand out..."></textarea>
-        </div>
-        <button class="fsub" onclick="submitForm()">Create Profile & Get Matched →</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="flogo">GIGNI</div>
-  <div class="flinks">
-    <a href="#about">About</a>
-    <a href="#achieve">Features</a>
-    <a href="#join-sec">Join</a>
-    <a href="#howto">How it Works</a>
-    <a href="about.html">Privacy</a>
-    <a href="about.html">Terms</a>
-  </div>
-  <div class="femail"><a href="mailto:gigniconnect@gmail.com">gigniconnect@gmail.com</a></div>
-  <div class="fcopy">© 2026 Gigni</div>
-</footer>
-
-<!-- SIGNIN MODAL -->
-<div class="ovl" id="signin-ovl" onclick="closeOvl(event,'signin')">
-  <div class="modal" onclick="event.stopPropagation()">
-    <button class="mx" onclick="closeOvl(null,'signin')">✕</button>
-    <h3>Welcome back</h3>
-    <p class="ms">Log in to your Gigni account.</p>
-    <div class="fg"><label>Email</label><input type="email" id="l_email" placeholder="you@college.edu"></div>
-    <div class="fg"><label>Password</label><input type="password" id="l_password" placeholder="••••••••"></div>
-    <button class="fsub" onclick="handleLogin()">Log In →</button>
-  </div>
-</div>
-
-<!-- TOAST -->
-<div id="toast"></div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
-<script>
-  // 3D AIRPLANE ANIMATION
-  const canvasContainer = document.getElementById('hero-gl');
-  if (canvasContainer) {
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    canvasContainer.appendChild(renderer.domElement);
-
-    // Add lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    scene.add(ambientLight);
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    dirLight.position.set(5, 10, 7);
-    scene.add(dirLight);
-
-    // Create Orange Brain with Blue Current
-    const brainGroup = new THREE.Group();
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    // Brain Particles
-    const particlesCount = 15000;
-    const posArray = new Float32Array(particlesCount * 3);
-    for(let i=0; i<particlesCount; i++) {
-       let theta = Math.random() * Math.PI * 2;
-       let phi = Math.acos((Math.random() * 2) - 1);
-       
-       let r = 2.0; 
-       let x = r * Math.sin(phi) * Math.cos(theta) * 0.85; // slight width adjust
-       let y = r * Math.sin(phi) * Math.sin(theta) * 0.75; // flatten height
-       let z = r * Math.cos(phi) * 1.0; 
-       
-       // Fissure
-       if (Math.abs(x) < 0.15) {
-           x = (x > 0 ? 0.15 : -0.15) + (Math.random() * 0.05);
-       }
-
-       // Folds noise approximation
-       let foldNoise = Math.sin(x*8)*Math.cos(y*8)*Math.sin(z*8) * 0.15;
-       let radiusFactor = 0.5 + 0.5*Math.pow(Math.random(), 0.6); 
-       
-       posArray[i*3] = (x + foldNoise) * radiusFactor;
-       posArray[i*3+1] = (y + foldNoise) * radiusFactor;
-       posArray[i*3+2] = (z + foldNoise) * radiusFactor;
-    }
-    const brainGeom = new THREE.BufferGeometry();
-    brainGeom.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-    const brainMat = new THREE.PointsMaterial({
-       size: 0.035, color: 0xf97316, transparent: true, opacity: 0.75, blending: THREE.AdditiveBlending
-    });
-    const brainPoints = new THREE.Points(brainGeom, brainMat);
-    brainGroup.add(brainPoints);
-
-    // Prepare arrays for burst effect
-    const basePosArray = new Float32Array(posArray);
-    const randomDirArray = new Float32Array(particlesCount * 3);
-    for(let i=0; i<particlesCount * 3; i++) {
-        randomDirArray[i] = (Math.random() - 0.5) * 2;
-    }
-
-    // Blue Current Rings
-    const currentPaths = new THREE.Group();
-    const currentMat = new THREE.LineBasicMaterial({ color: 0x3b5bdb, transparent: true, opacity: 0.6 });
-    for(let i = 0; i < 6; i++) {
-        const rad = 2.4 + Math.random() * 0.5;
-        const ringGeom = new THREE.TorusGeometry(rad, 0.01, 8, 64);
-        const ring = new THREE.LineSegments(new THREE.EdgesGeometry(ringGeom), currentMat);
-        ring.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, Math.random()*Math.PI);
-        ring.userData = {
-            rx: (Math.random() - 0.5) * 0.02,
-            ry: (Math.random() - 0.5) * 0.02,
-            rz: (Math.random() - 0.5) * 0.02
-        };
-        currentPaths.add(ring);
-    }
-    brainGroup.add(currentPaths);
-    
-    // Add blue floating electrons
-    const electronGeom = new THREE.BufferGeometry();
-    const electronPos = new Float32Array(50 * 3);
-    for(let i=0; i<150; i++) electronPos[i] = (Math.random() - 0.5) * 6;
-    electronGeom.setAttribute('position', new THREE.BufferAttribute(electronPos, 3));
-    const electronMat = new THREE.PointsMaterial({color: 0x3b5bdb, size: 0.1, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending});
-    const electrons = new THREE.Points(electronGeom, electronMat);
-    brainGroup.add(electrons);
-
-    // SWIMMING FISH ANIMATION (Peachweb motion)
-    const fishGroup = new THREE.Group();
-    const fishCount = 20;
-    const fishes = [];
-    const fishGeo = new THREE.ConeGeometry(0.05, 0.5, 4);
-    fishGeo.rotateX(Math.PI / 2); 
-    const fishMat = new THREE.MeshBasicMaterial({ color: 0x3b5bdb, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending });
-    for(let i=0; i<fishCount; i++) {
-      const fish = new THREE.Mesh(fishGeo, fishMat);
-      fish.userData = {
-        offset: Math.random() * Math.PI * 2,
-        speed: 0.3 + Math.random() * 0.4,
-        radius: 3.5 + Math.random() * 2.5,
-        yBase: (Math.random() - 0.5) * 6,
-        swaySpeed: 1 + Math.random()
-      };
-      fishGroup.add(fish);
-      fishes.push(fish);
-    }
-    brainGroup.add(fishGroup);
-
-    brainGroup.scale.set(0.9, 0.9, 0.9);
-    scene.add(brainGroup);
-
-    // Add some background floating stars
-    const starGeom = new THREE.BufferGeometry();
-    const starCount = 150;
-    const starPos = new Float32Array(starCount * 3);
-    for(let i=0; i<starCount * 3; i++) {
-        starPos[i] = (Math.random() - 0.5) * 40;
-    }
-    starGeom.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-    const starMat = new THREE.PointsMaterial({color: 0xffffff, size: 0.05, transparent: true, opacity: 0.4});
-    const stars = new THREE.Points(starGeom, starMat);
-    scene.add(stars);
-
-    camera.position.z = 8;
-    camera.position.y = 2;
-    camera.lookAt(0,0,0);
-
-    let mouseX = 0;
-    let mouseY = 0;
-    let targetX = 0;
-    let targetY = 0;
-    const windowHalfX = window.innerWidth / 2;
-    const windowHalfY = window.innerHeight / 2;
-
-    document.addEventListener('mousemove', (event) => {
-      mouseX = (event.clientX - windowHalfX);
-      mouseY = (event.clientY - windowHalfY);
-    });
-
-    const clock = new THREE.Clock();
-    
-    function render3D() {
-      requestAnimationFrame(render3D);
-      const time = clock.getElapsedTime();
-
-      targetX = mouseX * 0.002;
-      targetY = mouseY * 0.002;
-      
-      // Calculate Scroll Explosion Factor
-      let bustFactor = Math.max(0, window.scrollY - 300) / 600;
-      bustFactor = Math.min(1, bustFactor); // Constrain 0 to 1
-      
-      const power = bustFactor * 30; // Explosion force intensity
-      
-      const positions = brainGeom.attributes.position.array;
-      for(let i=0; i<particlesCount; i++) {
-         positions[i*3] = basePosArray[i*3] + randomDirArray[i*3] * power;
-         positions[i*3+1] = basePosArray[i*3+1] + randomDirArray[i*3+1] * power;
-         positions[i*3+2] = basePosArray[i*3+2] + randomDirArray[i*3+2] * power;
-      }
-      brainGeom.attributes.position.needsUpdate = true;
-      
-      brainMat.opacity = 0.75 * (1 - bustFactor); // Fade as it busts
-
-      // Scale up the entire group mimicking 3D traversal
-      brainGroup.scale.set(0.9 + bustFactor*2, 0.9 + bustFactor*2, 0.9 + bustFactor*2);
-      brainGroup.position.z = -bustFactor * 5;
-
-      // Floating animation relative to group
-      brainGroup.position.y = Math.sin(time * 2) * 0.15 - (bustFactor * 2);
-      
-      // Rotate slowly and track mouse smoothly
-      brainGroup.rotation.y += (targetX - brainGroup.rotation.y) * 0.05;
-      brainGroup.rotation.x += (targetY * 0.5 - brainGroup.rotation.x) * 0.05;
-      
-      // Core continuous slow rotation
-      brainPoints.rotation.y += 0.001;
-      
-      // Rotate currents and fade them
-      currentMat.opacity = 0.6 * (1 - bustFactor);
-      electronMat.opacity = 0.9 * (1 - bustFactor);
-      currentPaths.children.forEach(ring => {
-          ring.rotation.x += ring.userData.rx + (bustFactor * 0.05);
-          ring.rotation.y += ring.userData.ry + (bustFactor * 0.05);
-          ring.rotation.z += ring.userData.rz + (bustFactor * 0.05);
-      });
-      electrons.rotation.y -= 0.01 + (bustFactor * 0.04);
-      electrons.rotation.x += 0.005 + (bustFactor * 0.04);
-
-      // Swim Fishes
-      fishes.forEach((fish) => {
-        const t = time * fish.userData.speed + fish.userData.offset;
-        const x = Math.sin(t) * fish.userData.radius;
-        const z = Math.cos(t * 0.8) * fish.userData.radius;
-        const y = fish.userData.yBase + Math.sin(t * fish.userData.swaySpeed) * 0.8 - (bustFactor * 5);
-
-        const nextX = Math.sin(t + 0.05) * fish.userData.radius;
-        const nextZ = Math.cos((t + 0.05) * 0.8) * fish.userData.radius;
-        const nextY = fish.userData.yBase + Math.sin((t + 0.05) * fish.userData.swaySpeed) * 0.8 - (bustFactor * 5);
-        
-        fish.position.set(x, y, z);
-        fish.lookAt(nextX, nextY, nextZ);
-      });
-
-      stars.rotation.y += 0.001;
-
-      renderer.render(scene, camera);
-    }
-    render3D();
-
-    function resize3D() {
-      if (!canvasContainer) return;
-      camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
-    }
-    window.addEventListener('resize', resize3D);
-  }
-
-  // LENIS SMOOTH SCROLL
-  const lenis = new Lenis();
-  function raf(time) {
-    lenis.raf(time);
-    requestAnimationFrame(raf);
-  }
-  requestAnimationFrame(raf);
-
-  // CUSTOM CURSOR
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursor-ring');
-  let mouseX = 0, mouseY = 0;
-  let ringX = 0, ringY = 0;
-
-  window.addEventListener('mousemove', e => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    if(cursor) cursor.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
-  });
-
-  function animateRing() {
-    ringX += (mouseX - ringX) * 0.15;
-    ringY += (mouseY - ringY) * 0.15;
-    if(ring) ring.style.left = ringX + 'px';
-    if(ring) ring.style.top = ringY + 'px';
-    requestAnimationFrame(animateRing);
-  }
-  animateRing();
-
-  document.querySelectorAll('a, button, .acard, .fg input, .fg select, .fg textarea').forEach(el => {
-    el.addEventListener('mouseenter', () => ring.classList.add('active'));
-    el.addEventListener('mouseleave', () => ring.classList.remove('active'));
-  });
-
-  // LOADING SCREEN
-  window.addEventListener('load', () => {
-    const bar = document.getElementById('loader-bar');
-    if(bar) bar.style.width = '100%';
-    setTimeout(() => {
-      const loader = document.getElementById('loader-ovl');
-      if(loader) loader.classList.add('hidden');
-      document.body.classList.remove('loading');
-      
-      // Initialize animations AFTER loading screen is gone
-      initGSAPAnimations();
-    }, 800);
-  });
-
-  function initGSAPAnimations() {
-    gsap.registerPlugin(ScrollTrigger);
-
-    // PEACHWEB SLIDE PARALLAX EFFECT
-    gsap.utils.toArray('section:not(.hero)').forEach(sec => {
-      gsap.fromTo(sec, 
-        { y: 150 }, 
-        { 
-          y: 0, 
-          ease: "none",
-          scrollTrigger: {
-            trigger: sec,
-            start: "top bottom",
-            end: "top top",
-            scrub: 0.5
-          }
-        }
-      );
-    });
-
-    gsap.utils.toArray('.reveal').forEach(el => {
-      let xOff = 0;
-      if(el.classList.contains('reveal-left')) xOff = -40;
-      if(el.classList.contains('reveal-right')) xOff = 40;
-      
-      gsap.fromTo(el, 
-        { opacity: 0, y: xOff === 0 ? 40 : 0, x: xOff }, 
-        { 
-          opacity: 1, y: 0, x: 0, 
-          duration: 1.2, 
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: el,
-            start: "top 85%",
-            toggleActions: "play none none none"
-          }
-        }
-      );
-    });
-
-    // GSAP HERO ANIMATION
-    gsap.fromTo(".h-word", 
-      { y: 100, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1.2, stagger: 0.15, ease: "power4.out", delay: 0.2 }
-    );
-    
-    ScrollTrigger.refresh();
-  }
-
-  // HOWLER SOUND EFFECTS
-  const hoverSound = new Howl({
-    src: ['https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3'],
-    volume: 0.1
-  });
-  const clickSound = new Howl({
-    src: ['https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3'],
-    volume: 0.3
-  });
-
-  document.querySelectorAll('a, button, .acard, .hcard, .step-v').forEach(el => {
-    el.addEventListener('mouseenter', () => hoverSound.play());
-    el.addEventListener('click', () => clickSound.play());
-  });
-
-  const navEl = document.getElementById('nav');
-  const heroTarget = document.querySelector('.hero-helmet-bg img');
-  
-  window.addEventListener('scroll', () => {
-    // Nav Glass Effect
-    if (navEl) {
-      if (window.scrollY > 60) navEl.classList.add('scrolled');
-      else navEl.classList.remove('scrolled');
-    }
-
-    // Hero Parallax (Desktop Only)
-    if (window.innerWidth > 768 && heroTarget) {
-      const scrollPos = window.scrollY;
-      heroTarget.style.transform = `translateY(${scrollPos * 0.35}px)`;
-    }
-  });
-
-  // MAGNETIC BUTTONS
-  document.querySelectorAll('.mag-btn').forEach(btn => {
-    btn.addEventListener('mousemove', e => {
-      const rect = btn.getBoundingClientRect();
-      const x = e.clientX - rect.left - rect.width / 2;
-      const y = e.clientY - rect.top - rect.height / 2;
-      btn.style.transform = `translate(${x * 0.15}px, ${y * 0.3}px)`;
-    });
-    btn.addEventListener('mouseleave', () => {
-      btn.style.transform = '';
-    });
-  });
-
-  // CARD GLOW EFFECT
-  document.querySelectorAll('.acard').forEach(card => {
-    card.addEventListener('mousemove', e => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      card.style.setProperty('--x', `${x}px`);
-      card.style.setProperty('--y', `${y}px`);
-    });
-  });
-
-  // MODALS
-  function openOvl(id){ 
-    const target = document.getElementById(id+'-ovl');
-    if(target) target.classList.add('open'); 
-    document.body.style.overflow='hidden'; 
-  }
-  function closeOvl(e, id){ 
-    if(e && e.target!==e.currentTarget) return; 
-    const target = document.getElementById(id+'-ovl');
-    if(target) target.classList.remove('open'); 
-    document.body.style.overflow=''; 
-  }
-
-  // LOGIN / REGISTER
-  async function handleLogin() {
-    let email = document.getElementById('l_email')?.value || '';
-    let password = document.getElementById('l_password')?.value || '';
-    if (!email || !password) { showToast('Email and Password are required!'); return; }
-    try {
-        const res = await fetch('/api/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
-        });
-        const data = await res.json();
-        if (data.success) {
-            localStorage.setItem('gigni_user', JSON.stringify(data.user));
-            closeOvl(null, 'signin');
-            showToast('Logging in...');
-            setTimeout(() => { 
-                if (data.user.email === 'ankushka2089@gmail.com') {
-                    window.location.href = 'admin.html';
-                } else {
-                    window.location.href = 'dashboard.html'; 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brandBlue: '#3b5bdb',
+                        brandCyan: '#00D6FF',
+                        bgDark: '#050505',
+                    }
                 }
-            }, 1000);
-        } else { showToast(data.error || 'Invalid credentials'); }
-    } catch (e) { showToast('Error connecting to server.'); }
-  }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #050505;
+            color: white;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #444; }
 
-  async function submitForm(){
-    let fields = {
-      fname: document.getElementById('p_fname')?.value || '',
-      lname: document.getElementById('p_lname')?.value || '',
-      email: document.getElementById('p_email')?.value || '',
-      password: document.getElementById('p_password')?.value || '',
-      college: document.getElementById('p_college')?.value || '',
-      year: document.getElementById('p_year')?.value || '',
-      field: document.getElementById('p_field')?.value || '',
-      interest: document.getElementById('p_interest')?.value || '',
-      intro: document.getElementById('p_intro')?.value || ''
-    };
+        .gradient-text {
+            background: linear-gradient(180deg, #FFFFFF 50%, rgba(59, 91, 219, 0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .gradient-text-alt {
+            background: linear-gradient(180deg, #FFFFFF 50%, rgba(0, 214, 255, 0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+    </style>
+</head>
+<body class="selection:bg-brandBlue/50 selection:text-white">
 
-    if (!fields.email || !fields.password) { showToast('Email and Password are required!'); return; }
-    try {
-        const res = await fetch('/api/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(fields)
+    <!-- Navbar -->
+    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-700 bg-[#050505]/70 backdrop-blur-xl border-b border-white/5 opacity-0 -translate-y-full">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="text-white font-black tracking-widest text-xl uppercase">GIGNI</div>
+            <div class="hidden md:flex gap-8 text-sm font-medium text-white/60 tracking-wide">
+                <a href="about.html" class="hover:text-white transition-colors">About</a>
+                <a href="#projects" class="hover:text-white transition-colors">Projects</a>
+                <a href="#mentorship" class="hover:text-white transition-colors">Mentorship</a>
+                <a href="#certification" class="hover:text-white transition-colors">Certification</a>
+            </div>
+            <div>
+                <a href="dashboard.html" class="px-6 py-2 rounded-full border border-white/20 text-xs font-bold text-white hover:border-brandCyan/50 hover:shadow-[0_0_15px_rgba(0,214,255,0.2)] transition-all bg-gradient-to-r hover:from-brandBlue/20 hover:to-brandCyan/20 uppercase tracking-wider">Join Gigni</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Scrollytelling Container -->
+    <div id="scroll-container" class="relative w-full">
+        
+        <!-- Sticky Canvas Background -->
+        <div class="sticky top-0 w-full h-screen overflow-hidden z-0 bg-[#050505]">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_#0a0b16_0%,_#050505_70%)] opacity-90 pointer-events-none"></div>
+            <canvas id="hero-canvas" class="w-full h-full object-contain relative z-10"></canvas>
+        </div>
+
+        <!-- Scrolling Content Overlays -->
+        <div class="relative z-10 w-full -mt-[100vh]">
+            
+            <!-- Hero (0-15%) -->
+            <div class="h-[100vh] flex flex-col items-center justify-center pt-20">
+                <div class="gsap-text text-center px-4 w-full max-w-5xl">
+                    <h1 class="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-4 gradient-text drop-shadow-2xl uppercase">GIGNI</h1>
+                    <p class="text-2xl md:text-4xl font-medium text-white/90 mb-6 tracking-tight">Real Internships. Real Growth.</p>
+                    <p class="text-lg md:text-xl text-white/50 max-w-2xl mx-auto font-light">Elite opportunities vetted for you. Build your future with real-world projects and top-tier mentorship.</p>
+                </div>
+            </div>
+
+            <div class="h-[20vh]"></div>
+
+            <!-- Opportunities (15-40%) -->
+            <div id="projects" class="h-[120vh] flex flex-col items-start justify-center pl-[6%] md:pl-[12%] lg:pl-[15%]">
+                <div class="gsap-text max-w-lg px-4 relative">
+                    <div class="absolute -inset-10 bg-brandBlue/10 blur-[80px] rounded-full pointer-events-none z-0"></div>
+                    
+                    <div class="relative z-10">
+                        <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-tight gradient-text-alt">Precision-matched opportunities.</h2>
+                        <div class="space-y-5">
+                            <p class="text-lg md:text-xl text-white/60 font-light leading-relaxed">We filter out the noise. Receive curated projects and verified internships directly to your inbox.</p>
+                            <p class="text-lg md:text-xl text-white/60 font-light leading-relaxed">No more endless searching. Just real work that accelerates your career trajectory.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mentorship (40-65%) -->
+            <div id="mentorship" class="h-[130vh] flex flex-col items-end justify-center pr-[6%] md:pr-[12%] lg:pr-[15%] text-right">
+                <div class="gsap-text max-w-lg px-4 relative">
+                    <div class="absolute -inset-10 bg-brandCyan/10 blur-[80px] rounded-full pointer-events-none z-0"></div>
+                    
+                    <div class="relative z-10">
+                        <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-8 leading-tight gradient-text">Learn from the best.</h2>
+                        <ul class="text-lg md:text-xl text-white/60 space-y-5 font-light">
+                            <li class="flex items-center justify-end gap-4"><span class="w-2 h-2 rounded-full bg-brandBlue shadow-[0_0_10px_#3b5bdb]"></span>1-on-1 mentorship from industry professionals.</li>
+                            <li class="flex items-center justify-end gap-4"><span class="w-2 h-2 rounded-full bg-brandBlue shadow-[0_0_10px_#3b5bdb]"></span>Exclusive hackathons and technical events.</li>
+                            <li class="flex items-center justify-end gap-4"><span class="w-2 h-2 rounded-full bg-brandBlue shadow-[0_0_10px_#3b5bdb]"></span>Join a highly driven community of future builders.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certification (65-85%) -->
+            <div id="certification" class="h-[120vh] flex flex-col items-start justify-center pl-[6%] md:pl-[12%] lg:pl-[15%]">
+                <div class="gsap-text max-w-lg px-4 relative">
+                    <div class="absolute -inset-10 bg-brandBlue/10 blur-[80px] rounded-full pointer-events-none z-0"></div>
+                    
+                    <div class="relative z-10">
+                        <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-tight gradient-text-alt">Verified growth.</h2>
+                        <div class="space-y-5">
+                            <p class="text-lg md:text-xl text-white/60 font-light leading-relaxed">Complete real-world industry projects and earn verifiable, heavyweight certificates.</p>
+                            <p class="text-lg md:text-xl text-white/60 font-light leading-relaxed">Build a dynamic portfolio that actually stands out and holds weight with top employers.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA (85-100%) -->
+            <div class="h-[100vh] flex flex-col items-center justify-center">
+                <div class="gsap-text text-center px-4 w-full max-w-3xl" data-nofade="true">
+                    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#3b5bdb_0%,_transparent_60%)] opacity-20 blur-[100px] pointer-events-none z-0"></div>
+                    
+                    <div class="relative z-10">
+                        <h2 class="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter mb-6 gradient-text drop-shadow-2xl">Your career, accelerated.</h2>
+                        <p class="text-xl md:text-2xl text-white/80 mb-12 font-medium">Join thousands of students building their future with Gigni.</p>
+                        
+                        <div class="flex flex-col sm:flex-row items-center justify-center gap-8">
+                            <a href="dashboard.html" class="relative px-12 py-5 rounded-full bg-brandBlue border border-brandBlue text-white font-bold tracking-wide hover:bg-brandBlue/80 hover:shadow-[0_0_40px_rgba(59,91,219,0.5)] transition-all duration-300 overflow-hidden group uppercase">
+                                <span class="relative z-10">Create Free Profile</span>
+                            </a>
+                            <a href="about.html" class="text-brandCyan font-semibold hover:text-white transition-colors relative after:content-[''] after:absolute after:w-full after:h-[2px] after:bg-brandCyan/60 after:left-0 after:bottom-0 after:origin-right after:scale-x-0 hover:after:scale-x-100 hover:after:origin-left after:transition-transform after:duration-300 uppercase tracking-wider">Explore Platform</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-[#050505] border-t border-white/5 py-12 px-6 relative z-20">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="font-black text-2xl tracking-widest text-white/80">GIGNI</div>
+            <div class="flex gap-6 text-sm text-white/40">
+                <a href="#" class="hover:text-white transition-colors">Privacy</a>
+                <a href="#" class="hover:text-white transition-colors">Terms</a>
+                <a href="mailto:gigniconnect@gmail.com" class="hover:text-brandCyan transition-colors">gigniconnect@gmail.com</a>
+            </div>
+            <div class="text-sm text-white/30">© 2026 Gigni</div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script>
+        // Navbar fade
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if(window.scrollY > window.innerHeight * 0.2) {
+                nav.classList.remove('opacity-0', '-translate-y-full');
+                nav.classList.add('opacity-100', 'translate-y-0');
+            } else {
+                nav.classList.add('opacity-0', '-translate-y-full');
+                nav.classList.remove('opacity-100', 'translate-y-0');
+            }
         });
-        const data = await res.json();
-        if (data.success) {
-            document.getElementById('form-body').innerHTML = `
-              <div style="text-align:center;padding:28px 0">
-                <div style="width:68px;height:68px;border-radius:50%;background:rgba(59,91,219,0.14);border:2px solid #3b5bdb;display:flex;align-items:center;justify-content:center;font-size:1.9rem;margin:0 auto 22px">🎉</div>
-                <h3 style="font-size:1.25rem;font-weight:800;margin-bottom:10px">Profile Created!</h3>
-                <p style="color:rgba(255,255,255,0.45);font-size:0.88rem;line-height:1.7">Your Gigni profile is created. Please log in to view your dashboard.</p>
-                <div style="margin-top:22px;"><button onclick="openOvl('signin')" style="padding:12px;width:100%;background:#3b5bdb;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;">Log In Now</button></div>
-              </div>`;
-            showToast('Profile created successfully ✓');
-        } else { showToast(data.error || 'Failed to create profile'); }
-    } catch (e) { showToast('Error connecting to server.'); }
-  }
 
-  function showToast(msg){
-    const t = document.getElementById('toast');
-    if(!t) return;
-    t.textContent = msg;
-    t.style.transform = 'translateX(-50%) translateY(0)';
-    t.style.opacity = '1';
-    setTimeout(()=>{ t.style.transform='translateX(-50%) translateY(80px)'; t.style.opacity='0'; }, 3500);
-  }
+        // GSAP ScrollTrigger Setup
+        gsap.registerPlugin(ScrollTrigger);
 
-  function toggleDrawer() {
-    const btn = document.getElementById('ham-btn');
-    const drawer = document.getElementById('mobile-drawer');
-    if(btn && drawer) {
-      btn.classList.toggle('open');
-      drawer.classList.toggle('open');
-      document.body.style.overflow = drawer.classList.contains('open') ? 'hidden' : '';
-    }
-  }
-  function closeDrawer() {
-    const btn = document.getElementById('ham-btn');
-    const drawer = document.getElementById('mobile-drawer');
-    if(btn && drawer) {
-      btn.classList.remove('open');
-      drawer.classList.remove('open');
-      document.body.style.overflow = '';
-    }
-  }
-</script>
+        // Text Animations
+        const texts = gsap.utils.toArray('.gsap-text');
+        texts.forEach((text) => {
+            gsap.fromTo(text, 
+                { opacity: 0, y: 120 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: text,
+                        start: "top 85%",
+                        end: "top 45%",
+                        scrub: 1,
+                    }
+                }
+            );
+            
+            if(!text.dataset.nofade) {
+                gsap.to(text, {
+                    opacity: 0,
+                    y: -120,
+                    ease: "power2.in",
+                    scrollTrigger: {
+                        trigger: text,
+                        start: "bottom 55%",
+                        end: "bottom 15%",
+                        scrub: 1,
+                    }
+                });
+            }
+        });
+
+        // Canvas Image Sequence Setup
+        const canvas = document.getElementById("hero-canvas");
+        const ctx = canvas.getContext("2d");
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            renderSequence();
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        const frameCount = 240;
+        const currentFrame = index => `./file123/ezgif-frame-${(index + 1).toString().padStart(3, '0')}.jpg`;
+
+        const images = [];
+        const imageSequence = { frame: 0 };
+        
+        // Preload mechanism
+        let loadedCount = 0;
+        for (let i = 0; i < frameCount; i++) {
+            const img = new Image();
+            img.src = currentFrame(i);
+            img.onload = () => { loadedCount++; if(loadedCount===1) renderSequence(); };
+            images.push(img);
+        }
+
+        gsap.to(imageSequence, {
+            frame: frameCount - 1,
+            snap: "frame",
+            ease: "none",
+            scrollTrigger: {
+                trigger: "#scroll-container",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 0.5,
+            },
+            onUpdate: renderSequence
+        });
+
+        function renderSequence() {
+            ctx.fillStyle = "#050505";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            if (images[imageSequence.frame] && images[imageSequence.frame].complete && images[imageSequence.frame].naturalWidth > 0) {
+                const img = images[imageSequence.frame];
+                const hRatio = canvas.width / img.width;
+                const vRatio = canvas.height / img.height;
+                const ratio = Math.max(hRatio, vRatio); // Use max to fill screen entirely (like cover) or min for contain
+                const cx = (canvas.width - img.width * ratio) / 2;
+                const cy = (canvas.height - img.height * ratio) / 2;  
+                ctx.drawImage(img, 0, 0, img.width, img.height, cx, cy, img.width * ratio, img.height * ratio);
+            }
+        }
+        
+        renderSequence();
+    </script>
 </body>
 </html>

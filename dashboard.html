@@ -3,28 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gigni — Dashboard</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2">
+  <title>GIGNI — Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; cursor: auto; }
-
-    /* CUSTOM CURSOR */
-    #cursor {
-      position: fixed; top: 0; left: 0; width: 10px; height: 10px;
-      background: #f97316; border-radius: 50%; pointer-events: none;
-      z-index: 10000; transition: transform 0.1s;
-    }
-    #cursor-ring {
-      position: fixed; top: 0; left: 0; width: 44px; height: 44px;
-      border: 1px solid rgba(255,255,255,0.4); border-radius: 50%; 
-      pointer-events: none; z-index: 9999;
-      transition: transform 0.15s cubic-bezier(0.16,1,0.3,1), width 0.3s, height 0.3s, border 0.3s;
-      transform: translate(-50%, -50%);
-    }
-    #cursor-ring.active { width: 80px; height: 80px; border-color: rgba(59,91,219,0.8); background: rgba(59,91,219,0.1); }
-
+    body { font-family: 'Inter', sans-serif; background: #080808; color: #fff; overflow-x: hidden; }
 
     /* NAV */
     nav {
@@ -40,106 +23,49 @@
     .logout-btn:hover { border-color: #f97316; color: #f97316; }
 
     /* LAYOUT */
-    .dashboard { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; padding-top: 74px; position: relative; z-index: 1; }
+    .dashboard { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; padding-top: 74px; }
     
     /* SIDEBAR */
-    .sidebar { border-right: 1px solid rgba(255,255,255,0.05); padding: 32px 0; background: rgba(20,20,20,0.35); backdrop-filter: blur(15px); }
+    .sidebar { border-right: 1px solid rgba(255,255,255,0.08); padding: 32px 0; background: #0a0a0a; }
     .nav-item { padding: 14px 32px; display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.6); text-decoration: none; font-weight: 600; transition: all 0.2s; border-left: 3px solid transparent; cursor: pointer; }
-    .nav-item:hover, .nav-item.active { color: #fff; background: rgba(255,255,255,0.05); border-left-color: #f97316; }
+    .nav-item:hover, .nav-item.active { color: #fff; background: rgba(255,255,255,0.03); border-left-color: #f97316; }
 
     /* CONTENT */
     .content { padding: 48px; }
     .header-info { margin-bottom: 40px; }
-    .header-info h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.01em; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-    .header-info p { color: rgba(255,255,255,0.6); font-size: 1rem; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+    .header-info h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.01em; }
+    .header-info p { color: rgba(255,255,255,0.5); font-size: 1rem; }
 
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
-    .card { background: rgba(255,255,255,0.03); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 28px; transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s; position: relative; overflow: hidden; }
-    .card:hover { transform: translateY(-6px); border-color: rgba(59,91,219,0.5); box-shadow: 0 15px 40px rgba(0,0,0,0.4), 0 0 20px rgba(59,91,219,0.1); }
-    .cico { font-size: 2.5rem; margin-bottom: 16px; transition: transform 0.3s; }
-    .card:hover .cico { transform: scale(1.1) rotate(2deg); }
+    .card { background: #121212; border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 28px; transition: transform 0.2s; }
+    .card:hover { transform: translateY(-4px); border-color: rgba(59,91,219,0.3); }
+    .cico { font-size: 2.5rem; margin-bottom: 16px; }
     .card h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 8px; }
-    .card p { font-size: 0.9rem; color: rgba(255,255,255,0.6); line-height: 1.5; margin-bottom: 20px; }
+    .card p { font-size: 0.9rem; color: rgba(255,255,255,0.5); line-height: 1.5; margin-bottom: 20px; }
     .btn-act { background: #3b5bdb; color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 600; font-family: 'Inter',sans-serif; cursor: pointer; transition: all 0.3s; font-size: 0.85rem; }
-    .btn-act:hover { background: #2f4ec4; box-shadow: 0 5px 15px rgba(59,91,219,0.4); transform: translateY(-2px); }
+    .btn-act:hover { background: #2f4ec4; }
 
     /* TABS */
     .tab-content { display: none; }
-    .tab-content.active { display: block; animation: fadeIn 0.4s cubic-bezier(0.16,1,0.3,1); }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    .tab-content.active { display: block; animation: fadeIn 0.3s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
     /* EMPTY STATES */
-    .empty-state { text-align: center; padding: 60px 20px; background: rgba(255,255,255,0.02); backdrop-filter: blur(12px); border-radius: 20px; border: 1px dashed rgba(255,255,255,0.15); max-width: 600px; margin-top: 20px; }
-    .empty-state .ico { font-size: 4rem; margin-bottom: 20px; color: rgba(255,255,255,0.3); }
-    .empty-state h3 { font-size: 1.5rem; margin-bottom: 10px; color: rgba(255,255,255,0.8); }
+    .empty-state { text-align: center; padding: 60px 20px; background: #121212; border-radius: 20px; border: 1px dashed rgba(255,255,255,0.2); max-width: 600px; margin-top: 20px; }
+    .empty-state .ico { font-size: 4rem; margin-bottom: 20px; color: rgba(255,255,255,0.2); }
+    .empty-state h3 { font-size: 1.5rem; margin-bottom: 10px; color: rgba(255,255,255,0.6); }
 
     /* PROFILE FORM */
-    .profile-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 32px; max-width: 800px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+    .profile-card { background: #121212; border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 32px; max-width: 800px; }
     .fg { margin-bottom: 16px; }
     .fg label { display: block; font-size: 0.72rem; font-weight: 700; color: rgba(255,255,255,0.35); text-transform: uppercase; margin-bottom: 7px; }
     .fg input, .fg select, .fg textarea { width: 100%; background: #181818; border: 1px solid rgba(255,255,255,0.09); border-radius: 9px; padding: 12px 15px; color: #fff; font-family: 'Inter',sans-serif; font-size: 0.88rem; outline: none; transition: all 0.2s; }
     .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: #3b5bdb; box-shadow: 0 0 0 3px rgba(59,91,219,0.2); }
     .fg select option { background: #181818; }
     .frow2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-    /* PROFILE PICTURE */
-    .profile-pic-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 24px; gap: 12px; }
-    .profile-pic-preview { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #3b5bdb; background: #1a1a1a; display: flex; align-items: center; justify-content: center; font-size: 3rem; overflow: hidden; }
-    .profile-pic-label { cursor: pointer; color: #3b5bdb; font-weight: 700; font-size: 0.85rem; transition: color 0.2s; }
-    .profile-pic-label:hover { color: #f97316; }
-    #pic-input { display: none; }
-
-    /* MOBILE BOTTOM TAB BAR */
-    .mobile-tab-bar {
-      display: none; position: fixed; bottom: 0; left: 0; right: 0;
-      background: rgba(10,10,10,0.7); backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.08);
-      z-index: 900; padding: 6px 0 env(safe-area-inset-bottom, 6px);
-      justify-content: space-around; align-items: center;
-    }
-    .mob-tab {
-      display: flex; flex-direction: column; align-items: center; gap: 3px;
-      padding: 6px 8px; color: rgba(255,255,255,0.45); cursor: pointer;
-      font-size: 0.6rem; font-weight: 600; letter-spacing: 0.04em;
-      text-transform: uppercase; border: none; background: transparent;
-      flex: 1; transition: color 0.2s;
-    }
-    .mob-tab .mob-ico { font-size: 1.3rem; }
-    .mob-tab.active { color: #f97316; }
-
-    @media(max-width: 768px) {
-      nav { padding: 14px 20px; }
-      .logo { font-size: 2.0rem; }
-      .user-av { width: 34px; height: 34px; font-size: 0.9rem; }
-
-      /* Layout: stack sidebar out, go full width */
-      .dashboard { grid-template-columns: 1fr; padding-top: 68px; padding-bottom: 80px; }
-      .sidebar { display: none; }
-      .content { padding: 32px 20px; }
-
-      /* Cards grid tighter */
-      .grid { grid-template-columns: 1fr; gap: 16px; }
-      .card { padding: 24px 20px; }
-      .header-info h1 { font-size: 1.7rem; }
-      .header-info p { font-size: 0.9rem; }
-
-      /* Profile form */
-      .profile-card { padding: 24px 20px; }
-      .frow2 { grid-template-columns: 1fr; }
-
-      /* Show bottom tab bar */
-      .mobile-tab-bar { display: flex; }
-
-      /* Empty state */
-      .empty-state { padding: 48px 20px; }
-    }
   </style>
 </head>
 <body>
-
-<!-- 3D BACKGROUND AND CURSOR -->
-<div id="dashboard-gl" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none;"></div>
-<div id="cursor"></div>
-<div id="cursor-ring"></div>
 
 <nav>
   <div class="logo">GIGNI</div>
@@ -148,25 +74,6 @@
     <a href="index.html" class="logout-btn">Log Out</a>
   </div>
 </nav>
-
-<!-- MOBILE BOTTOM TAB BAR -->
-<div class="mobile-tab-bar">
-  <button class="mob-tab active" id="mob-tab-dash" onclick="switchTab('dash', null, this)">
-    <span class="mob-ico">🏠</span> Home
-  </button>
-  <button class="mob-tab" id="mob-tab-profile" onclick="switchTab('profile', null, this)">
-    <span class="mob-ico">👤</span> Profile
-  </button>
-  <button class="mob-tab" id="mob-tab-proj" onclick="switchTab('proj', null, this)">
-    <span class="mob-ico">💼</span> Projects
-  </button>
-  <button class="mob-tab" id="mob-tab-cert" onclick="switchTab('cert', null, this)">
-    <span class="mob-ico">🏆</span> Certs
-  </button>
-  <button class="mob-tab" id="mob-tab-hack" onclick="switchTab('hack', null, this)">
-    <span class="mob-ico">⚡</span> Events
-  </button>
-</div>
 
 <div class="dashboard">
   <div class="sidebar">
@@ -188,12 +95,6 @@
       </div>
       <div class="grid">
         <div class="card">
-          <div class="cico">🚀</div>
-          <h3>Zorus 2.1 Internship</h3>
-          <p>Production-ready development and deployment program. Learn basic to advanced Python and earn a recognized certificate.</p>
-          <button class="btn-act" onclick="window.location.href='zorus.html'">View Zorus 2.1</button>
-        </div>
-        <div class="card">
           <div class="cico">🏢</div>
           <h3>New Internship Match</h3>
           <p>A fast-growing fintech startup just verified a new project fitting your profile in Full Stack Development.</p>
@@ -209,11 +110,6 @@
         <p>View and edit your personal details here.</p>
       </div>
       <div class="profile-card">
-        <div class="profile-pic-container">
-          <div id="prof-pic-preview" class="profile-pic-preview">U</div>
-          <label for="pic-input" class="profile-pic-label">Change Profile Picture</label>
-          <input type="file" id="pic-input" accept="image/*" onchange="handlePicUpload(event)">
-        </div>
         <div class="frow2">
           <div class="fg"><label>First Name</label><input type="text" id="prof-fname"></div>
           <div class="fg"><label>Last Name</label><input type="text" id="prof-lname"></div>
@@ -248,8 +144,7 @@
         <h1>Certificates</h1>
         <p>Your verified completion certificates.</p>
       </div>
-      <div id="cert-container" class="grid" style="display:none; margin-bottom: 20px;"></div>
-      <div class="empty-state" id="cert-empty">
+      <div class="empty-state">
         <div class="ico">📜</div>
         <h3>No certificate earned</h3>
         <p style="color:rgba(255,255,255,0.4);">Complete verification of your projects to earn certificates.</p>
@@ -262,8 +157,7 @@
         <h1>Hackathons</h1>
         <p>Your upcoming and past hackathon events.</p>
       </div>
-      <div id="hack-container" class="grid" style="display:none; margin-bottom: 20px;"></div>
-      <div class="empty-state" id="hack-empty">
+      <div class="empty-state">
         <div class="ico">⚡</div>
         <h3>No hackathon updated</h3>
         <p style="color:rgba(255,255,255,0.4);">Check back later for new hackathon opportunities.</p>
@@ -276,8 +170,7 @@
         <h1>Projects</h1>
         <p>Your ongoing project work.</p>
       </div>
-      <div id="proj-container" class="grid" style="display:none; margin-bottom: 20px;"></div>
-      <div class="empty-state" id="proj-empty">
+      <div class="empty-state">
         <div class="ico">💼</div>
         <h3>No active projects</h3>
       </div>
@@ -298,20 +191,12 @@
 </div>
 
 <script>
-  function switchTab(id, el, mobEl) {
+  function switchTab(id, el) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.sidebar .nav-item').forEach(i => i.classList.remove('active'));
-    document.querySelectorAll('.mob-tab').forEach(i => i.classList.remove('active'));
     
     document.getElementById('tab-' + id).classList.add('active');
-    if (el) el.classList.add('active');
-    // sync mobile tab
-    const mob = document.getElementById('mob-tab-' + id);
-    if (mob) mob.classList.add('active');
-    // sync sidebar
-    document.querySelectorAll('.sidebar .nav-item').forEach(i => {
-      if (i.getAttribute('onclick') && i.getAttribute('onclick').includes("'" + id + "'")) i.classList.add('active');
-    });
+    el.classList.add('active');
   }
 
   // Hydrate local data into the profile (if they login from the main page)
@@ -330,229 +215,25 @@
     document.getElementById('prof-year').value = user.year || '';
     document.getElementById('prof-field').value = user.field || '';
     document.getElementById('prof-intro').value = user.intro || '';
-
-    // Load Profile Pic
-    if (user.profile_pic) {
-        setProfilePic(user.profile_pic);
-    }
-
-    // Render Items
-    function parseItems(itemStr) {
-        if (!itemStr) return [];
-        if (typeof itemStr === 'object') return itemStr;
-        try { return JSON.parse(itemStr); } catch(e) { return []; }
-    }
-
-    function renderItems(items, containerId, emptyId, icon) {
-        const container = document.getElementById(containerId);
-        const empty = document.getElementById(emptyId);
-        if (items.length > 0) {
-            empty.style.display = 'none';
-            container.style.display = 'grid';
-            container.innerHTML = items.map(it => `
-                <div class="card">
-                    <div class="cico">${icon}</div>
-                    <h3 style="margin-bottom:4px;">${it.title || 'Untitled'}</h3>
-                    <p style="margin-bottom:12px;">${it.description || ''}</p>
-                    <small style="color:rgba(255,255,255,0.3); font-weight: 600;">${it.date || ''}</small>
-                </div>
-            `).join('');
-        }
-    }
-
-    renderItems(parseItems(user.projects), 'proj-container', 'proj-empty', '💼');
-    renderItems(parseItems(user.certificates), 'cert-container', 'cert-empty', '🏆');
-    renderItems(parseItems(user.hackathons), 'hack-container', 'hack-empty', '⚡');
   });
 
-  function setProfilePic(base64) {
-      const preview = document.getElementById('prof-pic-preview');
-      const navAv = document.getElementById('nav-av');
-      
-      const imgHtml = `<img src="${base64}" style="width:100%; height:100%; object-fit:cover;">`;
-      preview.innerHTML = imgHtml;
-      navAv.innerHTML = imgHtml;
-      navAv.style.background = 'transparent';
-  }
-
-  function handlePicUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      if (file.size > 1024 * 1024) { // 1MB Limit for Base64 storage
-          alert('Image too large! Please choose a file under 1MB.');
-          return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-          const base64 = e.target.result;
-          setProfilePic(base64);
-          // Store temporarily in current session user data
-          const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
-          user.temp_pic = base64;
-          localStorage.setItem('gigni_user', JSON.stringify(user));
-      };
-      reader.readAsDataURL(file);
-  }
-
-  async function saveProfile() {
+  function saveProfile() {
+    // This updates the local storage cache so it persists locally
     const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
-    if (!user.id) {
-        alert('User ID is missing. Please log in again.');
-        return;
-    }
+    user.fname = document.getElementById('prof-fname').value;
+    user.lname = document.getElementById('prof-lname').value;
+    user.college = document.getElementById('prof-college').value;
+    user.year = document.getElementById('prof-year').value;
+    user.field = document.getElementById('prof-field').value;
+    user.intro = document.getElementById('prof-intro').value;
 
-    const updatedData = {
-        id: user.id,
-        fname: document.getElementById('prof-fname').value,
-        lname: document.getElementById('prof-lname').value,
-        college: document.getElementById('prof-college').value,
-        year: document.getElementById('prof-year').value,
-        field: document.getElementById('prof-field').value,
-        intro: document.getElementById('prof-intro').value,
-        profile_pic: user.temp_pic || user.profile_pic || null
-    };
-
-    try {
-        const res = await fetch('/api/user/update', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedData)
-        });
-        const data = await res.json();
-
-        if (data.success) {
-            // Update local storage cache
-            localStorage.setItem('gigni_user', JSON.stringify(data.user));
-            
-            // Update top UI Elements
-            document.getElementById('welcome-msg').innerText = 'Welcome back, ' + data.user.fname + '!';
-            if (data.user.fname) document.getElementById('nav-av').innerText = data.user.fname.charAt(0).toUpperCase();
-            
-            alert('Profile saved successfully to Database! 🎉');
-        } else {
-            alert('Error saving profile: ' + (data.error || 'Unknown error'));
-        }
-    } catch (e) {
-        alert('Error connecting to server.');
-    }
-  }
-
-  // CUSTOM CURSOR LOGIC
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursor-ring');
-  let mouseX = 0, mouseY = 0;
-  let ringX = 0, ringY = 0;
-
-  window.addEventListener('mousemove', e => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    if(cursor) cursor.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
-  });
-
-  function animateRing() {
-    ringX += (mouseX - ringX) * 0.15;
-    ringY += (mouseY - ringY) * 0.15;
-    if(ring) ring.style.left = ringX + 'px';
-    if(ring) ring.style.top = ringY + 'px';
-    requestAnimationFrame(animateRing);
-  }
-  animateRing();
-
-  document.querySelectorAll('a, button, .card, .profile-card, input, select, textarea').forEach(el => {
-    el.addEventListener('mouseenter', () => ring.classList.add('active'));
-    el.addEventListener('mouseleave', () => ring.classList.remove('active'));
-  });
-</script>
-
-<!-- THREE.JS 3D BACKGROUND -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
-  const canvasContainer = document.getElementById('dashboard-gl');
-  if (canvasContainer) {
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, canvasContainer.clientWidth / canvasContainer.clientHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    canvasContainer.appendChild(renderer.domElement);
-
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    dirLight.position.set(2, 5, 5);
-    scene.add(dirLight);
-
-    // Particles Data Network
-    const particlesCount = 2000;
-    const posArray = new Float32Array(particlesCount * 3);
-    for(let i=0; i<particlesCount * 3; i++) {
-        posArray[i] = (Math.random() - 0.5) * 15;
-    }
-    const particlesGeom = new THREE.BufferGeometry();
-    particlesGeom.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    localStorage.setItem('gigni_user', JSON.stringify(user));
     
-    // Use blue/orange mix based on the theme
-    const particlesMat = new THREE.PointsMaterial({
-        size: 0.03, color: 0x3b5bdb, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending
-    });
-    const particleMesh = new THREE.Points(particlesGeom, particlesMat);
-    scene.add(particleMesh);
-
-    // Add some connecting floating rings
-    const ringsGrp = new THREE.Group();
-    const ringMat = new THREE.LineBasicMaterial({ color: 0xf97316, transparent: true, opacity: 0.15 });
-    for(let i=0; i<3; i++){
-        const geom = new THREE.TorusGeometry(3 + i, 0.02, 16, 100);
-        const ring = new THREE.LineSegments(new THREE.EdgesGeometry(geom), ringMat);
-        ring.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, 0);
-        ring.userData = { rx: Math.random()*0.005, ry: Math.random()*0.005 };
-        ringsGrp.add(ring);
-    }
-    scene.add(ringsGrp);
-
-    camera.position.z = 5;
-
-    let targetX = 0;
-    let targetY = 0;
-    const windowHalfX = window.innerWidth / 2;
-    const windowHalfY = window.innerHeight / 2;
-
-    document.addEventListener('mousemove', (event) => {
-      targetX = (event.clientX - windowHalfX) * 0.001;
-      targetY = (event.clientY - windowHalfY) * 0.001;
-    });
-
-    const clock = new THREE.Clock();
+    // Update top UI Elements
+    document.getElementById('welcome-msg').innerText = 'Welcome back, ' + user.fname + '!';
+    document.getElementById('nav-av').innerText = user.fname.charAt(0).toUpperCase();
     
-    function render3D() {
-      requestAnimationFrame(render3D);
-      const time = clock.getElapsedTime();
-
-      // Smooth mouse follow
-      particleMesh.rotation.y += 0.0005;
-      particleMesh.rotation.x += (targetY - particleMesh.rotation.x) * 0.02;
-      particleMesh.rotation.y += (targetX - particleMesh.rotation.y) * 0.02;
-
-      // Float effect
-      particleMesh.position.y = Math.sin(time * 0.5) * 0.2;
-
-      // Rotate rings
-      ringsGrp.children.forEach(r => {
-          r.rotation.x += r.userData.rx;
-          r.rotation.y += r.userData.ry;
-      });
-
-      renderer.render(scene, camera);
-    }
-    render3D();
-
-    window.addEventListener('resize', () => {
-      camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(canvasContainer.clientWidth, canvasContainer.clientHeight);
-    });
+    alert('Profile saved successfully! 🎉');
   }
 </script>
 
