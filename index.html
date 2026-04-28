@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GIGNI — Real Internships. Real Growth.</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -13,15 +16,11 @@
   html { scroll-behavior: smooth; }
   body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
 
-  .video-bg {
+  #scroll-canvas {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -1; pointer-events: none; overflow: hidden;
-    background: #000;
+    z-index: -1; object-fit: cover;
   }
-  .video-bg video {
-    width: 100%; height: 100%; object-fit: cover;
-    opacity: 0.5;
-  }
+  .scroll-container { height: 800vh; position: relative; }
   .video-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     z-index: -1; pointer-events: none;
@@ -130,22 +129,78 @@
   /* TOAST */
   #toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(100px); background: #3b5bdb; color: #fff; padding: 16px 32px; border-radius: 100px; font-weight: 700; font-size: 0.95rem; box-shadow: 0 10px 30px rgba(59,91,219,0.4); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity: 0; z-index: 5000; pointer-events: none; }
 
+  /* FOOTER */
+  footer {
+    padding: 100px 52px 60px;
+    background: rgba(255,255,255,0.02);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    margin-top: 0;
+    position: relative;
+    z-index: 10;
+  }
+  .footer-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+    gap: 60px;
+  }
+  .f-col h4 {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: rgba(255,255,255,0.3);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+  }
+  .f-col p {
+    color: rgba(255,255,255,0.4);
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+  .f-links { list-style: none; }
+  .f-links li { margin-bottom: 12px; }
+  .f-links a {
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: 0.2s;
+  }
+  .f-links a:hover { color: #3b5bdb; }
+  .f-bottom {
+    max-width: 1200px;
+    margin: 60px auto 0;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: rgba(255,255,255,0.3);
+    font-size: 0.85rem;
+  }
+  .social-links { display: flex; gap: 20px; }
+  .social-links a { color: rgba(255,255,255,0.4); text-decoration: none; transition: 0.2s; }
+  .social-links a:hover { color: #fff; }
+
   @media (max-width: 768px) {
     .p-flow-modal { flex-direction: column; }
     .p-flow-sidebar { width: 100%; padding: 32px; }
     .nav-links { display: none; }
     .h-panel { width: 320px; height: 450px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+  }
+  @media (max-width: 480px) {
+    .footer-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
-  <div class="video-bg" id="video-wrap">
-    <video id="hero-video" autoplay muted loop playsinline>
-      <source src="Product_assembly_to_202604281726.mp4" type="video/mp4">
-    </video>
+  <div class="scroll-container">
+    <canvas id="scroll-canvas"></canvas>
+    <div class="video-overlay"></div>
   </div>
-  <div class="video-overlay"></div>
 
   <nav id="nav">
     <a href="index.html" class="logo">GIGNI</a>
@@ -160,7 +215,7 @@
 
   <!-- HERO -->
   <section class="hero">
-    <h1 class="hero-h1">THE FUTURE<br><span style="color:#3b5bdb">IS AGENTIC.</span></h1>
+    <h1 class="hero-h1">THE FUTURE<br><span style="color:#3b5bdb">IS Ai-Driven.</span></h1>
     <p class="hero-p">Gigni bridges the gap between ambition and reality with real-world AI internships and high-performance hosting.</p>
     <div style="display:flex; gap:20px; justify-content:center; margin-top:40px;">
       <button class="hero-btn" onclick="openOvl('signup')">Get Started →</button>
@@ -226,6 +281,47 @@
     </div>
   </section>
 
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="f-col">
+        <div class="logo" style="margin-bottom: 24px; pointer-events: none;">GIGNI</div>
+        <p>Bridging the gap between ambition and reality with real-world AI internships and high-performance infrastructure. The future is AI-driven.</p>
+      </div>
+      <div class="f-col">
+        <h4>Ecosystem</h4>
+        <ul class="f-links">
+          <li><a href="zorus.html">Zorus 2.1</a></li>
+          <li><a href="hosting.html">Hosting</a></li>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="#">Join Community</a></li>
+        </ul>
+      </div>
+      <div class="f-col">
+        <h4>Support</h4>
+        <ul class="f-links">
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="mailto:support@gigni.com">Contact Support</a></li>
+        </ul>
+      </div>
+      <div class="f-col">
+        <h4>Connect</h4>
+        <p>Stay updated with our latest project-based internships and community events.</p>
+        <div class="social-links" style="margin-top: 24px;">
+          <a href="#">LinkedIn</a>
+          <a href="#">Twitter</a>
+          <a href="#">GitHub</a>
+        </div>
+      </div>
+    </div>
+    <div class="f-bottom">
+      <p>&copy; 2026 GIGNI. All rights reserved.</p>
+      <p>Built with ❤️ for the AI Generation</p>
+    </div>
+  </footer>
+
   <!-- SIGNIN MODAL -->
   <div class="ovl" id="signin-ovl" onclick="closeOvl(event,'signin')">
     <div class="modal" onclick="event.stopPropagation()">
@@ -289,12 +385,50 @@
   <div id="toast">Message</div>
 
 <script>
-  // ─── VIDEO PARALLAX ───────────────────────────────────────────
-  const videoWrap = document.getElementById('video-wrap');
-  document.addEventListener('mousemove', (e) => {
-    const x = (e.clientX / window.innerWidth - 0.5) * 30;
-    const y = (e.clientY / window.innerHeight - 0.5) * 30;
-    gsap.to(videoWrap, { x: x, y: y, duration: 1.5, ease: "power2.out" });
+  // ─── APPLE-STYLE SCROLLYTELLING ──────────────────────────────
+  const canvas = document.getElementById("scroll-canvas");
+  const context = canvas.getContext("2d");
+
+  canvas.width = 1920;
+  canvas.height = 1080;
+
+  const frameCount = 240;
+  const currentFrame = index => (
+    `file123/ezgif-frame-${index.toString().padStart(3, '0')}.jpg`
+  );
+
+  const images = [];
+  const airpods = { frame: 1 };
+
+  for (let i = 1; i <= frameCount; i++) {
+    const img = new Image();
+    img.src = currentFrame(i);
+    images.push(img);
+  }
+
+  gsap.to(airpods, {
+    frame: frameCount - 1,
+    snap: "frame",
+    ease: "none",
+    scrollTrigger: {
+      trigger: ".scroll-container",
+      start: "top top",
+      end: "bottom bottom",
+      scrub: 0.5
+    },
+    onUpdate: render
+  });
+
+  images[0].onload = render;
+
+  function render() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(images[airpods.frame], 0, 0);
+  }
+
+  // Handle Resize
+  window.addEventListener('resize', () => {
+    // Logic to maintain aspect ratio on resize could go here
   });
 
   // ─── GSAP HORIZONTAL SCROLL ────────────────────────────────────
