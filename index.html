@@ -131,6 +131,27 @@
   /* TOAST */
   #toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(100px); background: #3b5bdb; color: #fff; padding: 16px 32px; border-radius: 100px; font-weight: 700; font-size: 0.95rem; box-shadow: 0 10px 30px rgba(59,91,219,0.4); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); opacity: 0; z-index: 5000; pointer-events: none; }
 
+  /* ABOUT SECTION */
+  .about-sec { padding: 120px 52px; background: rgba(0,0,0,0.98); }
+  .about-grid { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .about-text h2 { font-size: 3rem; font-weight: 900; margin-bottom: 24px; letter-spacing: -0.02em; }
+  .about-text p { font-size: 1.1rem; line-height: 1.7; color: rgba(255,255,255,0.7); margin-bottom: 20px; }
+  .about-text b { color: #fff; font-weight: 700; }
+  .about-text ul { padding-left: 20px; margin-bottom: 20px; }
+  .about-text li { color: rgba(255,255,255,0.6); line-height: 1.6; margin-bottom: 8px; }
+  .about-img { width: 100%; max-width: 400px; height: auto; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+
+  /* HOSTING SECTION */
+  .hosting-sec { padding: 120px 52px; background: #000; }
+  .hosting-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 60px; }
+  .hosting-card { background: rgba(20,20,20,0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 40px 30px; text-align: center; backdrop-filter: blur(12px); transition: all 0.4s; }
+  .hosting-card:hover { transform: translateY(-10px); border-color: #3b5bdb; box-shadow: 0 20px 60px rgba(59,91,219,0.2); }
+  .hosting-icon { font-size: 3rem; margin-bottom: 20px; }
+  .hosting-card h3 { font-size: 1.8rem; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.02em; }
+  .hosting-card p { color: rgba(255,255,255,0.5); font-size: 1rem; line-height: 1.6; margin-bottom: 32px; }
+  .hosting-btn { display: inline-block; background: #3b5bdb; color: #fff; text-decoration: none; padding: 14px 28px; border-radius: 12px; font-weight: 700; transition: all 0.3s; }
+  .hosting-btn:hover { background: #2a4bc7; transform: translateY(-3px); box-shadow: 0 10px 30px rgba(59,91,219,0.4); }
+
   /* FOOTER */
   footer {
     padding: 100px 52px 60px;
@@ -190,6 +211,11 @@
     .p-flow-sidebar { width: 100%; padding: 32px; }
     .nav-links { display: none; }
     .h-panel { width: 320px; height: 450px; }
+    .about-sec { padding: 80px 20px; }
+    .about-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+    .about-img { max-width: 300px; }
+    .hosting-sec { padding: 80px 20px; }
+    .hosting-grid { grid-template-columns: 1fr; gap: 40px; }
     .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
   }
   @media (max-width: 480px) {
@@ -279,6 +305,47 @@
           </div>
         </div>
 
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT SECTION -->
+  <section class="about-sec">
+    <div class="about-grid">
+      <div class="about-text">
+        <h2>About Gigni</h2>
+        <p><b>Gigni</b> is a platform designed to help students and explorers discover opportunities that support their learning and career growth. It acts as a central portal for internships, mentorships, hackathons, and community events.</p>
+        <p>When a student connects with <b>Gigni</b>, they become part of a network that regularly shares <b>real-world, project-based opportunities</b>. Students receive <b>email updates about internships, hackathons, mentorship programs, and events</b> that can help them gain practical experience and build skills beyond the classroom.</p>
+        <p>The platform focuses on connecting students with <b>hands-on projects and industry-relevant experiences</b>. Instead of only theoretical learning, students get chances to work on <b>real problems, collaborate with mentors, and participate in competitions or community initiatives</b>.</p>
+        <p>Key aspects of Gigni include:</p>
+        <ul>
+          <li><b>Internship Opportunities</b> – Access to real-world, project-based internships that help students build practical skills.</li>
+          <li><b>Mentorship Programs</b> – Guidance from experienced mentors who help students learn, grow, and navigate their careers.</li>
+          <li><b>Hackathons</b> – Opportunities to participate in coding or innovation challenges to solve real problems.</li>
+          <li><b>Community & Events</b> – A network where students can attend workshops, events, and connect with like-minded peers.</li>
+        </ul>
+        <p>Overall, <b>Gigni</b> aims to be a <b>trusted ecosystem where students can continuously discover opportunities, learn from mentors, and gain real-world experience</b>, helping them prepare for their future careers.</p>
+      </div>
+      <div>
+        <img src="hero-character.png" alt="Gigni Character" class="about-img">
+      </div>
+    </div>
+  </section>
+
+  <!-- HOSTING SECTION -->
+  <section class="hosting-sec">
+    <div class="hosting-grid">
+      <div class="hosting-card">
+        <div class="hosting-icon">🐍</div>
+        <h3>Zorus 2.1</h3>
+        <p>Zorus is a coding internship using Python to solve real-world problems. Gain exceptional experience and build your portfolio with us!</p>
+        <a href="zorus.html" class="hosting-btn">Explore Zorus 2.1 →</a>
+      </div>
+      <div class="hosting-card">
+        <div class="hosting-icon">⚡</div>
+        <h3>Upcoming Events</h3>
+        <p>More exciting hackathons, open source sprints, and verified internships are coming soon to Gigni Connect.</p>
+        <button class="hosting-btn" onclick="openOvl('signup')">Join Community →</button>
       </div>
     </div>
   </section>
