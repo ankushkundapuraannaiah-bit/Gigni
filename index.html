@@ -18,13 +18,14 @@
 
   #scroll-canvas {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -10; object-fit: cover;
+    z-index: 1; object-fit: cover;
+    background: #000;
   }
-  .scroll-container { height: 800vh; position: relative; z-index: -10; }
+  .scroll-container { height: 800vh; position: relative; z-index: 1; }
   .video-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -5; pointer-events: none;
-    background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%);
+    z-index: 2; pointer-events: none;
+    background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.9) 100%);
   }
 
   /* NAV */
@@ -33,8 +34,9 @@
     padding: 22px 52px;
     display: flex; align-items: center; justify-content: space-between;
     transition: all 0.4s ease;
-    background: rgba(0,0,0,0.3);
-    backdrop-filter: blur(10px);
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
   }
   .logo, .logo:visited { 
     font-family: 'Bebas Neue', sans-serif; 
@@ -56,14 +58,14 @@
   .join-btn:hover { background: #2f4ec4; transform: scale(1.05); }
 
   /* HERO */
-  .hero { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 20px; position: relative; z-index: 100; }
+  .hero { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 20px; position: relative; z-index: 50; }
   .hero-h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(4rem, 12vw, 10rem); line-height: 0.9; margin-bottom: 20px; letter-spacing: 0.02em; }
   .hero-p { max-width: 650px; font-size: 1.2rem; color: rgba(255,255,255,0.5); line-height: 1.6; margin-bottom: 40px; font-weight: 300; }
   .hero-btn { padding: 18px 48px; background: #3b5bdb; color: #fff; border: none; border-radius: 100px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.3s; text-decoration: none; display: inline-block; }
   .hero-btn:hover { background: #2f4ec4; transform: translateY(-5px); box-shadow: 0 20px 40px rgba(59,91,219,0.3); }
 
   /* HORIZONTAL SCROLL */
-  .horizontal-section { height: 600vh; position: relative; z-index: 100; }
+  .horizontal-section { height: 600vh; position: relative; z-index: 50; }
   .horizontal-container { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; display: flex; align-items: center; }
   .horizontal-track { display: flex; padding: 0 15vw; gap: 6vw; will-change: transform; }
   .h-panel { flex-shrink: 0; width: 450px; height: 550px; display: flex; align-items: center; justify-content: center; }
