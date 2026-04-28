@@ -13,7 +13,20 @@
   html { scroll-behavior: smooth; }
   body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
 
-  #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; opacity: 0.5; }
+  .video-bg {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -1; pointer-events: none; overflow: hidden;
+    background: #000;
+  }
+  .video-bg video {
+    width: 100%; height: 100%; object-fit: cover;
+    opacity: 0.5;
+  }
+  .video-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -1; pointer-events: none;
+    background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%);
+  }
 
   /* NAV */
   nav {
@@ -21,8 +34,22 @@
     padding: 22px 52px;
     display: flex; align-items: center; justify-content: space-between;
     transition: all 0.4s ease;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
   }
-  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; letter-spacing: 0.05em; color: #fff; line-height:1; }
+  .logo, .logo:visited { 
+    font-family: 'Bebas Neue', sans-serif; 
+    font-size: 3rem; 
+    letter-spacing: 0.05em; 
+    color: #fff; 
+    line-height:1; 
+    text-decoration: none; 
+    z-index: 1001; 
+    text-shadow: 0 0 20px rgba(59,91,219,0.3);
+    transition: transform 0.3s ease;
+    display: block;
+  }
+  .logo:hover { transform: scale(1.05); color: #fff; }
   .nav-links { display: flex; align-items: center; gap: 32px; }
   .nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: 0.2s; }
   .nav-links a:hover { color: #fff; }
@@ -113,10 +140,15 @@
 </head>
 <body>
 
-  <canvas id="bg-canvas"></canvas>
+  <div class="video-bg" id="video-wrap">
+    <video id="hero-video" autoplay muted loop playsinline>
+      <source src="Product_assembly_to_202604281726.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="video-overlay"></div>
 
   <nav id="nav">
-    <div class="logo">GIGNI</div>
+    <a href="index.html" class="logo">GIGNI</a>
     <div class="nav-links">
       <a href="hosting.html">Hosting</a>
       <a href="zorus.html">Zorus 2.1</a>
@@ -257,43 +289,12 @@
   <div id="toast">Message</div>
 
 <script>
-  // ─── THREE.JS BACKGROUND ─────────────────────────────────────────
-  const canvas = document.getElementById('bg-canvas');
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.z = 5;
-
-  const particlesCount = 2000;
-  const posArray = new Float32Array(particlesCount * 3);
-  for(let i=0; i<particlesCount*3; i++) posArray[i] = (Math.random() - 0.5) * 15;
-
-  const particlesGeom = new THREE.BufferGeometry();
-  particlesGeom.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-  const particlesMat = new THREE.PointsMaterial({ size: 0.012, color: '#3b5bdb', transparent: true, opacity: 0.6 });
-  const particlesMesh = new THREE.Points(particlesGeom, particlesMat);
-  scene.add(particlesMesh);
-
+  // ─── VIDEO PARALLAX ───────────────────────────────────────────
+  const videoWrap = document.getElementById('video-wrap');
   document.addEventListener('mousemove', (e) => {
-    const x = (e.clientX / window.innerWidth) - 0.5;
-    const y = (e.clientY / window.innerHeight) - 0.5;
-    gsap.to(particlesMesh.rotation, { x: y * 0.4, y: x * 0.4, duration: 1.5 });
-  });
-
-  function animate() {
-    requestAnimationFrame(animate);
-    particlesMesh.rotation.y += 0.0008;
-    renderer.render(scene, camera);
-  }
-  animate();
-
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    const x = (e.clientX / window.innerWidth - 0.5) * 30;
+    const y = (e.clientY / window.innerHeight - 0.5) * 30;
+    gsap.to(videoWrap, { x: x, y: y, duration: 1.5, ease: "power2.out" });
   });
 
   // ─── GSAP HORIZONTAL SCROLL ────────────────────────────────────
