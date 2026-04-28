@@ -60,7 +60,7 @@
 
   /* HERO */
   .hero { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 20px; position: relative; z-index: 50; }
-  .hero-h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(4rem, 12vw, 10rem); line-height: 0.9; margin-bottom: 20px; letter-spacing: 0.02em; }
+  .hero-h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(4rem, 12vw, 10rem); line-height: 0.9; margin-bottom: 20px; letter-spacing: 0.02em; background: linear-gradient(45deg, #3b5bdb, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
   .hero-p { max-width: 650px; font-size: 1.2rem; color: rgba(255,255,255,0.5); line-height: 1.6; margin-bottom: 40px; font-weight: 300; }
   .hero-btn { padding: 18px 48px; background: #3b5bdb; color: #fff; border: none; border-radius: 100px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.3s; text-decoration: none; display: inline-block; }
   .hero-btn:hover { background: #2f4ec4; transform: translateY(-5px); box-shadow: 0 20px 40px rgba(59,91,219,0.3); }
@@ -250,11 +250,11 @@
 
   <!-- HERO -->
   <section class="hero">
-    <h1 class="hero-h1">THE FUTURE<br><span style="color:#3b5bdb">IS Ai-Driven.</span></h1>
+    <h1 class="hero-h1">THE FUTURE<br><span>IS Ai-Driven.</span></h1>
     <p class="hero-p">Gigni bridges the gap between ambition and reality with real-world AI internships and high-performance hosting.</p>
     <div style="display:flex; gap:20px; justify-content:center; margin-top:40px;">
       <button class="hero-btn" onclick="openOvl('signup')">Get Started →</button>
-      <a href="zorus.html" class="hero-btn" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); text-decoration:none;">Learn More</a>
+      <a href="#about" class="hero-btn" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); text-decoration:none;">Learn More</a>
     </div>
   </section>
 
@@ -317,7 +317,7 @@
   </section>
 
   <!-- ABOUT SECTION -->
-  <section class="about-sec">
+  <section id="about" class="about-sec">
     <div class="about-grid">
       <div class="about-text">
         <h2>About Gigni</h2>
