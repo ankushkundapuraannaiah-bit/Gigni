@@ -283,8 +283,8 @@
   document.addEventListener('DOMContentLoaded', () => {
     let user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
 
-    // Set sample user data if none exists
-    if (!user.email) {
+    // Set sample user data if profile is incomplete
+    if (!user.fname || !user.lname || !user.email || !user.college) {
       user = {
         email: 'alex.johnson@email.com',
         fname: 'Alex',
@@ -472,9 +472,16 @@
     user.intro = document.getElementById('prof-intro').value;
 
     localStorage.setItem('gigni_user', JSON.stringify(user));
-    document.getElementById('welcome-msg').innerText = 'Welcome back, ' + user.fname + '!';
-    document.getElementById('nav-av').innerText = user.fname.charAt(0).toUpperCase();
-    
+
+    // Update UI elements
+    document.getElementById('welcome-msg').innerText = 'Welcome back, ' + (user.fname || 'User') + '!';
+    const navAv = document.getElementById('nav-av');
+    if(user.fname && user.lname) {
+      navAv.innerText = user.fname.charAt(0).toUpperCase() + user.lname.charAt(0).toUpperCase();
+    } else if(user.fname) {
+      navAv.innerText = user.fname.charAt(0).toUpperCase();
+    }
+
     alert('Profile saved successfully! 🎉');
   }
 </script>
