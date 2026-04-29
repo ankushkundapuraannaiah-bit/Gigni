@@ -176,37 +176,8 @@
         <h1 id="welcome-msg">Welcome back!</h1>
         <p>Here's what's happening with your projects and opportunities.</p>
       </div>
-      <div class="grid">
-        <div class="card">
-          <div class="cico">📊</div>
-          <h3>Project Progress</h3>
-          <p>Your current project is 75% complete. Great work on the recent updates!</p>
-          <div style="width: 100%; height: 8px; background: #e8eaed; border-radius: 4px; margin: 16px 0;">
-            <div style="width: 75%; height: 100%; background: #1a73e8; border-radius: 4px;"></div>
-          </div>
-          <button class="btn-act">View Project</button>
-        </div>
-        <div class="card">
-          <div class="cico">💼</div>
-          <h3>Internship Matches</h3>
-          <p>You have 3 new internship opportunities that match your skills.</p>
-          <ul style="text-align: left; margin: 16px 0; padding-left: 20px; color: #5f6368;">
-            <li>Full Stack Developer at TechCorp</li>
-            <li>UI/UX Designer at DesignHub</li>
-            <li>Data Analyst at DataPlus</li>
-          </ul>
-          <button class="btn-act">View Matches</button>
-        </div>
-        <div class="card">
-          <div class="cico">📈</div>
-          <h3>Performance Stats</h3>
-          <p>Your profile views increased by 45% this month.</p>
-          <div style="display: flex; justify-content: space-between; margin: 16px 0;">
-            <div><strong>Profile Views:</strong> 234</div>
-            <div><strong>Applications:</strong> 12</div>
-          </div>
-          <button class="btn-act">View Analytics</button>
-        </div>
+      <div class="grid" id="dashboard-cards">
+        <!-- Cards will be populated dynamically based on user data -->
       </div>
     </div>
 
@@ -310,15 +281,69 @@
 
   // Hydrate local data into the profile
   document.addEventListener('DOMContentLoaded', () => {
-    const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+    let user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+
+    // Set sample user data if none exists
     if (!user.email) {
-      window.location.href = 'index.html';
-      return;
+      user = {
+        email: 'alex.johnson@email.com',
+        fname: 'Alex',
+        lname: 'Johnson',
+        college: 'IIT Bombay',
+        year: '3rd Year',
+        field: 'Computer Science',
+        intro: 'Passionate computer science student with experience in web development and machine learning. Looking for internship opportunities in software engineering.',
+        projects: [
+          {
+            title: 'E-Commerce Platform',
+            desc: 'Full-stack e-commerce website built with React and Node.js. Features include user authentication, payment integration, and admin dashboard.',
+            link: '#'
+          },
+          {
+            title: 'AI Chatbot',
+            desc: 'NLP-powered chatbot using Python and TensorFlow. Trained on customer service datasets for automated support.',
+            link: '#'
+          }
+        ],
+        certificates: [
+          {
+            name: 'Google Cloud Professional Developer',
+            desc: 'Certified in Google Cloud Platform development and deployment practices.',
+            link: '#'
+          },
+          {
+            name: 'AWS Solutions Architect',
+            desc: 'Associate level certification for designing distributed systems on AWS.',
+            link: '#'
+          }
+        ],
+        hackathons: [
+          {
+            title: 'HackIndia 2024',
+            desc: 'Built a smart agriculture monitoring system. Won 2nd place in IoT category.',
+            link: '#'
+          },
+          {
+            title: 'CodeFest 2024',
+            desc: 'Developed a real-time collaboration platform. Featured in top 10 projects.',
+            link: '#'
+          }
+        ]
+      };
+      localStorage.setItem('gigni_user', JSON.stringify(user));
     }
-    
+
     // Update UI
     document.getElementById('welcome-msg').innerText = 'Welcome back, ' + (user.fname || 'User') + '!';
     if(user.fname) document.getElementById('nav-av').innerText = user.fname.charAt(0).toUpperCase();
+
+    // Update nav avatar
+    const navAv = document.getElementById('nav-av');
+    if(user.fname && user.lname) {
+      navAv.innerText = user.fname.charAt(0).toUpperCase() + user.lname.charAt(0).toUpperCase();
+    } else if(user.fname) {
+      navAv.innerText = user.fname.charAt(0).toUpperCase();
+    }
 
     // Fill profile fields
     document.getElementById('prof-fname').value = user.fname || '';
@@ -329,11 +354,80 @@
     document.getElementById('prof-field').value = user.field || '';
     document.getElementById('prof-intro').value = user.intro || '';
 
+    // Render dashboard cards
+    renderDashboardCards(user);
+
     // Render Items
     renderItems('proj', user.projects || []);
     renderItems('cert', user.certificates || []);
     renderItems('hack', user.hackathons || []);
   });
+
+  function renderDashboardCards(user) {
+    const dashboardContainer = document.getElementById('dashboard-cards');
+    const projects = user.projects || [];
+    const certificates = user.certificates || [];
+    const hackathons = user.hackathons || [];
+
+    const cards = [
+      {
+        icon: '📊',
+        title: 'Project Progress',
+        content: projects.length > 0
+          ? `You have ${projects.length} active project${projects.length > 1 ? 's' : ''}. Current project: ${projects[0].title}`
+          : 'Start your first project to track progress.',
+        progress: projects.length > 0 ? 75 : 0,
+        button: 'View Projects',
+        action: () => switchTab('proj', document.querySelector('.nav-item[href="#proj"]'))
+      },
+      {
+        icon: '💼',
+        title: 'Internship Matches',
+        content: `Based on your ${user.field} background, you have matching opportunities available.`,
+        list: [
+          'Full Stack Developer at TechCorp',
+          'Software Engineer at InnovateLabs',
+          `${user.field} Specialist at DataFlow`
+        ],
+        button: 'View Matches'
+      },
+      {
+        icon: '📈',
+        title: 'Your Stats',
+        content: `Profile strength: ${certificates.length * 20 + projects.length * 15 + hackathons.length * 10}% complete`,
+        stats: [
+          { label: 'Projects', value: projects.length },
+          { label: 'Certificates', value: certificates.length },
+          { label: 'Hackathons', value: hackathons.length }
+        ],
+        button: 'View Analytics'
+      }
+    ];
+
+    dashboardContainer.innerHTML = cards.map(card => `
+      <div class="card">
+        <div class="cico">${card.icon}</div>
+        <h3>${card.title}</h3>
+        <p>${card.content}</p>
+        ${card.progress !== undefined ? `
+          <div style="width: 100%; height: 8px; background: #e8eaed; border-radius: 4px; margin: 16px 0;">
+            <div style="width: ${card.progress}%; height: 100%; background: #1a73e8; border-radius: 4px; transition: width 0.3s ease;"></div>
+          </div>
+        ` : ''}
+        ${card.list ? `
+          <ul style="text-align: left; margin: 16px 0; padding-left: 20px; color: #5f6368;">
+            ${card.list.map(item => `<li>${item}</li>`).join('')}
+          </ul>
+        ` : ''}
+        ${card.stats ? `
+          <div style="display: flex; justify-content: space-between; margin: 16px 0;">
+            ${card.stats.map(stat => `<div><strong>${stat.label}:</strong> ${stat.value}</div>`).join('')}
+          </div>
+        ` : ''}
+        <button class="btn-act">${card.button}</button>
+      </div>
+    `).join('');
+  }
 
   function renderItems(tabId, items) {
     const container = document.getElementById('tab-' + tabId);
@@ -356,7 +450,7 @@
         <div class="cico">${getIcon(tabId)}</div>
         <h3>${item.title || item.name}</h3>
         <p>${item.desc || item.description || ''}</p>
-        ${item.link ? `<a href="${item.link}" target="_blank" class="btn-act" style="text-decoration:none;display:inline-block">View Link</a>` : ''}
+        ${item.link ? `<a href="${item.link}" target="_blank" class="btn-act" style="text-decoration:none;display:inline-block;margin-top:16px;">View Details</a>` : ''}
       </div>
     `).join('');
   }
