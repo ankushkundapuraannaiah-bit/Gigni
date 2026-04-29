@@ -16,7 +16,6 @@
       overflow-x: hidden;
     }
 
-
     /* NAV */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
@@ -109,23 +108,26 @@
     .btn-act { background: #1a73e8; color: #fff; border: none; border-radius: 4px; padding: 8px 16px; font-weight: 500; font-size: 14px; cursor: pointer; transition: background 0.2s; }
     .btn-act:hover { background: #1557b0; }
 
-    /* TABS */
+    /* TABS — animation only fires when .active is applied */
     .tab-content {
       display: none;
       opacity: 0;
+    }
+    .tab-content.active {
+      display: block;
       animation: fadeIn 0.3s ease-out forwards;
     }
-    .tab-content.active { display: block; }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* Accessibility: Reduce motion for users who prefer it */
+    /* Accessibility: Reduce motion */
     @media (prefers-reduced-motion: reduce) {
       .card, .nav-item, .tab-content {
         transition: none !important;
         animation: none !important;
+        opacity: 1 !important;
       }
     }
 
@@ -177,7 +179,7 @@
         <p>Here's what's happening with your projects and opportunities.</p>
       </div>
       <div class="grid" id="dashboard-cards">
-        <!-- Cards will be populated dynamically based on user data -->
+        <!-- Cards populated dynamically -->
       </div>
     </div>
 
@@ -225,7 +227,7 @@
       <div class="empty-state">
         <div class="ico">📜</div>
         <h3>No certificate earned</h3>
-        <p style="color:rgba(255,255,255,0.4);">Complete verification of your projects to earn certificates.</p>
+        <p>Complete verification of your projects to earn certificates.</p>
       </div>
     </div>
 
@@ -238,7 +240,7 @@
       <div class="empty-state">
         <div class="ico">⚡</div>
         <h3>No hackathon updated</h3>
-        <p style="color:rgba(255,255,255,0.4);">Check back later for new hackathon opportunities.</p>
+        <p>Check back later for new hackathon opportunities.</p>
       </div>
     </div>
 
@@ -270,21 +272,27 @@
 
 <script>
   function switchTab(id, el) {
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    // Remove active from all tabs and reset animation so it re-fires
+    document.querySelectorAll('.tab-content').forEach(t => {
+      t.classList.remove('active');
+    });
     document.querySelectorAll('.sidebar .nav-item').forEach(i => i.classList.remove('active'));
 
-    document.getElementById('tab-' + id).classList.add('active');
+    const target = document.getElementById('tab-' + id);
+    // Force reflow so the animation triggers fresh each time
+    target.style.animation = 'none';
+    void target.offsetWidth;
+    target.style.animation = '';
+    target.classList.add('active');
     el.classList.add('active');
   }
-
-
 
   // Hydrate local data into the profile
   document.addEventListener('DOMContentLoaded', () => {
     let user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
 
-    // Set sample user data if profile is incomplete
-    if (!user.fname || !user.lname || !user.email || !user.college) {
+    // Only use sample data if there's no logged-in user at all
+    if (!user.email) {
       user = {
         email: 'alex.johnson@email.com',
         fname: 'Alex',
@@ -333,9 +341,8 @@
       localStorage.setItem('gigni_user', JSON.stringify(user));
     }
 
-    // Update UI
+    // Update welcome message
     document.getElementById('welcome-msg').innerText = 'Welcome back, ' + (user.fname || 'User') + '!';
-    if(user.fname) document.getElementById('nav-av').innerText = user.fname.charAt(0).toUpperCase();
 
     // Update nav avatar
     const navAv = document.getElementById('nav-av');
@@ -357,7 +364,7 @@
     // Render dashboard cards
     renderDashboardCards(user);
 
-    // Render Items
+    // Render items into their tabs
     renderItems('proj', user.projects || []);
     renderItems('cert', user.certificates || []);
     renderItems('hack', user.hackathons || []);
@@ -377,17 +384,16 @@
           ? `You have ${projects.length} active project${projects.length > 1 ? 's' : ''}. Current project: ${projects[0].title}`
           : 'Start your first project to track progress.',
         progress: projects.length > 0 ? 75 : 0,
-        button: 'View Projects',
-        action: () => switchTab('proj', document.querySelector('.nav-item[href="#proj"]'))
+        button: 'View Projects'
       },
       {
         icon: '💼',
         title: 'Internship Matches',
-        content: `Based on your ${user.field} background, you have matching opportunities available.`,
+        content: `Based on your ${user.field || 'background'}, you have matching opportunities available.`,
         list: [
           'Full Stack Developer at TechCorp',
           'Software Engineer at InnovateLabs',
-          `${user.field} Specialist at DataFlow`
+          `${user.field || 'Tech'} Specialist at DataFlow`
         ],
         button: 'View Matches'
       },
@@ -431,7 +437,6 @@
 
   function renderItems(tabId, items) {
     const container = document.getElementById('tab-' + tabId);
-    // Find the content section (not the header)
     let listDiv = container.querySelector('.grid') || container.querySelector('.items-list');
     
     if (!listDiv) {
@@ -440,7 +445,7 @@
       container.appendChild(listDiv);
     }
 
-    // Remove empty state if items exist
+    // Toggle empty state visibility
     const empty = container.querySelector('.empty-state');
     if (items.length > 0 && empty) empty.style.display = 'none';
     if (items.length === 0 && empty) empty.style.display = 'block';
@@ -473,7 +478,7 @@
 
     localStorage.setItem('gigni_user', JSON.stringify(user));
 
-    // Update UI elements
+    // Refresh UI
     document.getElementById('welcome-msg').innerText = 'Welcome back, ' + (user.fname || 'User') + '!';
     const navAv = document.getElementById('nav-av');
     if(user.fname && user.lname) {
