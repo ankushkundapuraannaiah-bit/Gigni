@@ -45,12 +45,6 @@ app.get('/api/init', async (req, res) => {
             score INTEGER,
             applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );`);
-        // Zorus Access List Table (admin-managed)
-        await client.query(`CREATE TABLE IF NOT EXISTS zorus_access (
-            id SERIAL PRIMARY KEY,
-            email VARCHAR(255) UNIQUE NOT NULL,
-            added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );`);
 
         // Migrations (Add columns if missing)
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS projects JSONB DEFAULT '[]';`);
@@ -203,94 +197,6 @@ app.post('/api/zorus-submit-score', async (req, res) => {
         client = createClient();
         await client.connect();
         await client.query(`UPDATE zorus_applications SET score = $1 WHERE user_id = $2;`, [score, userId]);
-        res.status(200).json({ success: true });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    } finally {
-        if (client) await client.end();
-    }
-});
-
-
-// ─── User Search (for Admin) ──────────────────────────────────
-app.get('/api/admin/search-users', async (req, res) => {
-    const { q, adminEmail } = req.query;
-    if (adminEmail !== 'ankushka2089@gmail.com') return res.status(403).json({ error: 'Unauthorized' });
-    if (!q || q.length < 2) return res.json({ success: true, users: [] });
-
-    let client;
-    try {
-        client = createClient();
-        await client.connect();
-        const searchTerm = `%${q.toLowerCase()}%`;
-        const result = await client.query(
-            `SELECT email, fname, lname FROM users WHERE LOWER(fname || ' ' || lname) LIKE $1 LIMIT 8;`,
-            [searchTerm]
-        );
-        res.status(200).json({ success: true, users: result.rows });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    } finally {
-        if (client) await client.end();
-    }
-});
-
-// ─── Zorus 2.1 Access Management ──────────────────────────────
-app.get('/api/zorus-access', async (req, res) => {
-    let client;
-    try {
-        client = createClient();
-        await client.connect();
-        const result = await client.query(`SELECT email FROM zorus_access;`);
-        res.status(200).json({ success: true, emails: result.rows.map(r => r.email.toLowerCase()) });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    } finally {
-        if (client) await client.end();
-    }
-});
-
-app.get('/api/admin/zorus-access', async (req, res) => {
-    const { adminEmail } = req.query;
-    if (adminEmail !== 'ankushka2089@gmail.com') return res.status(403).json({ error: 'Unauthorized' });
-    let client;
-    try {
-        client = createClient();
-        await client.connect();
-        const result = await client.query(`SELECT id, email, added_at FROM zorus_access ORDER BY added_at DESC;`);
-        res.status(200).json({ success: true, list: result.rows });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    } finally {
-        if (client) await client.end();
-    }
-});
-
-app.post('/api/admin/zorus-access', async (req, res) => {
-    const { email, adminEmail } = req.body;
-    if (adminEmail !== 'ankushka2089@gmail.com') return res.status(403).json({ error: 'Unauthorized' });
-    let client;
-    try {
-        client = createClient();
-        await client.connect();
-        await client.query(`INSERT INTO zorus_access (email) VALUES ($1) ON CONFLICT (email) DO NOTHING;`, [email.toLowerCase().trim()]);
-        res.status(200).json({ success: true });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    } finally {
-        if (client) await client.end();
-    }
-});
-
-app.delete('/api/admin/zorus-access', async (req, res) => {
-    const { email, adminEmail } = req.body;
-    if (adminEmail !== 'ankushka2089@gmail.com') return res.status(403).json({ error: 'Unauthorized' });
-    let client;
-    try {
-        client = createClient();
-        await client.connect();
-        await client.query(`DELETE FROM zorus_access WHERE email = $1;`, [email.toLowerCase().trim()]);
-        res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
     } finally {
