@@ -351,9 +351,13 @@
 <script>
   const START = new Date('2026-06-01T00:00:00');
 
+  const EARLY_ACCESS = ['ankushkundapuraannaiah+101@gmail.com', 'ankushka2089@gmail.com'];
+
   function checkAccess() {
+    const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+    const hasEarlyAccess = EARLY_ACCESS.includes((user.email || '').toLowerCase());
     const now = new Date();
-    if (now >= START) {
+    if (hasEarlyAccess || now >= START) {
       document.getElementById('cs-overlay').style.display = 'none';
     } else {
       tick();

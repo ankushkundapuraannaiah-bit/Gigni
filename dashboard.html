@@ -469,8 +469,12 @@
 
     document.getElementById('zorus-section').style.display = 'block';
 
+    // Emails that bypass the June 1 date lock
+    const EARLY_ACCESS = ['ankushkundapuraannaiah+101@gmail.com', 'ankushka2089@gmail.com'];
+    const hasEarlyAccess = EARLY_ACCESS.includes((user.email || '').toLowerCase());
+
     const now = new Date();
-    if (now >= ZORUS_START) {
+    if (hasEarlyAccess || now >= ZORUS_START) {
       // Course is live
       document.getElementById('zorus-locked-card').style.display = 'none';
       document.getElementById('zorus-active-card').style.display = 'block';
