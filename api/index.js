@@ -100,6 +100,26 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// Get single user's full profile (for dashboard refresh)
+app.get('/api/user/:id', async (req, res) => {
+    const { id } = req.params;
+    let client;
+    try {
+        client = createClient();
+        await client.connect();
+        const result = await client.query(
+            `SELECT id, fname, lname, email, college, year, field, interest, intro, projects, certificates, hackathons FROM users WHERE id = $1;`,
+            [id]
+        );
+        if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
+        res.status(200).json({ success: true, user: result.rows[0] });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    } finally {
+        if (client) await client.end();
+    }
+});
+
 // Admin Endpoints
 app.get('/api/users', async (req, res) => {
     let client;

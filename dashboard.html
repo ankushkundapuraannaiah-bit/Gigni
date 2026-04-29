@@ -288,7 +288,7 @@
   }
 
   // Hydrate local data into the profile
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
     let user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
 
     // Only use sample data if there's no logged-in user at all
@@ -339,8 +339,33 @@
         ]
       };
       localStorage.setItem('gigni_user', JSON.stringify(user));
+      renderAll(user);
+      return;
     }
 
+    // Render immediately with cached data for instant feel
+    renderAll(user);
+
+    // Then fetch fresh data from DB so admin-assigned items show up
+    if (user.id) {
+      try {
+        const res = await fetch('/api/user/' + user.id);
+        const data = await res.json();
+        if (data.success) {
+          // Merge fresh DB data but keep password hidden
+          const fresh = data.user;
+          // Keep existing password in localStorage (DB doesn't return it)
+          fresh.password = user.password;
+          localStorage.setItem('gigni_user', JSON.stringify(fresh));
+          renderAll(fresh);
+        }
+      } catch (e) {
+        console.warn('Could not refresh user data from server:', e);
+      }
+    }
+  });
+
+  function renderAll(user) {
     // Update welcome message
     document.getElementById('welcome-msg').innerText = 'Welcome back, ' + (user.fname || 'User') + '!';
 
@@ -368,7 +393,7 @@
     renderItems('proj', user.projects || []);
     renderItems('cert', user.certificates || []);
     renderItems('hack', user.hackathons || []);
-  });
+  }
 
   function renderDashboardCards(user) {
     const dashboardContainer = document.getElementById('dashboard-cards');
