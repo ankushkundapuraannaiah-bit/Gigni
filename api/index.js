@@ -197,6 +197,7 @@ app.post('/api/zorus-submit-score', async (req, res) => {
         client = createClient();
         await client.connect();
         await client.query(`UPDATE zorus_applications SET score = $1 WHERE user_id = $2;`, [score, userId]);
+        res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
     } finally {
@@ -251,34 +252,6 @@ app.post('/api/admin/send-bulk-email', async (req, res) => {
     res.end();
 });
 
-// ─── External Email Discovery (Automated) ─────────────────────
-// Scrapes public search snippets to find emails without a paid API
-app.get('/api/admin/find-email-external', async (req, res) => {
-    const { name, adminEmail } = req.query;
-    if (adminEmail !== 'ankushka2089@gmail.com') return res.status(403).json({ error: 'Unauthorized' });
-    if (!name) return res.status(400).json({ error: 'Name is required' });
-
-    try {
-        // Use DuckDuckGo HTML (less likely to block than Google/LinkedIn)
-        const searchUrl = `https://duckduckgo.com/html/?q=${encodeURIComponent(name)}+linkedin+email+OR+"@gmail.com"`;
-        const response = await fetch(searchUrl, {
-            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
-        });
-        const html = await response.text();
-
-        // Extract emails using regex from the HTML snippets
-        const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
-        const matches = html.match(emailRegex) || [];
-        
-        // Filter out common junk and duplicates
-        const uniqueEmails = [...new Set(matches.map(e => e.toLowerCase()))]
-            .filter(e => !e.includes('duckduckgo') && !e.includes('example') && !e.endsWith('.png') && !e.endsWith('.jpg'));
-
-        res.status(200).json({ success: true, emails: uniqueEmails });
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to perform external search' });
-    }
-});
 
 module.exports = app;
 
