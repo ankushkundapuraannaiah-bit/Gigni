@@ -651,11 +651,16 @@
       <div class="external-finder">
         <p>Not in Gigni? Find <strong>${q}</strong> elsewhere:</p>
         <div class="finder-btns">
-          <button class="btn-find" onclick="searchExternal('${q}', 'google')">🔍 Google Search</button>
+          <button class="btn-find" id="btn-deep-scan" onclick="deepScan('${q}')">✨ Deep Scan (Auto)</button>
           <button class="btn-find" onclick="searchExternal('${q}', 'linkedin')">👤 LinkedIn</button>
           <button class="btn-find" onclick="searchExternal('${q}', 'rocketreach')">🚀 RocketReach</button>
           <button class="btn-find" onclick="togglePatternGuesser()">🏗️ Guess Pattern</button>
         </div>
+        <div id="scan-loading" style="display:none; margin-top:12px; font-size:0.75rem; color:#f97316;">
+          ⏳ Scanning public records for "${q}"...
+        </div>
+        <div id="scan-results" style="margin-top:12px; display:flex; flex-wrap:wrap; gap:6px;"></div>
+        
         <div id="pattern-guesser" style="display:none;">
           <div class="pattern-row">
             <input type="text" id="pattern-domain" placeholder="e.g. google.com">
@@ -668,6 +673,36 @@
 
     searchResults.innerHTML = html;
     searchResults.style.display = 'block';
+  }
+
+  async function deepScan(name) {
+    const btn = document.getElementById('btn-deep-scan');
+    const loading = document.getElementById('scan-loading');
+    const resultsDiv = document.getElementById('scan-results');
+    const admin = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+
+    btn.disabled = true;
+    loading.style.display = 'block';
+    resultsDiv.innerHTML = '';
+
+    try {
+      const res = await fetch(`/api/admin/find-email-external?name=${encodeURIComponent(name)}&adminEmail=${encodeURIComponent(admin.email)}`);
+      const data = await res.json();
+      
+      loading.style.display = 'none';
+      if (data.success && data.emails.length > 0) {
+        resultsDiv.innerHTML = data.emails.map(email => `
+          <button class="btn-find" style="border-color:#10b981; color:#10b981; background:rgba(16,185,129,0.1);" onclick="selectUser('${email}', '')">✓ ${email}</button>
+        `).join('');
+      } else {
+        resultsDiv.innerHTML = '<span style="font-size:0.72rem; color:rgba(255,255,255,0.3);">No emails found in snippets. Try guessing pattern or manual search.</span>';
+      }
+    } catch (e) {
+      loading.style.display = 'none';
+      showToast('Scan failed. Try manual search.');
+    } finally {
+      btn.disabled = false;
+    }
   }
 
   function searchExternal(name, platform) {
