@@ -181,6 +181,48 @@
     .sum-pill.ok { background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2); }
     .sum-pill.err { background: rgba(220,38,38,0.1); color: #f87171; border: 1px solid rgba(220,38,38,0.2); }
 
+    /* ── ZORUS ACCESS SECTION ──────────────────────────────── */
+    .access-add-row {
+      display: flex; gap: 12px; margin-bottom: 24px;
+    }
+    .access-add-row input {
+      flex: 1; background: #181818;
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 9px; padding: 12px 15px;
+      color: #fff; font-family: 'Inter',sans-serif;
+      font-size: 0.88rem; outline: none;
+      transition: border-color 0.2s;
+    }
+    .access-add-row input:focus { border-color: #f97316; }
+    .access-add-row input::placeholder { color: rgba(255,255,255,0.25); }
+    .btn-grant {
+      background: linear-gradient(135deg,#f97316,#ea580c);
+      color: #fff; border: none; border-radius: 9px;
+      padding: 12px 22px; font-weight: 700;
+      font-family: 'Inter',sans-serif; font-size: 0.85rem;
+      cursor: pointer; white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+    .btn-grant:hover { opacity: 0.85; }
+    .btn-revoke {
+      background: rgba(220,38,38,0.12); color: #f87171;
+      border: 1px solid rgba(220,38,38,0.3); border-radius: 6px;
+      padding: 5px 12px; font-size: 0.75rem; font-weight: 700;
+      font-family: 'Inter',sans-serif; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-revoke:hover { background: rgba(220,38,38,0.25); }
+    .pill-access {
+      display: inline-block; padding: 3px 12px;
+      border-radius: 50px; font-size: 0.72rem; font-weight: 700;
+      background: rgba(16,185,129,0.12); color: #10b981;
+      border: 1px solid rgba(16,185,129,0.3);
+    }
+    .zorus-empty {
+      text-align:center; padding: 32px;
+      color: rgba(255,255,255,0.3); font-size: 0.9rem;
+    }
+
     @media(max-width: 768px) {
       nav { padding: 14px 20px; }
       .logo { font-size: 1.8rem; }
@@ -245,6 +287,41 @@
         <tr><td colspan="6" style="text-align:center; padding: 40px; color:rgba(255,255,255,0.4);">Loading applications...</td></tr>
       </tbody>
     </table>
+  </div>
+</div>
+
+<!-- ═══════════════════ ZORUS 2.1 ACCESS MANAGEMENT ═══════════════════ -->
+<hr class="section-divider">
+<div class="content" style="padding-top:0;">
+  <div class="header-info">
+    <h1>🐍 Zorus 2.1 Course Access</h1>
+    <p>Grant or revoke access to the Zorus 2.1 internship course. Approved emails will see the course in their dashboard from <strong>June 1, 2026</strong>.</p>
+  </div>
+
+  <div class="card">
+    <!-- Add Email Row -->
+    <div class="access-add-row">
+      <input type="email" id="zorus-email-input" placeholder="Enter email address to grant access...">
+      <button class="btn-grant" onclick="addZorusEmail()">✓ Grant Access</button>
+    </div>
+
+    <!-- Access List Table -->
+    <div style="overflow-x:auto;">
+      <table id="zorus-access-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Email Address</th>
+            <th>Status</th>
+            <th>Added On</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="zorus-access-body">
+          <tr><td colspan="5" class="zorus-empty">Loading access list...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -354,6 +431,7 @@
     }
     fetchUsers();
     fetchZorusApplications();
+    fetchZorusAccess();
   });
 
   async function fetchUsers() {
@@ -502,6 +580,90 @@
           console.error("Failed to fetch Zorus applications.");
       }
   }
+  // ─── ZORUS ACCESS MANAGEMENT ────────────────────────────────
+  document.getElementById('zorus-email-input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') addZorusEmail();
+  });
+
+  async function fetchZorusAccess() {
+    const admin = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+    try {
+      const res = await fetch('/api/admin/zorus-access?adminEmail=' + encodeURIComponent(admin.email));
+      const data = await res.json();
+      if (data.success) renderZorusAccess(data.list);
+      else showToast(data.error || 'Failed to load access list');
+    } catch (err) {
+      showToast('Error loading Zorus access list.');
+    }
+  }
+
+  function renderZorusAccess(list) {
+    const tbody = document.getElementById('zorus-access-body');
+    if (!list || list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" class="zorus-empty">No emails granted access yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = list.map((row, i) => {
+      const date = new Date(row.added_at).toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' });
+      return `
+        <tr id="zrow-${row.id}">
+          <td style="color:rgba(255,255,255,0.3);">${i + 1}</td>
+          <td><strong>${row.email}</strong></td>
+          <td><span class="pill-access">✓ Granted</span></td>
+          <td style="color:rgba(255,255,255,0.4);font-size:0.85rem;">${date}</td>
+          <td><button class="btn-revoke" onclick="revokeZorusEmail('${row.email}')">✕ Revoke</button></td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  async function addZorusEmail() {
+    const input = document.getElementById('zorus-email-input');
+    const email = input.value.trim().toLowerCase();
+    if (!email) return;
+    if (!email.includes('@')) { showToast('Enter a valid email address'); return; }
+
+    const admin = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+    try {
+      const res = await fetch('/api/admin/zorus-access', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, adminEmail: admin.email })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('✓ Access granted to ' + email);
+        input.value = '';
+        fetchZorusAccess();
+      } else {
+        showToast(data.error || 'Failed to grant access');
+      }
+    } catch (err) {
+      showToast('Error connecting to server.');
+    }
+  }
+
+  async function revokeZorusEmail(email) {
+    if (!confirm(`Revoke Zorus 2.1 access for ${email}?`)) return;
+    const admin = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+    try {
+      const res = await fetch('/api/admin/zorus-access', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, adminEmail: admin.email })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('Access revoked for ' + email);
+        fetchZorusAccess();
+      } else {
+        showToast(data.error || 'Failed to revoke access');
+      }
+    } catch (err) {
+      showToast('Error connecting to server.');
+    }
+  }
+
   // ─── BULK EMAIL LOGIC ───────────────────────────────────────
   let bulkEmails = [];
   const bodyInput = document.getElementById('bulk-body');
@@ -704,6 +866,7 @@
 
     const div = document.createElement('div');
     div.className = 'prog-item';
+    div.setAttribute('data-email', email);
     div.innerHTML = `
       <div class="prog-icon ${status}">${icon}</div>
       <div class="prog-email">${email}${error ? `<br><small style="color:#f87171">${error}</small>` : ''}</div>
