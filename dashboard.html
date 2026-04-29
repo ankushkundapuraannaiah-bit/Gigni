@@ -162,12 +162,12 @@
 
 <div class="dashboard">
   <div class="sidebar">
-    <a class="nav-item active" onclick="switchTab('dash', this)"><span class="material-icons">dashboard</span> Dashboard</a>
-    <a class="nav-item" onclick="switchTab('profile', this)"><span class="material-icons">person</span> Profile</a>
-    <a class="nav-item" onclick="switchTab('proj', this)"><span class="material-icons">work</span> Projects</a>
-    <a class="nav-item" onclick="switchTab('cert', this)"><span class="material-icons">school</span> Certificates</a>
-    <a class="nav-item" onclick="switchTab('hack', this)"><span class="material-icons">flash_on</span> Hackathons</a>
-    <a class="nav-item" onclick="switchTab('settings', this)"><span class="material-icons">settings</span> Settings</a>
+    <a id="nav-dash" class="nav-item active" onclick="switchTab('dash', this)"><span class="material-icons">dashboard</span> Dashboard</a>
+    <a id="nav-profile" class="nav-item" onclick="switchTab('profile', this)"><span class="material-icons">person</span> Profile</a>
+    <a id="nav-proj" class="nav-item" onclick="switchTab('proj', this)"><span class="material-icons">work</span> Projects</a>
+    <a id="nav-cert" class="nav-item" onclick="switchTab('cert', this)"><span class="material-icons">school</span> Certificates</a>
+    <a id="nav-hack" class="nav-item" onclick="switchTab('hack', this)"><span class="material-icons">flash_on</span> Hackathons</a>
+    <a id="nav-settings" class="nav-item" onclick="switchTab('settings', this)"><span class="material-icons">settings</span> Settings</a>
   </div>
 
   <div class="content">
@@ -180,6 +180,57 @@
       </div>
       <div class="grid" id="dashboard-cards">
         <!-- Cards populated dynamically -->
+      </div>
+
+      <!-- ZORUS 2.1 INTERNSHIP SECTION — only shown to qualified users -->
+      <div id="zorus-section" style="display:none; margin-top: 40px;">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px;">
+          <div style="width:4px; height:28px; background:linear-gradient(to bottom,#f97316,#ea580c); border-radius:2px;"></div>
+          <h2 style="font-size:20px; font-weight:600; color:#202124; margin:0;">🐍 Zorus 2.1 Internship</h2>
+          <span style="background:rgba(249,115,22,0.12); color:#f97316; border:1px solid rgba(249,115,22,0.3); border-radius:50px; padding:3px 12px; font-size:12px; font-weight:700; letter-spacing:.05em;">QUALIFIED</span>
+        </div>
+
+        <!-- LOCKED card — shown before June 1 2026 -->
+        <div id="zorus-locked-card" class="card" style="border-left:4px solid #f97316; background:linear-gradient(135deg,#fff 0%,#fff9f5 100%); max-width:680px;">
+          <div style="display:flex; align-items:flex-start; gap:20px; flex-wrap:wrap;">
+            <div style="font-size:52px; line-height:1;">🔒</div>
+            <div style="flex:1; min-width:220px;">
+              <h3 style="font-size:17px; color:#202124; margin-bottom:6px;">Your internship starts on June 1, 2026</h3>
+              <p style="font-size:14px; color:#5f6368; margin-bottom:18px;">Congratulations on passing the Zorus 2.1 selection test! Your course access will unlock on the start date. Get ready — it's going to be intense.</p>
+              <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px;">
+                <div style="text-align:center; background:#fff; border:1px solid #dadce0; border-radius:8px; padding:12px 20px; min-width:70px;">
+                  <div id="cd-days" style="font-size:28px; font-weight:700; color:#f97316; line-height:1;">--</div>
+                  <div style="font-size:11px; color:#5f6368; margin-top:4px; text-transform:uppercase; letter-spacing:.05em;">Days</div>
+                </div>
+                <div style="text-align:center; background:#fff; border:1px solid #dadce0; border-radius:8px; padding:12px 20px; min-width:70px;">
+                  <div id="cd-hours" style="font-size:28px; font-weight:700; color:#f97316; line-height:1;">--</div>
+                  <div style="font-size:11px; color:#5f6368; margin-top:4px; text-transform:uppercase; letter-spacing:.05em;">Hours</div>
+                </div>
+                <div style="text-align:center; background:#fff; border:1px solid #dadce0; border-radius:8px; padding:12px 20px; min-width:70px;">
+                  <div id="cd-mins" style="font-size:28px; font-weight:700; color:#f97316; line-height:1;">--</div>
+                  <div style="font-size:11px; color:#5f6368; margin-top:4px; text-transform:uppercase; letter-spacing:.05em;">Mins</div>
+                </div>
+                <div style="text-align:center; background:#fff; border:1px solid #dadce0; border-radius:8px; padding:12px 20px; min-width:70px;">
+                  <div id="cd-secs" style="font-size:28px; font-weight:700; color:#f97316; line-height:1;">--</div>
+                  <div style="font-size:11px; color:#5f6368; margin-top:4px; text-transform:uppercase; letter-spacing:.05em;">Secs</div>
+                </div>
+              </div>
+              <button class="btn-act" disabled style="background:#dadce0; color:#9aa0a6; cursor:not-allowed; border-radius:6px; padding:10px 20px;">Access Unlocks June 1 🔒</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTIVE card — shown on/after June 1 2026 -->
+        <div id="zorus-active-card" class="card" style="display:none; border-left:4px solid #10b981; background:linear-gradient(135deg,#fff 0%,#f0fdf8 100%); max-width:680px;">
+          <div style="display:flex; align-items:flex-start; gap:20px; flex-wrap:wrap;">
+            <div style="font-size:52px; line-height:1;">🚀</div>
+            <div style="flex:1; min-width:220px;">
+              <h3 style="font-size:17px; color:#202124; margin-bottom:6px;">Zorus 2.1 Internship — Course is Live!</h3>
+              <p style="font-size:14px; color:#5f6368; margin-bottom:18px;">Your internship has officially begun. Access your Python course material, project briefs, and mentorship schedule. Give it your best!</p>
+              <a href="zorus-course.html" class="btn-act" style="text-decoration:none; display:inline-block; background:#10b981; border-radius:6px; padding:10px 24px; font-weight:600;">Enter Course →</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -272,6 +323,7 @@
 
 <script>
   function switchTab(id, el) {
+    if (!el) el = document.getElementById('nav-' + id);
     // Remove active from all tabs and reset animation so it re-fires
     document.querySelectorAll('.tab-content').forEach(t => {
       t.classList.remove('active');
@@ -284,7 +336,7 @@
     void target.offsetWidth;
     target.style.animation = '';
     target.classList.add('active');
-    el.classList.add('active');
+    if (el) el.classList.add('active');
   }
 
   // Hydrate local data into the profile
@@ -393,7 +445,67 @@
     renderItems('proj', user.projects || []);
     renderItems('cert', user.certificates || []);
     renderItems('hack', user.hackathons || []);
+
+    // Zorus 2.1 qualified section
+    checkZorusAccess(user);
   }
+
+  // ─── ZORUS 2.1 INTERNSHIP ACCESS ────────────────────────────
+  const ZORUS_QUALIFIED = [
+    'aishwarya holliyavarmath',
+    'basavaraj patil',
+    'ankush annaiah',
+    'arya s',
+    'arya s.'
+  ];
+  const ZORUS_START = new Date('2026-06-01T00:00:00');
+  let countdownTimer = null;
+
+  function checkZorusAccess(user) {
+    const fullName = ((user.fname || '') + ' ' + (user.lname || '')).trim().toLowerCase();
+    const isQualified = ZORUS_QUALIFIED.some(n => fullName.includes(n) || n.includes(fullName));
+
+    if (!isQualified) return;
+
+    document.getElementById('zorus-section').style.display = 'block';
+
+    const now = new Date();
+    if (now >= ZORUS_START) {
+      // Course is live
+      document.getElementById('zorus-locked-card').style.display = 'none';
+      document.getElementById('zorus-active-card').style.display = 'block';
+    } else {
+      // Show countdown
+      document.getElementById('zorus-locked-card').style.display = 'block';
+      document.getElementById('zorus-active-card').style.display = 'none';
+      startCountdown();
+    }
+  }
+
+  function startCountdown() {
+    if (countdownTimer) clearInterval(countdownTimer);
+    function tick() {
+      const diff = ZORUS_START - new Date();
+      if (diff <= 0) {
+        clearInterval(countdownTimer);
+        document.getElementById('zorus-locked-card').style.display = 'none';
+        document.getElementById('zorus-active-card').style.display = 'block';
+        return;
+      }
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      document.getElementById('cd-days').innerText  = String(d).padStart(2, '0');
+      document.getElementById('cd-hours').innerText = String(h).padStart(2, '0');
+      document.getElementById('cd-mins').innerText  = String(m).padStart(2, '0');
+      document.getElementById('cd-secs').innerText  = String(s).padStart(2, '0');
+    }
+    tick();
+    countdownTimer = setInterval(tick, 1000);
+  }
+
+
 
   function renderDashboardCards(user) {
     const dashboardContainer = document.getElementById('dashboard-cards');
@@ -409,7 +521,8 @@
           ? `You have ${projects.length} active project${projects.length > 1 ? 's' : ''}. Current project: ${projects[0].title}`
           : 'Start your first project to track progress.',
         progress: projects.length > 0 ? 75 : 0,
-        button: 'View Projects'
+        button: 'View Projects',
+        tab: 'proj'
       },
       {
         icon: '💼',
@@ -431,7 +544,8 @@
           { label: 'Certificates', value: certificates.length },
           { label: 'Hackathons', value: hackathons.length }
         ],
-        button: 'View Analytics'
+        button: 'View Analytics',
+        tab: 'profile'
       }
     ];
 
@@ -455,7 +569,7 @@
             ${card.stats.map(stat => `<div><strong>${stat.label}:</strong> ${stat.value}</div>`).join('')}
           </div>
         ` : ''}
-        <button class="btn-act">${card.button}</button>
+        <button class="btn-act" onclick="${card.tab ? `switchTab('${card.tab}')` : ''}">${card.button}</button>
       </div>
     `).join('');
   }

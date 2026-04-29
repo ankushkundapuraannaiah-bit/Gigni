@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zorus 2.1 Internship Course — Gigni</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #060609; color: #fff; overflow-x: hidden; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 16px 48px;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: .08em; color: #fff; text-decoration: none; }
+    .back-btn {
+      color: rgba(255,255,255,0.5); text-decoration: none; font-size: .88rem; font-weight: 600;
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border: 1px solid rgba(255,255,255,0.12); border-radius: 8px;
+      transition: all .2s;
+    }
+    .back-btn:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 120px 24px 60px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(249,115,22,0.18) 0%, transparent 70%),
+                  radial-gradient(ellipse at 80% 80%, rgba(59,91,219,0.12) 0%, transparent 60%);
+    }
+    .badge-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(249,115,22,0.12); border: 1px solid rgba(249,115,22,0.35);
+      border-radius: 50px; padding: 6px 18px;
+      font-size: .78rem; font-weight: 700; color: #f97316; letter-spacing: .08em;
+      text-transform: uppercase; margin-bottom: 32px;
+    }
+    .badge-pill .dot { width: 7px; height: 7px; background: #f97316; border-radius: 50%; animation: pulse 1.4s ease infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.3)} }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 9vw, 7.5rem);
+      line-height: .95; letter-spacing: .02em;
+      background: linear-gradient(135deg, #fff 30%, #f97316 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 24px;
+    }
+    .hero p {
+      max-width: 560px; font-size: 1.1rem; color: rgba(255,255,255,.5);
+      line-height: 1.7; margin-bottom: 48px;
+    }
+    .hero-cta {
+      display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+    }
+    .btn-primary {
+      padding: 16px 40px; background: #f97316; color: #fff; border: none;
+      border-radius: 100px; font-weight: 800; font-size: 1rem; cursor: pointer;
+      text-decoration: none; transition: all .3s;
+      box-shadow: 0 12px 32px rgba(249,115,22,.35);
+    }
+    .btn-primary:hover { background: #ea580c; transform: translateY(-3px); }
+    .btn-ghost {
+      padding: 16px 40px; background: rgba(255,255,255,.04); color: rgba(255,255,255,.8);
+      border: 1px solid rgba(255,255,255,.12); border-radius: 100px;
+      font-weight: 700; font-size: 1rem; cursor: pointer; text-decoration: none; transition: all .3s;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.25); }
+
+    /* ── COHORT STRIP ── */
+    .cohort-strip {
+      background: rgba(255,255,255,.02); border-top: 1px solid rgba(255,255,255,.05);
+      border-bottom: 1px solid rgba(255,255,255,.05); padding: 28px 48px;
+      display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap;
+    }
+    .cohort-strip .label { font-size: .75rem; font-weight: 700; color: rgba(255,255,255,.3); text-transform: uppercase; letter-spacing: .1em; }
+    .intern-avatar {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .av-circle {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: linear-gradient(135deg, #f97316, #3b5bdb);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: .85rem; color: #fff;
+      flex-shrink: 0;
+    }
+    .intern-avatar span { font-size: .88rem; font-weight: 600; color: rgba(255,255,255,.8); }
+
+    /* ── CONTENT GRID ── */
+    .section { padding: 100px 48px; max-width: 1200px; margin: 0 auto; }
+    .section-tag { font-size: .72rem; font-weight: 800; color: #f97316; text-transform: uppercase; letter-spacing: .12em; margin-bottom: 14px; }
+    .section-title { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 900; letter-spacing: -.02em; margin-bottom: 16px; line-height: 1.15; }
+    .section-sub { color: rgba(255,255,255,.45); font-size: 1.05rem; line-height: 1.7; max-width: 520px; }
+
+    /* MODULES */
+    .modules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px,1fr)); gap: 20px; margin-top: 48px; }
+    .module-card {
+      background: #0f0f0f; border: 1px solid rgba(255,255,255,.06); border-radius: 20px;
+      padding: 28px; position: relative; overflow: hidden;
+      transition: border-color .3s, transform .3s;
+    }
+    .module-card:hover { border-color: rgba(249,115,22,.35); transform: translateY(-4px); }
+    .module-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, #f97316, #3b5bdb);
+      opacity: 0; transition: opacity .3s;
+    }
+    .module-card:hover::before { opacity: 1; }
+    .m-week { font-size: .7rem; font-weight: 800; color: #f97316; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 10px; }
+    .m-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; }
+    .m-desc { font-size: .88rem; color: rgba(255,255,255,.45); line-height: 1.6; margin-bottom: 18px; }
+    .m-topics { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .m-topics li { font-size: .82rem; color: rgba(255,255,255,.6); display: flex; align-items: center; gap: 8px; }
+    .m-topics li::before { content: '→'; color: #f97316; font-weight: 700; }
+    .m-locked { opacity: .35; filter: blur(1px); pointer-events: none; }
+    .lock-badge {
+      position: absolute; top: 16px; right: 16px;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px; padding: 4px 10px; font-size: .7rem; color: rgba(255,255,255,.35); font-weight: 700;
+    }
+
+    /* TIMELINE */
+    .timeline { margin-top: 56px; display: flex; flex-direction: column; gap: 0; position: relative; }
+    .timeline::before {
+      content: ''; position: absolute; left: 19px; top: 0; bottom: 0; width: 2px;
+      background: linear-gradient(to bottom, #f97316, rgba(59,91,219,.3));
+    }
+    .t-item { display: flex; gap: 24px; padding-bottom: 40px; }
+    .t-dot {
+      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; font-weight: 800; color: #fff; z-index: 1;
+      box-shadow: 0 0 0 4px rgba(249,115,22,.15);
+    }
+    .t-body h4 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; margin-top: 9px; }
+    .t-body p { font-size: .88rem; color: rgba(255,255,255,.45); line-height: 1.6; }
+    .t-date { font-size: .72rem; font-weight: 700; color: #f97316; letter-spacing: .06em; margin-bottom: 6px; text-transform: uppercase; }
+
+    /* COMING SOON overlay */
+    .coming-soon-overlay {
+      position: fixed; inset: 0; z-index: 5000;
+      background: #060609;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 24px;
+    }
+    .cs-icon { font-size: 72px; margin-bottom: 28px; }
+    .cs-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 8vw, 5rem); letter-spacing: .04em; margin-bottom: 16px; }
+    .cs-sub { color: rgba(255,255,255,.4); font-size: 1rem; max-width: 420px; line-height: 1.6; margin-bottom: 36px; }
+    .cs-countdown { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px; }
+    .cs-cd-box { text-align: center; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; padding: 18px 24px; min-width: 80px; }
+    .cs-cd-num { font-size: 2.4rem; font-weight: 800; color: #f97316; line-height: 1; }
+    .cs-cd-label { font-size: .7rem; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.3); margin-top: 6px; }
+
+    @media(max-width:768px) {
+      nav { padding: 14px 20px; }
+      .cohort-strip { padding: 20px; gap: 24px; }
+      .section { padding: 70px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- COMING SOON OVERLAY — hidden after June 1 2026 -->
+<div class="coming-soon-overlay" id="cs-overlay">
+  <div class="cs-icon">🔒</div>
+  <div class="cs-title">Course Starts June 1</div>
+  <p class="cs-sub">Your Zorus 2.1 internship course will go live on June 1, 2026. Hang tight — it's almost time!</p>
+  <div class="cs-countdown">
+    <div class="cs-cd-box"><div class="cs-cd-num" id="cs-days">--</div><div class="cs-cd-label">Days</div></div>
+    <div class="cs-cd-box"><div class="cs-cd-num" id="cs-hours">--</div><div class="cs-cd-label">Hours</div></div>
+    <div class="cs-cd-box"><div class="cs-cd-num" id="cs-mins">--</div><div class="cs-cd-label">Mins</div></div>
+    <div class="cs-cd-box"><div class="cs-cd-num" id="cs-secs">--</div><div class="cs-cd-label">Secs</div></div>
+  </div>
+  <a href="dashboard.html" class="btn-ghost">← Back to Dashboard</a>
+</div>
+
+<!-- MAIN COURSE PAGE (visible after June 1) -->
+<nav>
+  <a href="index.html" class="logo">GIGNI</a>
+  <a href="dashboard.html" class="back-btn">← Dashboard</a>
+</nav>
+
+<div class="hero">
+  <div class="badge-pill"><div class="dot"></div>Cohort 2026 · Active</div>
+  <h1>ZORUS 2.1<br>INTERNSHIP</h1>
+  <p>A 3-month intensive Python internship. Build production-ready software, ship real projects, and earn a recognized certificate from Gigni.</p>
+  <div class="hero-cta">
+    <a href="#modules" class="btn-primary">Start Learning →</a>
+    <a href="dashboard.html" class="btn-ghost">← Dashboard</a>
+  </div>
+</div>
+
+<!-- COHORT STRIP -->
+<div class="cohort-strip">
+  <div class="label">Your Cohort</div>
+  <div class="intern-avatar"><div class="av-circle">AH</div><span>Aishwarya Holliyavarmath</span></div>
+  <div class="intern-avatar"><div class="av-circle">BP</div><span>Basavaraj Patil</span></div>
+  <div class="intern-avatar"><div class="av-circle">AN</div><span>Ankush Annaiah</span></div>
+  <div class="intern-avatar"><div class="av-circle">AS</div><span>Arya S.</span></div>
+</div>
+
+<!-- MODULES -->
+<div class="section" id="modules">
+  <div class="section-tag">Course Curriculum</div>
+  <h2 class="section-title">12 Weeks of Real Python</h2>
+  <p class="section-sub">From core fundamentals to production deployment — every week pushes you further.</p>
+
+  <div class="modules-grid">
+
+    <div class="module-card">
+      <div class="m-week">Week 1 – 2</div>
+      <h3 class="m-title">Python Core & Environment</h3>
+      <p class="m-desc">Set up your dev environment and master Python syntax, data types, and control flow.</p>
+      <ul class="m-topics">
+        <li>Variables, types & operators</li>
+        <li>Functions & scope</li>
+        <li>Lists, dicts & tuples</li>
+        <li>File I/O & exceptions</li>
+      </ul>
+    </div>
+
+    <div class="module-card">
+      <div class="m-week">Week 3 – 4</div>
+      <h3 class="m-title">OOP & Modules</h3>
+      <p class="m-desc">Write structured, reusable code using object-oriented principles and Python's module system.</p>
+      <ul class="m-topics">
+        <li>Classes & inheritance</li>
+        <li>Decorators & iterators</li>
+        <li>Python standard library</li>
+        <li>Virtual envs & pip</li>
+      </ul>
+    </div>
+
+    <div class="module-card m-locked">
+      <div class="lock-badge">🔒 Unlocks Week 5</div>
+      <div class="m-week">Week 5 – 6</div>
+      <h3 class="m-title">Web APIs with FastAPI</h3>
+      <p class="m-desc">Build and deploy production-grade REST APIs using FastAPI and Pydantic.</p>
+      <ul class="m-topics">
+        <li>HTTP fundamentals</li>
+        <li>FastAPI routing & models</li>
+        <li>Authentication & JWT</li>
+        <li>API documentation</li>
+      </ul>
+    </div>
+
+    <div class="module-card m-locked">
+      <div class="lock-badge">🔒 Unlocks Week 7</div>
+      <div class="m-week">Week 7 – 8</div>
+      <h3 class="m-title">Databases & SQL</h3>
+      <p class="m-desc">Persist data reliably using PostgreSQL and SQLAlchemy ORM with proper migrations.</p>
+      <ul class="m-topics">
+        <li>SQL fundamentals</li>
+        <li>SQLAlchemy ORM</li>
+        <li>Migrations with Alembic</li>
+        <li>Query optimization</li>
+      </ul>
+    </div>
+
+    <div class="module-card m-locked">
+      <div class="lock-badge">🔒 Unlocks Week 9</div>
+      <div class="m-week">Week 9 – 10</div>
+      <h3 class="m-title">Automation & Data</h3>
+      <p class="m-desc">Automate workflows and analyse data with Pandas, NumPy, and scripting pipelines.</p>
+      <ul class="m-topics">
+        <li>Pandas & NumPy basics</li>
+        <li>Web scraping</li>
+        <li>Task automation</li>
+        <li>Data visualisation</li>
+      </ul>
+    </div>
+
+    <div class="module-card m-locked">
+      <div class="lock-badge">🔒 Unlocks Week 11</div>
+      <div class="m-week">Week 11 – 12</div>
+      <h3 class="m-title">Deployment & Capstone</h3>
+      <p class="m-desc">Ship your capstone project to production using Docker, GitHub Actions, and cloud hosting.</p>
+      <ul class="m-topics">
+        <li>Docker & containers</li>
+        <li>CI/CD with GitHub Actions</li>
+        <li>Cloud deployment (Vercel/Render)</li>
+        <li>Capstone project review</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<div class="section" style="border-top:1px solid rgba(255,255,255,.05); padding-top:80px;">
+  <div class="section-tag">Program Timeline</div>
+  <h2 class="section-title">What to Expect</h2>
+  <p class="section-sub">A structured 3-month journey with clear milestones and mentor checkpoints.</p>
+
+  <div class="timeline">
+    <div class="t-item">
+      <div class="t-dot">1</div>
+      <div class="t-body">
+        <div class="t-date">June 1, 2026</div>
+        <h4>Internship Kickoff</h4>
+        <p>Course materials go live. Your cohort is introduced and Week 1–2 modules unlock immediately.</p>
+      </div>
+    </div>
+    <div class="t-item">
+      <div class="t-dot">2</div>
+      <div class="t-body">
+        <div class="t-date">June 15, 2026</div>
+        <h4>Project 1 Submission</h4>
+        <p>Submit your first real project — a fully functional Python CLI tool — for mentor review.</p>
+      </div>
+    </div>
+    <div class="t-item">
+      <div class="t-dot">3</div>
+      <div class="t-body">
+        <div class="t-date">July 15, 2026</div>
+        <h4>Mid-Internship Review</h4>
+        <p>One-on-one mentor session. Progress evaluation and career advice tailored to your goals.</p>
+      </div>
+    </div>
+    <div class="t-item">
+      <div class="t-dot">4</div>
+      <div class="t-body">
+        <div class="t-date">August 28, 2026</div>
+        <h4>Capstone Project Demo</h4>
+        <p>Present your capstone project to the Gigni team and peers. Live demo + code review.</p>
+      </div>
+    </div>
+    <div class="t-item">
+      <div class="t-dot">🎓</div>
+      <div class="t-body">
+        <div class="t-date">September 1, 2026</div>
+        <h4>Certificate Issued</h4>
+        <p>Graduates receive the official Gigni Certificate of Internship — Zorus 2.1. Shared on LinkedIn.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer style="padding:48px; text-align:center; border-top:1px solid rgba(255,255,255,.05); color:rgba(255,255,255,.25); font-size:.85rem;">
+  <p>© 2026 GIGNI · Zorus 2.1 Internship Program</p>
+</footer>
+
+<script>
+  const START = new Date('2026-06-01T00:00:00');
+
+  function checkAccess() {
+    const now = new Date();
+    if (now >= START) {
+      document.getElementById('cs-overlay').style.display = 'none';
+    } else {
+      tick();
+      setInterval(tick, 1000);
+    }
+  }
+
+  function tick() {
+    const diff = START - new Date();
+    if (diff <= 0) {
+      document.getElementById('cs-overlay').style.display = 'none';
+      return;
+    }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('cs-days').innerText  = String(d).padStart(2, '0');
+    document.getElementById('cs-hours').innerText = String(h).padStart(2, '0');
+    document.getElementById('cs-mins').innerText  = String(m).padStart(2, '0');
+    document.getElementById('cs-secs').innerText  = String(s).padStart(2, '0');
+  }
+
+  checkAccess();
+</script>
+</body>
+</html>
