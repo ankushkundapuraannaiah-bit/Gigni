@@ -46,24 +46,12 @@ app.get('/api/init', async (req, res) => {
             applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );`);
 
-        // Zorus Access List Table (admin-managed)
-        await client.query(`CREATE TABLE IF NOT EXISTS zorus_access (
-            id SERIAL PRIMARY KEY,
-            email VARCHAR(255) UNIQUE NOT NULL,
-            added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );`);
-
         // Migrations (Add columns if missing)
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS projects JSONB DEFAULT '[]';`);
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS certificates JSONB DEFAULT '[]';`);
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS hackathons JSONB DEFAULT '[]';`);
         await client.query(`ALTER TABLE zorus_applications ADD COLUMN IF NOT EXISTS score INTEGER;`);
 
-        // Seed pre-approved emails (safe: ON CONFLICT DO NOTHING)
-        const seedEmails = ['amholliyavar@gmail.com', 'basavapatil938@gmail.com', 'aryasm794@gmail.com'];
-        for (const em of seedEmails) {
-            await client.query(`INSERT INTO zorus_access (email) VALUES ($1) ON CONFLICT (email) DO NOTHING;`, [em]);
-        }
 
         res.status(200).json({ success: true, message: 'Database initialized' });
     } catch (err) {
@@ -217,76 +205,6 @@ app.post('/api/zorus-submit-score', async (req, res) => {
     }
 });
 
-// ─── Zorus 2.1 Access Management ──────────────────────────────
-// Public: dashboard calls this to check if the logged-in user is qualified
-app.get('/api/zorus-access', async (req, res) => {
-    let client;
-    try {
-        client = createClient();
-        await client.connect();
-        const result = await client.query(`SELECT email, added_at FROM zorus_access ORDER BY added_at DESC;`);
-        res.status(200).json({ success: true, emails: result.rows.map(r => r.email.toLowerCase()) });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    } finally {
-        if (client) await client.end();
-    }
-});
-
-// Admin: fetch full list with dates (for admin portal table)
-app.get('/api/admin/zorus-access', async (req, res) => {
-    const adminEmail = req.query.adminEmail;
-    if (adminEmail !== 'ankushka2089@gmail.com') return res.status(403).json({ error: 'Unauthorized' });
-    let client;
-    try {
-        client = createClient();
-        await client.connect();
-        const result = await client.query(`SELECT id, email, added_at FROM zorus_access ORDER BY added_at DESC;`);
-        res.status(200).json({ success: true, list: result.rows });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    } finally {
-        if (client) await client.end();
-    }
-});
-
-// Admin: add an email to the access list
-app.post('/api/admin/zorus-access', async (req, res) => {
-    const { email, adminEmail } = req.body;
-    if (adminEmail !== 'ankushka2089@gmail.com') return res.status(403).json({ error: 'Unauthorized' });
-    if (!email || !email.includes('@')) return res.status(400).json({ error: 'Invalid email' });
-    let client;
-    try {
-        client = createClient();
-        await client.connect();
-        await client.query(
-            `INSERT INTO zorus_access (email) VALUES ($1) ON CONFLICT (email) DO NOTHING;`,
-            [email.toLowerCase().trim()]
-        );
-        res.status(200).json({ success: true });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    } finally {
-        if (client) await client.end();
-    }
-});
-
-// Admin: remove an email from the access list
-app.delete('/api/admin/zorus-access', async (req, res) => {
-    const { email, adminEmail } = req.body;
-    if (adminEmail !== 'ankushka2089@gmail.com') return res.status(403).json({ error: 'Unauthorized' });
-    let client;
-    try {
-        client = createClient();
-        await client.connect();
-        await client.query(`DELETE FROM zorus_access WHERE email = $1;`, [email.toLowerCase().trim()]);
-        res.status(200).json({ success: true });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    } finally {
-        if (client) await client.end();
-    }
-});
 
 // Bulk Email Sender with 20s Delay
 app.post('/api/admin/send-bulk-email', async (req, res) => {
