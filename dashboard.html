@@ -451,15 +451,38 @@
   }
 
   // ─── ZORUS 2.1 INTERNSHIP ACCESS ────────────────────────────
-  const ZORUS_QUALIFIED = [
+  // Qualified users identified by email (fetched from DB, managed by admin)
+  let ZORUS_QUALIFIED_EMAILS = new Set(); 
+
+  // Name-based fallback for legacy users
+  const ZORUS_QUALIFIED_NAMES = [
     'ankush annaiah'
   ];
+
   const ZORUS_START = new Date('2026-06-01T00:00:00');
   let countdownTimer = null;
 
+  // Fetch the DB-backed access list once on page load
+  (async function loadZorusAccessList() {
+    try {
+      const res = await fetch('/api/zorus-access');
+      const data = await res.json();
+      if (data.success && Array.isArray(data.emails)) {
+        ZORUS_QUALIFIED_EMAILS = new Set(data.emails.map(e => e.toLowerCase()));
+      }
+    } catch (e) {
+      console.warn('Could not load Zorus access list:', e);
+    }
+  })();
+
   function checkZorusAccess(user) {
+    const email = (user.email || '').toLowerCase().trim();
     const fullName = ((user.fname || '') + ' ' + (user.lname || '')).trim().toLowerCase();
-    const isQualified = ZORUS_QUALIFIED.some(n => fullName.includes(n) || n.includes(fullName));
+
+    // Check by email (exact DB match) or name fallback
+    const isQualified =
+      ZORUS_QUALIFIED_EMAILS.has(email) ||
+      ZORUS_QUALIFIED_NAMES.some(n => fullName.includes(n) || n.includes(fullName));
 
     if (!isQualified) return;
 
@@ -467,7 +490,7 @@
 
     // Emails that bypass the June 1 date lock
     const EARLY_ACCESS = ['ankushka2089@gmail.com'];
-    const hasEarlyAccess = EARLY_ACCESS.includes((user.email || '').toLowerCase());
+    const hasEarlyAccess = EARLY_ACCESS.includes(email);
 
     const now = new Date();
     if (hasEarlyAccess || now >= ZORUS_START) {
