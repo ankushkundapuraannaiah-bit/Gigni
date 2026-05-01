@@ -473,11 +473,13 @@
     const fullName = ((user.fname || '') + ' ' + (user.lname || '')).trim().toLowerCase();
     const isQualified = ZORUS_QUALIFIED.some(n => fullName.includes(n) || n.includes(fullName));
 
-    if (!isQualified) return;
-
-    // Show Zorus navigation item and dashboard section
+    // Show Zorus navigation item for all users
     document.getElementById('nav-zorus').style.display = 'flex';
-    document.getElementById('zorus-section').style.display = 'block';
+
+    // Show dashboard section only for qualified users
+    if (isQualified) {
+      document.getElementById('zorus-section').style.display = 'block';
+    }
 
     // Emails that bypass the June 1 date lock
     const EARLY_ACCESS = ['ankushka2089@gmail.com'];
@@ -486,17 +488,20 @@
     const now = new Date();
     const isLive = hasEarlyAccess || now >= ZORUS_START;
 
-    if (isLive) {
-      // Course is live
+    if (isQualified && isLive) {
+      // Course is live for qualified users
       document.getElementById('zorus-locked-card').style.display = 'none';
       document.getElementById('zorus-active-card').style.display = 'block';
-      renderZorusTab(true);
-    } else {
-      // Show countdown
+      renderZorusTab(true, isQualified);
+    } else if (isQualified) {
+      // Show countdown for qualified users
       document.getElementById('zorus-locked-card').style.display = 'block';
       document.getElementById('zorus-active-card').style.display = 'none';
       startCountdown();
-      renderZorusTab(false);
+      renderZorusTab(false, isQualified);
+    } else {
+      // Non-qualified users see general information
+      renderZorusTab(null, false);
     }
   }
 
@@ -508,7 +513,9 @@
         clearInterval(countdownTimer);
         document.getElementById('zorus-locked-card').style.display = 'none';
         document.getElementById('zorus-active-card').style.display = 'block';
-        renderZorusTab(true);
+        // Re-check access to render tab with updated status
+        const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+        checkZorusAccess(user);
         return;
       }
       const d = Math.floor(diff / 86400000);
@@ -524,10 +531,41 @@
     countdownTimer = setInterval(tick, 1000);
   }
 
-  function renderZorusTab(isLive) {
+  function renderZorusTab(isLive, isQualified) {
     const container = document.getElementById('zorus-tab-content');
 
-    if (isLive) {
+    if (isQualified === false) {
+      // Non-qualified users see general information and apply option
+      container.innerHTML = `
+        <div class="grid">
+          <div class="card">
+            <div class="cico">🐍</div>
+            <h3>About Zorus 2.1</h3>
+            <p>Zorus 2.1 is an intensive 3-month Python internship program focused on solving real-world problems with practical coding skills.</p>
+            <a href="zorus.html" class="btn-act" style="text-decoration:none; display:inline-block;">Learn More</a>
+          </div>
+          <div class="card">
+            <div class="cico">📅</div>
+            <h3>Program Details</h3>
+            <p>3-month duration starting June 1, 2026. Build 3 real-world projects and earn a recognized internship certificate.</p>
+            <button class="btn-act">View Curriculum</button>
+          </div>
+          <div class="card">
+            <div class="cico">🎯</div>
+            <h3>Selection Process</h3>
+            <p>Complete a technical assessment to qualify for this competitive internship program.</p>
+            <a href="zorus-test.html" class="btn-act" style="text-decoration:none; display:inline-block;">Take Assessment</a>
+          </div>
+          <div class="card">
+            <div class="cico">🏆</div>
+            <h3>Benefits</h3>
+            <p>Gain hands-on experience, mentorship, and industry recognition through this comprehensive program.</p>
+            <button class="btn-act">View Success Stories</button>
+          </div>
+        </div>
+      `;
+    } else if (isLive) {
+      // Qualified users with live course
       container.innerHTML = `
         <div class="grid">
           <div class="card">
@@ -557,6 +595,7 @@
         </div>
       `;
     } else {
+      // Qualified users with pending course access
       container.innerHTML = `
         <div style="text-align: center; padding: 60px 20px;">
           <div style="font-size: 64px; margin-bottom: 24px;">🔒</div>
