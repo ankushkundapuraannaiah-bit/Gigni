@@ -167,6 +167,7 @@
     <a id="nav-proj" class="nav-item" onclick="switchTab('proj', this)"><span class="material-icons">work</span> Projects</a>
     <a id="nav-cert" class="nav-item" onclick="switchTab('cert', this)"><span class="material-icons">school</span> Certificates</a>
     <a id="nav-hack" class="nav-item" onclick="switchTab('hack', this)"><span class="material-icons">flash_on</span> Hackathons</a>
+    <a id="nav-zorus" class="nav-item" onclick="switchTab('zorus', this)" style="display:none;"><span class="material-icons">code</span> Zorus 2.1</a>
     <a id="nav-settings" class="nav-item" onclick="switchTab('settings', this)"><span class="material-icons">settings</span> Settings</a>
   </div>
 
@@ -307,6 +308,17 @@
       </div>
     </div>
     
+    <!-- ZORUS TAB -->
+    <div id="tab-zorus" class="tab-content">
+      <div class="header-info">
+        <h1>Zorus 2.1 Internship</h1>
+        <p>Your Python internship program and course materials.</p>
+      </div>
+      <div id="zorus-tab-content">
+        <!-- Content will be populated dynamically -->
+      </div>
+    </div>
+
     <!-- SETTINGS TAB -->
     <div id="tab-settings" class="tab-content">
       <div class="header-info">
@@ -463,6 +475,8 @@
 
     if (!isQualified) return;
 
+    // Show Zorus navigation item and dashboard section
+    document.getElementById('nav-zorus').style.display = 'flex';
     document.getElementById('zorus-section').style.display = 'block';
 
     // Emails that bypass the June 1 date lock
@@ -470,15 +484,19 @@
     const hasEarlyAccess = EARLY_ACCESS.includes((user.email || '').toLowerCase());
 
     const now = new Date();
-    if (hasEarlyAccess || now >= ZORUS_START) {
+    const isLive = hasEarlyAccess || now >= ZORUS_START;
+
+    if (isLive) {
       // Course is live
       document.getElementById('zorus-locked-card').style.display = 'none';
       document.getElementById('zorus-active-card').style.display = 'block';
+      renderZorusTab(true);
     } else {
       // Show countdown
       document.getElementById('zorus-locked-card').style.display = 'block';
       document.getElementById('zorus-active-card').style.display = 'none';
       startCountdown();
+      renderZorusTab(false);
     }
   }
 
@@ -490,6 +508,7 @@
         clearInterval(countdownTimer);
         document.getElementById('zorus-locked-card').style.display = 'none';
         document.getElementById('zorus-active-card').style.display = 'block';
+        renderZorusTab(true);
         return;
       }
       const d = Math.floor(diff / 86400000);
@@ -503,6 +522,94 @@
     }
     tick();
     countdownTimer = setInterval(tick, 1000);
+  }
+
+  function renderZorusTab(isLive) {
+    const container = document.getElementById('zorus-tab-content');
+
+    if (isLive) {
+      container.innerHTML = `
+        <div class="grid">
+          <div class="card">
+            <div class="cico">🚀</div>
+            <h3>Course Materials</h3>
+            <p>Access your Python internship curriculum, project briefs, and learning resources.</p>
+            <a href="zorus-course.html" class="btn-act" style="text-decoration:none; display:inline-block;">Enter Course</a>
+          </div>
+          <div class="card">
+            <div class="cico">📊</div>
+            <h3>Project Progress</h3>
+            <p>Track your progress on the 3 real-world Python projects you'll be building.</p>
+            <button class="btn-act">View Progress</button>
+          </div>
+          <div class="card">
+            <div class="cico">👥</div>
+            <h3>Mentorship</h3>
+            <p>Connect with your mentors and get guidance on your internship journey.</p>
+            <button class="btn-act">Contact Mentor</button>
+          </div>
+          <div class="card">
+            <div class="cico">🏆</div>
+            <h3>Certificate</h3>
+            <p>Earn your recognized internship certificate upon successful completion.</p>
+            <button class="btn-act">View Requirements</button>
+          </div>
+        </div>
+      `;
+    } else {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 60px 20px;">
+          <div style="font-size: 64px; margin-bottom: 24px;">🔒</div>
+          <h3 style="font-size: 24px; margin-bottom: 16px; color: #202124;">Course Access Pending</h3>
+          <p style="font-size: 16px; color: #5f6368; margin-bottom: 32px; max-width: 500px; margin-left: auto; margin-right: auto;">
+            Congratulations on passing the Zorus 2.1 selection test! Your course access will unlock on June 1, 2026.
+          </p>
+          <div style="display: inline-flex; gap: 16px; align-items: center; background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.3); border-radius: 50px; padding: 16px 24px;">
+            <div style="text-align: center;">
+              <div id="tab-cd-days" style="font-size: 24px; font-weight: 700; color: #f97316; line-height: 1;">--</div>
+              <div style="font-size: 11px; color: #5f6368; margin-top: 4px; text-transform: uppercase; letter-spacing: .05em;">Days</div>
+            </div>
+            <div style="text-align: center;">
+              <div id="tab-cd-hours" style="font-size: 24px; font-weight: 700; color: #f97316; line-height: 1;">--</div>
+              <div style="font-size: 11px; color: #5f6368; margin-top: 4px; text-transform: uppercase; letter-spacing: .05em;">Hours</div>
+            </div>
+            <div style="text-align: center;">
+              <div id="tab-cd-mins" style="font-size: 24px; font-weight: 700; color: #f97316; line-height: 1;">--</div>
+              <div style="font-size: 11px; color: #5f6368; margin-top: 4px; text-transform: uppercase; letter-spacing: .05em;">Mins</div>
+            </div>
+            <div style="text-align: center;">
+              <div id="tab-cd-secs" style="font-size: 24px; font-weight: 700; color: #f97316; line-height: 1;">--</div>
+              <div style="font-size: 11px; color: #5f6368; margin-top: 4px; text-transform: uppercase; letter-spacing: .05em;">Secs</div>
+            </div>
+          </div>
+        </div>
+      `;
+      // Start countdown for tab as well
+      startTabCountdown();
+    }
+  }
+
+  let tabCountdownTimer = null;
+  function startTabCountdown() {
+    if (tabCountdownTimer) clearInterval(tabCountdownTimer);
+    function tick() {
+      const diff = ZORUS_START - new Date();
+      if (diff <= 0) {
+        clearInterval(tabCountdownTimer);
+        renderZorusTab(true);
+        return;
+      }
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      document.getElementById('tab-cd-days').innerText  = String(d).padStart(2, '0');
+      document.getElementById('tab-cd-hours').innerText = String(h).padStart(2, '0');
+      document.getElementById('tab-cd-mins').innerText  = String(m).padStart(2, '0');
+      document.getElementById('tab-cd-secs').innerText  = String(s).padStart(2, '0');
+    }
+    tick();
+    tabCountdownTimer = setInterval(tick, 1000);
   }
 
 
