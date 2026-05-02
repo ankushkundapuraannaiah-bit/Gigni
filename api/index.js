@@ -59,17 +59,28 @@ app.get('/api/init', async (req, res) => {
             applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );`);
 
-        // Migrations (Add columns if missing)
-        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS projects JSONB DEFAULT '[]';`);
-        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS certificates JSONB DEFAULT '[]';`);
-        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS hackathons JSONB DEFAULT '[]';`);
-        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS year VARCHAR(255);`);
-        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS field VARCHAR(255);`);
-        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS interest VARCHAR(255);`);
-        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS intro TEXT;`);
-        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS linkedin VARCHAR(255);`);
-        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS github VARCHAR(255);`);
-        await client.query(`ALTER TABLE zorus_applications ADD COLUMN IF NOT EXISTS score INTEGER;`);
+        // Robust Migrations
+        const userCols = [
+            { name: 'projects', type: 'JSONB DEFAULT \'[]\'' },
+            { name: 'certificates', type: 'JSONB DEFAULT \'[]\'' },
+            { name: 'hackathons', type: 'JSONB DEFAULT \'[]\'' },
+            { name: 'year', type: 'VARCHAR(255)' },
+            { name: 'field', type: 'VARCHAR(255)' },
+            { name: 'interest', type: 'VARCHAR(255)' },
+            { name: 'intro', type: 'TEXT' },
+            { name: 'linkedin', type: 'VARCHAR(255)' },
+            { name: 'github', type: 'VARCHAR(255)' }
+        ];
+
+        for (const col of userCols) {
+            try {
+                await client.query(`ALTER TABLE users ADD COLUMN ${col.name} ${col.type};`);
+            } catch (e) { if (e.code !== '42701') console.error(`Error adding ${col.name}:`, e.message); }
+        }
+
+        try {
+            await client.query(`ALTER TABLE zorus_applications ADD COLUMN score INTEGER;`);
+        } catch (e) { if (e.code !== '42701') console.error(`Error adding score to zorus_applications:`, e.message); }
 
 
         // Ensure Admin User Exists

@@ -126,9 +126,12 @@
     
     <!-- USERS SECTION -->
     <div class="section">
-      <div class="header-info">
-        <h1>Member Directory</h1>
-        <p>Manage community members and assign validated builds/credentials.</p>
+      <div class="header-info" style="display:flex; justify-content:space-between; align-items:flex-end;">
+        <div>
+          <h1>Member Directory</h1>
+          <p>Manage community members and assign validated builds/credentials.</p>
+        </div>
+        <button class="btn-act" onclick="repairDatabase()" style="background:var(--orange); font-size:11px; padding:6px 12px; margin:0;">Repair Grid Schema</button>
       </div>
       <div class="card">
         <table>
@@ -486,6 +489,20 @@
         body.value = '<h1 style="color:#fff;">Major Platform Update</h1><p style="color:#9ca3af;">We have released new tools in the Gigni Hub...</p>';
       }
       updatePreview();
+    }
+
+    async function repairDatabase() {
+      if(!confirm('This will attempt to verify and repair the database schema. Proceed?')) return;
+      try {
+        const res = await fetch('/api/init');
+        const data = await res.json();
+        if(data.success) {
+          showToast('Schema Repaired. Resyncing...');
+          setTimeout(() => location.reload(), 1500);
+        } else {
+          showToast('Repair Failed: ' + data.error);
+        }
+      } catch(e) { showToast('Network Error during repair'); }
     }
 
     function showToast(msg) {
