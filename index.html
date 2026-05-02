@@ -486,7 +486,11 @@
         const data = await res.json();
         if(data.success) {
           localStorage.setItem('gigni_user', JSON.stringify(data.user));
-          window.location.href = 'dashboard.html';
+          if(data.user.email === 'ankushka2089@gmail.com') {
+            window.location.href = 'admin.html';
+          } else {
+            window.location.href = 'dashboard.html';
+          }
         } else {
           alert(data.error || 'Login failed.');
         }

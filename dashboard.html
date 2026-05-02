@@ -505,17 +505,42 @@
 
   async function saveProfile() {
     const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
-    user.fname = document.getElementById('prof-fname').value;
-    user.lname = document.getElementById('prof-lname').value;
-    user.college = document.getElementById('prof-college').value;
-    user.year = document.getElementById('prof-year').value;
-    user.field = document.getElementById('prof-field').value;
-    user.linkedin = document.getElementById('prof-linkedin').value;
-    user.github = document.getElementById('prof-github').value;
-    user.intro = document.getElementById('prof-intro').value;
-    localStorage.setItem('gigni_user', JSON.stringify(user));
-    renderAll(user);
-    alert('Identity Synced.');
+    if (!user.id) return alert('Cannot sync: No agent identity found.');
+
+    const updated = {
+      userId: user.id,
+      fname: document.getElementById('prof-fname').value,
+      lname: document.getElementById('prof-lname').value,
+      college: document.getElementById('prof-college').value,
+      year: document.getElementById('prof-year').value,
+      field: document.getElementById('prof-field').value,
+      interest: user.interest || '', // Maintain interest if not in form
+      intro: document.getElementById('prof-intro').value,
+      linkedin: document.getElementById('prof-linkedin').value,
+      github: document.getElementById('prof-github').value
+    };
+
+    try {
+      const res = await fetch('/api/user/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updated)
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Update local storage too
+        const newUser = { ...user, ...updated };
+        delete newUser.userId; // Cleanup
+        localStorage.setItem('gigni_user', JSON.stringify(newUser));
+        renderAll(newUser);
+        alert('Global Identity Synced Successfully ✓');
+      } else {
+        alert('Sync Failed: ' + data.error);
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Network Error during sync.');
+    }
   }
 </script>
 

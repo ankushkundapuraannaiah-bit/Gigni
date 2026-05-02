@@ -68,7 +68,16 @@ app.get('/api/init', async (req, res) => {
         await client.query(`ALTER TABLE zorus_applications ADD COLUMN IF NOT EXISTS score INTEGER;`);
 
 
-        res.status(200).json({ success: true, message: 'Database initialized' });
+        // Ensure Admin User Exists
+        const adminCheck = await client.query(`SELECT id FROM users WHERE email = $1;`, ['ankushka2089@gmail.com']);
+        if (adminCheck.rows.length === 0) {
+            await client.query(`
+                INSERT INTO users (fname, lname, email, password, college)
+                VALUES ($1, $2, $3, $4, $5);
+            `, ['Ankush', 'Admin', 'ankushka2089@gmail.com', 'Ankush@2026', 'Gigni Headquarters']);
+        }
+
+        res.status(200).json({ success: true, message: 'Database initialized and admin checked' });
     } catch (err) {
         res.status(500).json({ error: err.message });
     } finally {
@@ -201,6 +210,27 @@ app.post('/api/user/add-item', async (req, res) => {
         await client.connect();
         const query = `UPDATE users SET ${column} = ${column} || $1::jsonb WHERE id = $2;`;
         await client.query(query, [JSON.stringify([item]), userId]);
+        res.status(200).json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    } finally {
+        if (client) await client.end();
+    }
+});
+
+app.post('/api/user/update', async (req, res) => {
+    const { userId, fname, lname, college, year, field, interest, intro, linkedin, github } = req.body;
+    let client;
+    try {
+        client = createClient();
+        await client.connect();
+        const query = `
+            UPDATE users 
+            SET fname = $1, lname = $2, college = $3, year = $4, field = $5, interest = $6, intro = $7, linkedin = $8, github = $9
+            WHERE id = $10;
+        `;
+        const values = [fname, lname, college, year, field, interest, intro, linkedin, github, userId];
+        await client.query(query, values);
         res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
