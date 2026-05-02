@@ -3,770 +3,421 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gigni — Admin Portal</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <title>GIGNI — Admin Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
   <style>
+    :root {
+      --primary: #3b5bdb;
+      --accent: #8b5cf6;
+      --orange: #f97316;
+      --bg: #030712;
+      --card-bg: rgba(17, 24, 39, 0.4);
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #f3f4f6;
+      --text-dim: #9ca3af;
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: #080808; color: #fff; overflow-x: hidden; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    #bg-canvas {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 1; pointer-events: none; opacity: 0.3;
+    }
+    .main-container { position: relative; z-index: 10; padding: 40px; max-width: 1400px; margin: 0 auto; }
 
     /* NAV */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-      padding: 18px 48px; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+      padding: 15px 40px; background: rgba(3, 7, 18, 0.8);
+      backdrop-filter: blur(20px);
       display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid var(--border);
     }
-    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing: 0.05em; color: #fff; line-height:1; }
-    .nav-user { display: flex; align-items: center; gap: 16px; }
-    .logout-btn { background: transparent; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 6px 16px; color: #fff; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none; }
-    .logout-btn:hover { border-color: #f97316; color: #f97316; }
+    .logo { 
+      font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; 
+      letter-spacing: 0.05em; color: #fff; text-decoration: none;
+      background: linear-gradient(45deg, #fff, var(--primary));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .logout-btn { 
+      color: var(--text-dim); text-decoration: none; font-size: 14px; 
+      font-weight: 600; transition: 0.3s; 
+    }
+    .logout-btn:hover { color: #fff; }
 
     /* CONTENT */
-    .content { padding: 120px 48px 48px; max-width: 1200px; margin: 0 auto; }
+    .section { margin-bottom: 80px; padding-top: 100px; }
     .header-info { margin-bottom: 40px; }
-    .header-info h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.01em; }
-    .header-info p { color: rgba(255,255,255,0.5); font-size: 1rem; }
+    .header-info h1 { font-size: 32px; font-weight: 800; margin-bottom: 8px; }
+    .header-info p { color: var(--text-dim); font-size: 16px; }
 
-    .card { background: #121212; border: 1px solid rgba(255,255,255,0.06); border-radius: 20px; padding: 28px; }
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px;
+      overflow-x: auto;
+    }
 
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 16px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
-    th { font-size: 0.8rem; text-transform: uppercase; color: rgba(255,255,255,0.4); font-weight: 700; letter-spacing: 0.05em; }
-    td { font-size: 0.95rem; }
-    
-    .actions { display: flex; gap: 10px; flex-wrap: wrap;}
-    .btn-act { background: #3b5bdb; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-weight: 600; font-family: 'Inter',sans-serif; cursor: pointer; transition: all 0.2s; font-size: 0.75rem; }
-    .btn-act:hover { background: #2f4ec4; }
+    table { width: 100%; border-collapse: collapse; min-width: 800px; }
+    th, td { padding: 20px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { font-size: 12px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+    td { font-size: 15px; }
+
+    .btn-act { 
+      background: var(--primary); color: #fff; border: none; border-radius: 8px; 
+      padding: 8px 16px; font-weight: 600; cursor: pointer; transition: 0.3s; font-size: 12px; margin: 4px;
+    }
+    .btn-act:hover { background: #2f4ec4; transform: scale(1.05); }
     .btn-cert { background: #10b981; } .btn-cert:hover { background: #059669; }
-    .btn-hack { background: #8b5cf6; } .btn-hack:hover { background: #7c3aed; }
-
-    /* SCORE BADGES */
-    .badge { display: inline-block; padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; }
-    .badge-pass { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.35); }
-    .badge-fail { background: rgba(220,38,38,0.15); color: #f87171; border: 1px solid rgba(220,38,38,0.35); }
-    .badge-pending { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.1); }
+    .btn-hack { background: var(--accent); } .btn-hack:hover { background: #7c3aed; }
 
     /* MODALS */
-    .ovl { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+    .ovl {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(20px); z-index: 2000;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: 0.3s;
+    }
     .ovl.open { opacity: 1; pointer-events: all; }
-    .modal { background: #111; border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 42px 38px; width: 90%; max-width: 480px; transform: translateY(20px); transition: transform 0.3s; position: relative; }
+    .modal {
+      background: #0d1117; border: 1px solid var(--border);
+      border-radius: 24px; padding: 40px; width: 90%; max-width: 500px;
+      transform: translateY(20px); transition: 0.3s;
+    }
     .ovl.open .modal { transform: translateY(0); }
-    .mx { position: absolute; top: 14px; right: 14px; background: rgba(255,255,255,0.06); border: none; color: rgba(255,255,255,0.4); width: 30px; height: 30px; border-radius: 7px; cursor: pointer; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-    .mx:hover { background: rgba(255,255,255,0.1); color: #fff; }
-    .modal h3 { font-size: 1.4rem; font-weight: 800; margin-bottom: 24px; }
-    
-    .fg { margin-bottom: 16px; }
-    .fg label { display: block; font-size: 0.72rem; font-weight: 700; color: rgba(255,255,255,0.35); text-transform: uppercase; margin-bottom: 7px; }
-    .fg input, .fg textarea { width: 100%; background: #181818; border: 1px solid rgba(255,255,255,0.09); border-radius: 9px; padding: 12px 15px; color: #fff; font-family: 'Inter',sans-serif; font-size: 0.88rem; outline: none; transition: all 0.2s; }
-    .fg input:focus, .fg textarea:focus { border-color: #3b5bdb; box-shadow: 0 0 0 3px rgba(59,91,219,0.2); }
-    
-    .fsub { width: 100%; background: #3b5bdb; color: #fff; border: none; border-radius: 9px; padding: 14px; font-size: 0.93rem; font-weight: 700; cursor: pointer; font-family: 'Inter',sans-serif; margin-top: 6px; transition: all 0.3s; }
-    .fsub:hover { background: #2f4ec4; }
-
-    /* TOAST */
-    #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: #161616; border: 1px solid rgba(59,91,219,0.4); border-radius: 100px; padding: 13px 26px; color: #fff; font-size: 0.86rem; font-weight: 500; z-index: 9999; transition: all 0.4s cubic-bezier(0.16,1,0.3,1); white-space: nowrap; box-shadow: 0 16px 48px rgba(0,0,0,0.5); opacity: 0; }
-
-    /* ── BULK EMAIL SECTION ─────────────────────────────── */
-    .section-divider { border: none; border-top: 1px solid rgba(255,255,255,0.05); margin: 60px 0; }
-
-    .email-compose-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      align-items: start;
+    .fg { margin-bottom: 20px; }
+    .fg label { display: block; font-size: 12px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; }
+    .fg input, .fg textarea, .fg select {
+      width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 16px; color: #fff; font-family: 'Outfit',sans-serif; outline: none;
     }
-    @media(max-width: 900px) { .email-compose-grid { grid-template-columns: 1fr; } }
 
-    .email-tag-wrap {
-      display: flex; flex-wrap: wrap; gap: 8px;
-      min-height: 48px; background: #181818;
-      border: 1px solid rgba(255,255,255,0.09);
-      border-radius: 9px; padding: 10px 12px;
-      cursor: text;
-    }
-    .email-tag {
-      display: flex; align-items: center; gap: 6px;
-      background: rgba(59,91,219,0.18); border: 1px solid rgba(59,91,219,0.35);
-      color: #93a8ff; border-radius: 50px;
-      padding: 4px 12px; font-size: 0.78rem; font-weight: 600;
-    }
-    .email-tag button {
-      background: none; border: none; color: #93a8ff;
-      cursor: pointer; padding: 0; font-size: 0.85rem; line-height: 1;
-      opacity: 0.7; transition: opacity 0.2s;
-    }
-    .email-tag button:hover { opacity: 1; }
+    /* BULK EMAIL */
+    .email-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    @media (max-width: 1000px) { .email-grid { grid-template-columns: 1fr; } }
+    .email-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; min-height: 50px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid var(--border); }
+    .email-tag { background: rgba(59, 91, 219, 0.2); border: 1px solid rgba(59, 91, 219, 0.4); padding: 4px 12px; border-radius: 100px; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+    .email-tag button { background: none; border: none; color: #fff; cursor: pointer; opacity: 0.5; }
 
-    .email-input-row {
-      display: flex; gap: 10px; margin-top: 10px;
-    }
-    .email-input-row input {
-      flex: 1; background: #181818;
-      border: 1px solid rgba(255,255,255,0.09);
-      border-radius: 9px; padding: 11px 14px;
-      color: #fff; font-family: 'Inter',sans-serif;
-      font-size: 0.88rem; outline: none;
-      transition: border-color 0.2s;
-    }
-    .email-input-row input:focus { border-color: #3b5bdb; }
-    .email-input-row input::placeholder { color: rgba(255,255,255,0.25); }
-    .btn-add-email {
-      background: #3b5bdb; color: #fff; border: none;
-      border-radius: 9px; padding: 11px 18px;
-      font-weight: 700; font-size: 0.82rem;
-      cursor: pointer; font-family: 'Inter',sans-serif;
-      transition: background 0.2s; white-space: nowrap;
-    }
-    .btn-add-email:hover { background: #2f4ec4; }
-
-    .template-area {
-      width: 100%; min-height: 200px;
-      background: #181818; border: 1px solid rgba(255,255,255,0.09);
-      border-radius: 9px; padding: 14px 16px;
-      color: #fff; font-family: 'Inter',sans-serif;
-      font-size: 0.88rem; outline: none; resize: vertical;
-      transition: border-color 0.2s; line-height: 1.6;
-    }
-    .template-area:focus { border-color: #3b5bdb; }
-
-    .send-bulk-btn {
-      width: 100%; padding: 16px;
-      background: linear-gradient(135deg, #f97316, #ea580c);
-      border: none; border-radius: 12px;
-      color: #fff; font-size: 1rem; font-weight: 800;
-      font-family: 'Inter',sans-serif; cursor: pointer;
-      transition: all 0.3s; margin-top: 8px;
-      letter-spacing: 0.02em;
-    }
-    .send-bulk-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(249,115,22,0.35); }
-    .send-bulk-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-    /* Progress Feed */
-    #bulk-progress-wrap { margin-top: 28px; display: none; }
-    .prog-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .prog-header h4 { font-size: 0.85rem; font-weight: 700; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.06em; }
-    .prog-bar-track { height: 4px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; margin-bottom: 20px; }
-    .prog-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #3b5bdb, #f97316); border-radius: 4px; transition: width 0.6s ease; }
-
-    .prog-feed { display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto; }
-    .prog-item {
-      display: flex; align-items: center; gap: 14px;
-      background: #161616; border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 10px; padding: 12px 16px;
-      animation: fadeUp 0.3s ease;
-    }
-    @keyframes fadeUp { from { opacity:0; transform:translateY(8px);} to { opacity:1; transform:translateY(0);} }
-    .prog-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; }
-    .prog-icon.sent { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
-    .prog-icon.failed { background: rgba(220,38,38,0.15); color: #f87171; border: 1px solid rgba(220,38,38,0.3); }
-    .prog-icon.waiting { background: rgba(249,115,22,0.12); color: #f97316; border: 1px solid rgba(249,115,22,0.25); }
-    .prog-email { font-size: 0.88rem; flex: 1; word-break: break-all; }
-    .prog-status { font-size: 0.76rem; font-weight: 700; }
-    .prog-status.sent { color: #10b981; }
-    .prog-status.failed { color: #f87171; }
-    .prog-status.waiting { color: #f97316; }
-
-    /* Countdown ring */
-    .countdown-ring { position: relative; width: 32px; height: 32px; flex-shrink: 0; }
-    .countdown-ring svg { transform: rotate(-90deg); }
-    .countdown-ring circle { fill: none; stroke-width: 3; }
-    .countdown-ring .track { stroke: rgba(249,115,22,0.15); }
-    .countdown-ring .fill { stroke: #f97316; stroke-dasharray: 88; stroke-dashoffset: 88; stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
-    .countdown-ring .num { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 800; color: #f97316; }
-
-    /* Summary */
-    .prog-summary { margin-top: 16px; display: flex; gap: 12px; }
-    .sum-pill { flex: 1; text-align: center; padding: 12px; border-radius: 10px; font-size: 0.82rem; font-weight: 700; }
-    .sum-pill.ok { background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2); }
-    .sum-pill.err { background: rgba(220,38,38,0.1); color: #f87171; border: 1px solid rgba(220,38,38,0.2); }
-
-
-    .btn-revoke {
-      background: rgba(220,38,38,0.12); color: #f87171;
-      border: 1px solid rgba(220,38,38,0.3); border-radius: 6px;
-      padding: 5px 12px; font-size: 0.75rem; font-weight: 700;
-      font-family: 'Inter',sans-serif; cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-revoke:hover { background: rgba(220,38,38,0.25); }
-    .pill-access {
-      display: inline-block; padding: 3px 12px; border-radius: 50px; font-size: 0.72rem;
-      font-weight: 700; background: rgba(16,185,129,0.12); color: #10b981;
-      border: 1px solid rgba(16,185,129,0.3);
-    }
-    .zorus-empty { text-align:center; padding: 32px; color: rgba(255,255,255,0.3); font-size: 0.9rem; }
-
-
-    @media(max-width: 768px) {
-      nav { padding: 14px 20px; }
-      .logo { font-size: 1.8rem; }
-      .content { padding: 90px 20px 40px; }
-      .header-info h1 { font-size: 1.8rem; }
-      .card { padding: 16px; border-radius: 12px; }
-      th, td { padding: 10px; font-size: 0.85rem; }
-      .actions { flex-direction: column; }
-      .btn-act { width: 100%; text-align: center; }
-    }
+    #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1a1a1a; border: 1px solid var(--primary); padding: 14px 28px; border-radius: 50px; color: #fff; z-index: 10000; transition: 0.4s; opacity: 0; }
   </style>
 </head>
 <body>
 
-<nav>
-  <div class="logo">GIGNI ADMIN</div>
-  <div class="nav-user">
+  <canvas id="bg-canvas"></canvas>
+
+  <nav>
+    <a href="index.html" class="logo">GIGNI ADMIN</a>
     <a href="index.html" onclick="localStorage.removeItem('gigni_user')" class="logout-btn">Log Out</a>
-  </div>
-</nav>
+  </nav>
 
-<div class="content">
-  <div class="header-info">
-    <h1>User Accounts</h1>
-    <p>Manage all users and add Projects, Certificates, and Hackathons to their profiles.</p>
-  </div>
-  
-  <div class="card" style="overflow-x:auto;">
-    <table id="users-table">
-       <thead>
-         <tr>
-           <th>ID</th>
-           <th>Name</th>
-           <th>Email</th>
-           <th>LinkedIn</th>
-           <th>GitHub</th>
-           <th>Actions</th>
-         </tr>
-       </thead>
-      <tbody id="users-body">
-        <tr><td colspan="4" style="text-align:center; padding: 40px; color:rgba(255,255,255,0.4);">Loading users...</td></tr>
-      </tbody>
-    </table>
-  </div>
-  
-  <div class="header-info" style="margin-top: 60px;">
-    <h1>Zorus 2.1 Applicants</h1>
-    <p>View all users who have applied for the Zorus internship.</p>
-  </div>
-  
-  <div class="card" style="overflow-x:auto;">
-    <table id="zorus-table">
-      <thead>
-        <tr>
-          <th>App ID</th>
-          <th>User ID</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Score</th>
-          <th>Applied At</th>
-        </tr>
-      </thead>
-      <tbody id="zorus-body">
-        <tr><td colspan="6" style="text-align:center; padding: 40px; color:rgba(255,255,255,0.4);">Loading applications...</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
+  <div class="main-container">
+    
+    <!-- USERS SECTION -->
+    <div class="section">
+      <div class="header-info">
+        <h1>Member Directory</h1>
+        <p>Manage community members and assign validated builds/credentials.</p>
+      </div>
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Member</th>
+              <th>Email</th>
+              <th>Connections</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="users-body">
+            <tr><td colspan="5" style="text-align:center; padding:60px; color:var(--text-dim);">Scanning for identities...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
+    <!-- ZORUS SECTION -->
+    <div class="section" style="padding-top:0;">
+      <div class="header-info">
+        <h1>Zorus 2.1 Applicants</h1>
+        <p>Monitor technical assessment scores and internship qualifications.</p>
+      </div>
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>App ID</th>
+              <th>Member</th>
+              <th>Status / Score</th>
+              <th>Applied At</th>
+            </tr>
+          </thead>
+          <tbody id="zorus-body">
+            <tr><td colspan="4" style="text-align:center; padding:60px; color:var(--text-dim);">Loading applications...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-<!-- ═══════════════════ BULK EMAIL SENDER ═══════════════════ -->
-<hr class="section-divider">
-<div class="content" style="padding-top:0;">
-  <div class="header-info">
-    <h1>📧 Bulk Email Sender</h1>
-    <p>Compose a message, add recipient emails, and send with an automatic 20-second interval between each delivery.</p>
-  </div>
-
-  <div class="card">
-    <div class="email-compose-grid">
-
-      <!-- LEFT: Recipients + Subject -->
-      <div>
-        <div class="fg">
-          <label>Email Subject</label>
-          <input type="text" id="bulk-subject" placeholder="e.g. Important Update from Gigni 🚀" style="width:100%;background:#181818;border:1px solid rgba(255,255,255,0.09);border-radius:9px;padding:12px 15px;color:#fff;font-family:'Inter',sans-serif;font-size:.88rem;outline:none;transition:border-color .2s;">
-        </div>
-
-        <div class="fg">
-          <label>Recipient Emails <span id="email-count" style="color:rgba(255,255,255,0.25);font-weight:400;"> — 0 added</span></label>
-          <!-- Tag display -->
-          <div class="email-tag-wrap" id="email-tags"></div>
-          <!-- Add row -->
-          <div class="email-input-row" style="margin-top:10px;">
-            <input type="email" id="new-email-input" placeholder="Add an email address and press Enter or click Add">
-            <button class="btn-add-email" onclick="addEmail()">+ Add</button>
+    <!-- BULK EMAIL SECTION -->
+    <div class="section" style="padding-top:0;">
+      <div class="header-info">
+        <h1>Bulk Agentic Communications</h1>
+        <p>Distribute mass updates with automated delivery intervals (20s).</p>
+      </div>
+      <div class="card">
+        <div class="email-grid">
+          <div>
+            <div class="fg">
+              <label>Subject</label>
+              <input type="text" id="bulk-subject" placeholder="e.g. Critical AI Update 🚀">
+            </div>
+            <div class="fg">
+              <label>Recipients <span id="email-count" style="opacity:0.4;">— 0</span></label>
+              <div class="email-tags" id="email-tags"></div>
+              <div style="display:flex; gap:12px;">
+                <input type="email" id="new-email-input" placeholder="Enter email address" style="flex:1;">
+                <button class="btn-act" onclick="addEmail()" style="margin:0; padding:12px 24px;">+ Add</button>
+              </div>
+            </div>
+            <div class="fg">
+              <label>Template Preset</label>
+              <select id="template-preset" onchange="applyTemplatePreset()">
+                <option value="custom">Custom Build</option>
+                <option value="announcement">Global Announcement</option>
+                <option value="internship">Zorus Opportunity</option>
+              </select>
+            </div>
+            <button class="btn-act" id="send-bulk-btn" onclick="startBulkSend()" style="width:100%; padding:18px; font-size:16px; background:var(--orange); margin-top:20px;">Deploy Bulk Stream</button>
           </div>
-          <p style="font-size:0.74rem;color:rgba(255,255,255,0.25);margin-top:8px;">Tip: Press <kbd style="background:rgba(255,255,255,0.08);padding:1px 6px;border-radius:4px;">Enter</kbd> to quickly add emails.</p>
+          <div>
+            <div class="fg">
+              <label>Email Body (HTML)</label>
+              <textarea id="bulk-body" style="height:280px;" placeholder="Build your HTML template here..."></textarea>
+            </div>
+            <div style="background:#000; border-radius:12px; padding:12px;">
+              <p style="font-size:10px; color:var(--text-dim); margin-bottom:8px; font-weight:800;">PREVIEW</p>
+              <iframe id="email-preview" style="width:100%; height:200px; border:none; background:#fff; border-radius:8px;"></iframe>
+            </div>
+          </div>
         </div>
-
-        <div class="fg">
-          <label>Email Format / Template Type</label>
-          <select id="template-preset" onchange="applyTemplatePreset()" style="width:100%;background:#181818;border:1px solid rgba(255,255,255,0.09);border-radius:9px;padding:12px 15px;color:#fff;font-family:'Inter',sans-serif;font-size:.88rem;outline:none;appearance:none;cursor:pointer;">
-            <option value="custom">✏️ Custom (write your own HTML)</option>
-            <option value="announcement">📢 Announcement</option>
-            <option value="internship">🎓 Internship Opportunity</option>
-            <option value="reminder">🔔 Gentle Reminder</option>
-          </select>
-        </div>
-
-        <button class="send-bulk-btn" id="send-bulk-btn" onclick="startBulkSend()">
-          🚀 Send to All Recipients
-        </button>
-      </div>
-
-      <!-- RIGHT: Template Editor -->
-      <div>
-        <div class="fg">
-          <label>Email Body <span style="color:rgba(255,255,255,0.25);font-weight:400;">(HTML supported)</span></label>
-          <textarea class="template-area" id="bulk-body" placeholder="Write your email HTML here..."></textarea>
-        </div>
-        <div style="background:#0f0f0f;border:1px solid rgba(255,255,255,0.05);border-radius:9px;padding:12px 16px;margin-top:4px;">
-          <p style="font-size:0.72rem;color:rgba(255,255,255,0.3);margin-bottom:4px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Preview</p>
-          <iframe id="email-preview" style="width:100%;height:220px;border:none;border-radius:6px;background:#fff;"></iframe>
+        
+        <!-- PROGRESS -->
+        <div id="bulk-progress-wrap" style="display:none; margin-top:40px; padding-top:40px; border-top:1px solid var(--border);">
+          <div style="height:4px; background:rgba(255,255,255,0.05); border-radius:10px; margin-bottom:20px; overflow:hidden;">
+            <div id="prog-bar" style="width:0%; height:100%; background:var(--primary); transition:0.5s;"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+            <h4 id="prog-label">Streaming...</h4>
+            <span id="prog-count">0 / 0</span>
+          </div>
+          <div id="prog-feed" style="max-height:300px; overflow-y:auto; display:flex; flex-direction:column; gap:12px;"></div>
         </div>
       </div>
     </div>
 
-    <!-- Progress Feed -->
-    <div id="bulk-progress-wrap">
-      <div class="prog-bar-track"><div class="prog-bar-fill" id="prog-bar"></div></div>
-      <div class="prog-header">
-        <h4 id="prog-label">Sending…</h4>
-        <span id="prog-count" style="font-size:0.82rem;color:rgba(255,255,255,0.4);"></span>
-      </div>
-      <div class="prog-feed" id="prog-feed"></div>
-      <div class="prog-summary" id="prog-summary" style="display:none;">
-        <div class="sum-pill ok" id="sum-sent">0 Sent</div>
-        <div class="sum-pill err" id="sum-failed">0 Failed</div>
-      </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="ovl" id="item-ovl" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <h3 id="modal-title" style="margin-bottom:24px;">Assign Build</h3>
+      <input type="hidden" id="m_userId"><input type="hidden" id="m_type">
+      <div class="fg"><label>Build Title</label><input type="text" id="m_title"></div>
+      <div class="fg"><label>Context / Description</label><textarea id="m_desc" rows="3"></textarea></div>
+      <div class="fg"><label>Verification Date</label><input type="text" id="m_date" placeholder="e.g. May 2026"></div>
+      <button class="btn-act" onclick="submitItem()" id="m_submit" style="width:100%; padding:15px;">Finalize Assignment</button>
     </div>
   </div>
-</div>
 
-<!-- ITEM MODAL -->
-<div class="ovl" id="item-ovl" onclick="closeModal(event)">
-  <div class="modal" onclick="event.stopPropagation()">
-    <button class="mx" onclick="closeModal(null)">✕</button>
-    <h3 id="modal-title">Add Item</h3>
-    <input type="hidden" id="m_userId">
-    <input type="hidden" id="m_type">
-    
-    <div class="fg"><label>Title / Name</label><input type="text" id="m_title" placeholder="e.g. Full Stack Dashboard"></div>
-    <div class="fg">
-        <label id="m_desc_label">Description / Organization</label>
-        <textarea id="m_desc" rows="3" placeholder="Provide details..."></textarea>
-    </div>
-    <div class="fg"><label>Date (Optional)</label><input type="text" id="m_date" placeholder="e.g. Aug 2025"></div>
-    
-    <button class="fsub" onclick="submitItem()" id="m_submit">Add to User Profile</button>
-  </div>
-</div>
+  <div id="toast"></div>
 
-<!-- TOAST -->
-<div id="toast"></div>
+  <script>
+    // AUTH & DATA
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+      if (user.email !== 'ankushka2089@gmail.com') { window.location.href = 'index.html'; return; }
+      fetchUsers();
+      fetchZorusApplications();
+    });
 
-<script>
-  // Auth Check
-  document.addEventListener('DOMContentLoaded', () => {
-    const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
-    if (user.email !== 'ankushka2089@gmail.com') {
-        window.location.href = 'index.html';
-        return;
-    }
-    fetchUsers();
-    fetchZorusApplications();
-  });
-
-  async function fetchUsers() {
+    async function fetchUsers() {
       try {
-          const res = await fetch('/api/users');
-          const data = await res.json();
-          if (data.success) {
-              const tbody = document.getElementById('users-body');
-              tbody.innerHTML = '';
-              if (data.users.length === 0) {
-                   tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No users found</td></tr>';
-                  return;
-              }
-              
-              data.users.forEach(u => {
-                  const tr = document.createElement('tr');
-                  
-                  // Use let to capture variable in closures
-                  const f = u.fname || '';
-                  const l = u.lname || '';
-                  
-                   tr.innerHTML = `
-                     <td>#${u.id}</td>
-                     <td><strong style="margin-right:8px">${f} ${l}</strong><br><small style="color:rgba(255,255,255,0.4)">${u.college || 'No college'}</small></td>
-                     <td>${u.email}</td>
-                     <td><a href="${u.linkedin || '#'}" target="_blank" style="color:#3b5bdb;text-decoration:none;">${u.linkedin ? 'LinkedIn' : '-'}</a></td>
-                     <td><a href="${u.github || '#'}" target="_blank" style="color:#3b5bdb;text-decoration:none;">${u.github ? 'GitHub' : '-'}</a></td>
-                     <td>
-                       <div class="actions">
-                         <button class="btn-act" onclick="openModal(${u.id}, 'project', '${f}')">+ Project</button>
-                         <button class="btn-act btn-cert" onclick="openModal(${u.id}, 'certificate', '${f}')">+ Certificate</button>
-                         <button class="btn-act btn-hack" onclick="openModal(${u.id}, 'hackathon', '${f}')">+ Hackathon</button>
-                       </div>
-                     </td>
-                   `;
-                  tbody.appendChild(tr);
-              });
-          } else {
-              showToast(data.error || 'Failed to fetch users');
-          }
-      } catch (err) {
-          showToast('Error connecting to server.');
-      }
-  }
+        const res = await fetch('/api/users');
+        const data = await res.json();
+        if (data.success) {
+          const tbody = document.getElementById('users-body');
+          tbody.innerHTML = '';
+          data.users.forEach(u => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>#${u.id}</td>
+              <td><strong>${u.fname} ${u.lname}</strong><br><small style="color:var(--text-dim)">${u.college}</small></td>
+              <td>${u.email}</td>
+              <td>
+                <a href="${u.github}" target="_blank" style="color:var(--primary); margin-right:10px;">GitHub</a>
+                <a href="${u.linkedin}" target="_blank" style="color:var(--primary)">LinkedIn</a>
+              </td>
+              <td>
+                <button class="btn-act" onclick="openModal(${u.id}, 'project', '${u.fname}')">+ Build</button>
+                <button class="btn-act btn-cert" onclick="openModal(${u.id}, 'certificate', '${u.fname}')">+ Creds</button>
+                <button class="btn-act btn-hack" onclick="openModal(${u.id}, 'hackathon', '${u.fname}')">+ Hack</button>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (e) { showToast('Sync Error'); }
+    }
 
-  function openModal(userId, type, userName) {
+    async function fetchZorusApplications() {
+      try {
+        const res = await fetch('/api/zorus-applications');
+        const data = await res.json();
+        if (data.success) {
+          const tbody = document.getElementById('zorus-body');
+          tbody.innerHTML = '';
+          data.applications.forEach(a => {
+            const tr = document.createElement('tr');
+            const status = a.score === null ? 'Pending' : (a.score >= 85 ? `Pass (${a.score}%)` : `Fail (${a.score}%)`);
+            const statusColor = a.score === null ? 'var(--text-dim)' : (a.score >= 85 ? '#10b981' : '#f87171');
+            tr.innerHTML = `
+              <td>#${a.id}</td>
+              <td><strong>${a.fname} ${a.lname}</strong><br><small style="color:var(--text-dim)">${a.email}</small></td>
+              <td style="color:${statusColor}; font-weight:700;">${status}</td>
+              <td>${new Date(a.applied_at).toLocaleDateString()}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (e) {}
+    }
+
+    function openModal(userId, type, name) {
       document.getElementById('m_userId').value = userId;
       document.getElementById('m_type').value = type;
-      
-      document.getElementById('m_title').value = '';
-      document.getElementById('m_desc').value = '';
-      document.getElementById('m_date').value = '';
-      
-      let title = type.charAt(0).toUpperCase() + type.slice(1);
-      document.getElementById('modal-title').innerText = `Add ${title} for ${userName}`;
-      
+      document.getElementById('modal-title').innerText = `Assign ${type} to ${name}`;
       document.getElementById('item-ovl').classList.add('open');
-  }
+    }
+    function closeModal(e) { if(e && e.target !== e.currentTarget) return; document.getElementById('item-ovl').classList.remove('open'); }
 
-  function closeModal(e) {
-      if (e && e.target !== e.currentTarget) return;
-      document.getElementById('item-ovl').classList.remove('open');
-  }
-
-  async function submitItem() {
-      const userId = document.getElementById('m_userId').value;
-      const type = document.getElementById('m_type').value;
-      const title = document.getElementById('m_title').value;
-      const desc = document.getElementById('m_desc').value;
-      const date = document.getElementById('m_date').value;
-      
-      if (!title) { showToast('Title is required!'); return; }
-      
-      const item = { title, description: desc, date };
-      
+    async function submitItem() {
       const btn = document.getElementById('m_submit');
-      btn.innerText = 'Adding...';
-      btn.disabled = true;
-      
-      try {
-          const res = await fetch('/api/user/add-item', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ userId, type, item })
-          });
-          const data = await res.json();
-          if (data.success) {
-              showToast(type.charAt(0).toUpperCase() + type.slice(1) + ' added successfully! ✓');
-              closeModal(null);
-          } else {
-              showToast(data.error || 'Failed to add item');
-          }
-      } catch (err) {
-          showToast('Error connecting to sever.');
-      } finally {
-          btn.innerText = 'Add to User Profile';
-          btn.disabled = false;
-      }
-  }
-
-  function showToast(msg){
-    const t = document.getElementById('toast');
-    if(!t) return;
-    t.textContent = msg;
-    t.style.transform = 'translateX(-50%) translateY(0)';
-    t.style.opacity = '1';
-    setTimeout(()=>{ t.style.transform='translateX(-50%) translateY(80px)'; t.style.opacity='0'; }, 3500);
-  }
-
-  async function fetchZorusApplications() {
-      try {
-          const res = await fetch('/api/zorus-applications');
-          const data = await res.json();
-          if (data.success) {
-              const tbody = document.getElementById('zorus-body');
-              tbody.innerHTML = '';
-              if (data.applications.length === 0) {
-                  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:rgba(255,255,255,0.4);">No applications yet</td></tr>';
-                  return;
-              }
-              
-              data.applications.forEach(a => {
-                  const tr = document.createElement('tr');
-                  const dateOpts = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-                  const dateStr = new Date(a.applied_at).toLocaleDateString(undefined, dateOpts);
-
-                  let scoreBadge;
-                  if (a.score === null || a.score === undefined) {
-                      scoreBadge = `<span class="badge badge-pending">Pending</span>`;
-                  } else if (a.score >= 85) {
-                      scoreBadge = `<span class="badge badge-pass">${a.score}% &nbsp;✓ PASS</span>`;
-                  } else {
-                      scoreBadge = `<span class="badge badge-fail">${a.score}% &nbsp;✗ FAIL</span>`;
-                  }
-                  
-                  tr.innerHTML = `
-                    <td>#${a.id}</td>
-                    <td>${a.user_id}</td>
-                    <td><strong>${a.fname || ''} ${a.lname || ''}</strong></td>
-                    <td>${a.email}</td>
-                    <td>${scoreBadge}</td>
-                    <td>${dateStr}</td>
-                  `;
-                  tbody.appendChild(tr);
-              });
-          }
-      } catch (err) {
-          console.error("Failed to fetch Zorus applications.");
-      }
-  }
-
-
-  // ─── BULK EMAIL LOGIC ───────────────────────────────────────
-  let bulkEmails = [];
-  const bodyInput = document.getElementById('bulk-body');
-  const previewFrame = document.getElementById('email-preview');
-  const emailInput = document.getElementById('new-email-input');
-
-  // Live Preview
-  bodyInput.addEventListener('input', updatePreview);
-  function updatePreview() {
-    const doc = previewFrame.contentDocument || previewFrame.contentWindow.document;
-    doc.open();
-    doc.write(bodyInput.value || '<p style="color:#999;font-family:sans-serif;padding:20px;">Email body preview will appear here...</p>');
-    doc.close();
-  }
-
-  // Add Email Tag
-  emailInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') addEmail(); });
-  function addEmail() {
-    const val = emailInput.value.trim();
-    if (!val) return;
-    if (!val.includes('@')) { showToast('Invalid email address'); return; }
-    if (bulkEmails.includes(val)) { showToast('Email already added'); return; }
-    
-    bulkEmails.push(val);
-    emailInput.value = '';
-    updateEmailTags();
-  }
-
-  function removeEmail(idx) {
-    bulkEmails.splice(idx, 1);
-    updateEmailTags();
-  }
-
-  function updateEmailTags() {
-    const wrap = document.getElementById('email-tags');
-    const count = document.getElementById('email-count');
-    wrap.innerHTML = '';
-    bulkEmails.forEach((email, i) => {
-      const tag = document.createElement('div');
-      tag.className = 'email-tag';
-      tag.innerHTML = `${email} <button onclick="removeEmail(${i})">✕</button>`;
-      wrap.appendChild(tag);
-    });
-    count.innerText = ` — ${bulkEmails.length} added`;
-  }
-
-  // Template Presets
-  function applyTemplatePreset() {
-    const preset = document.getElementById('template-preset').value;
-    const subject = document.getElementById('bulk-subject');
-    let body = '';
-
-    if (preset === 'announcement') {
-      subject.value = "Big News from Gigni! 📢";
-      body = `<div style="font-family:sans-serif;max-width:600px;margin:auto;padding:30px;border:1px solid #eee;border-radius:12px;">
-        <h2 style="color:#3b5bdb;">Major Update</h2>
-        <p>Hello! We have some exciting news to share regarding our platform...</p>
-        <p>Best regards,<br>Team Gigni</p>
-      </div>`;
-    } else if (preset === 'internship') {
-      subject.value = "Zorus 2.1: A Great Internship Opportunity for You! 🚀";
-      body = `<div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; padding: 0; border: 1px solid #e0e0e0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-        <div style="background: linear-gradient(135deg, #3b5bdb, #2f4ec4); padding: 40px 30px; text-align: center; color: white;">
-          <h1 style="margin: 0; font-size: 28px; letter-spacing: 1px;">ZORUS 2.1</h1>
-          <p style="margin-top: 10px; opacity: 0.9; font-size: 16px;">By Gigni Community</p>
-        </div>
-        <div style="padding: 40px 30px; color: #333; line-height: 1.6;">
-          <p style="font-size: 16px;">Hi,</p>
-          <p style="font-size: 16px;">We have a <strong>great internship opportunity</strong> for you.</p>
-          <p style="font-size: 16px;"><strong>Zorus 2.1 by Gigni</strong> is a 3-month internship program designed to bridge the gap between learning and industry-ready production.</p>
-          
-          <div style="background: #f8faff; border-left: 4px solid #3b5bdb; padding: 20px; margin: 25px 0; border-radius: 0 8px 8px 0;">
-            <h3 style="margin-top: 0; color: #3b5bdb; font-size: 18px;">What you'll get:</h3>
-            <ul style="padding-left: 20px; margin-bottom: 0;">
-              <li>Developing software using <strong>Python</strong></li>
-              <li>Deploying software to production environments</li>
-              <li>Training through <strong>basic to advanced courses</strong> designed by experts</li>
-              <li>Building <strong>3 major projects</strong></li>
-            </ul>
-          </div>
-
-          <p style="font-size: 16px;">Upon successful completion of the entire 3-month program, everyone will receive a <strong>Certificate of Internship</strong> by Gigni.</p>
-          
-          <div style="text-align: center; margin: 40px 0;">
-            <a href="https://www.gigniconnect.space/zorus.html" style="background: #f97316; color: white; padding: 16px 32px; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 18px; box-shadow: 0 4px 14px rgba(249, 115, 22, 0.4);">Apply Now →</a>
-          </div>
-
-          <p style="font-size: 15px; color: #666; text-align: center;"><em>Do not miss this opportunity!</em></p>
-        </div>
-        <div style="background: #f4f4f4; padding: 30px; text-align: center; border-top: 1px solid #eee;">
-          <p style="margin: 0; font-weight: bold; color: #333;">Thank you,<br>Gigni Team</p>
-          <p style="margin-top: 10px; font-size: 14px; color: #999;">gigniconnect.space</p>
-        </div>
-      </div>`;
-    } else if (preset === 'reminder') {
-      subject.value = "Gentle Reminder: Complete your profile 🔔";
-      body = `<div style="font-family:sans-serif;max-width:600px;margin:auto;padding:30px;border:1px solid #eee;border-radius:12px;">
-        <p>Hi there, we noticed your profile is incomplete. To get verified for internships, please fill in all details.</p>
-        <p>Cheers!</p>
-      </div>`;
-    }
-
-    if (body) {
-      bodyInput.value = body;
-      updatePreview();
-    }
-  }
-
-  // Start Bulk Send
-  async function startBulkSend() {
-    const subject = document.getElementById('bulk-subject').value;
-    const htmlBody = bodyInput.value;
-    const btn = document.getElementById('send-bulk-btn');
-
-    if (bulkEmails.length === 0) { showToast('Add at least one recipient'); return; }
-    if (!subject || !htmlBody) { showToast('Subject and body are required'); return; }
-
-    if (!confirm(`Are you sure you want to send this email to ${bulkEmails.length} recipients? This will take ~${(bulkEmails.length - 1) * 20} seconds.`)) return;
-
-    btn.disabled = true;
-    btn.innerText = 'Sending Bulk...';
-    
-    const wrap = document.getElementById('bulk-progress-wrap');
-    const feed = document.getElementById('prog-feed');
-    const bar = document.getElementById('prog-bar');
-    const label = document.getElementById('prog-label');
-    const summary = document.getElementById('prog-summary');
-    
-    wrap.style.display = 'block';
-    feed.innerHTML = '';
-    bar.style.width = '0%';
-    summary.style.display = 'none';
-    label.innerText = 'Initializing...';
-
-    let sentCount = 0;
-    let failCount = 0;
-
-    try {
-      const admin = JSON.parse(localStorage.getItem('gigni_user') || '{}');
-      const response = await fetch('/api/admin/send-bulk-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ emails: bulkEmails, subject, htmlBody, adminEmail: admin.email })
-      });
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop(); // Keep partial line in buffer
-
-        for (const line of lines) {
-          if (!line.trim()) continue;
-          const msg = JSON.parse(line);
-
-          if (msg.type === 'waiting') {
-            updateWaitingItem(msg.index, msg.secondsLeft);
-            label.innerText = `Waiting ${msg.secondsLeft}s for next send...`;
-          } else if (msg.type === 'sent') {
-            sentCount++;
-            addFeedItem(msg.email, 'sent');
-            updateProgress(msg.index + 1, msg.total);
-          } else if (msg.type === 'failed') {
-            failCount++;
-            addFeedItem(msg.email, 'failed', msg.error);
-            updateProgress(msg.index + 1, msg.total);
-          }
+      btn.innerText = 'Syncing...';
+      const body = {
+        userId: document.getElementById('m_userId').value,
+        type: document.getElementById('m_type').value,
+        item: {
+          title: document.getElementById('m_title').value,
+          description: document.getElementById('m_desc').value,
+          date: document.getElementById('m_date').value
         }
+      };
+      try {
+        const res = await fetch('/api/user/add-item', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+        if((await res.json()).success) { showToast('Build Assigned'); closeModal(); }
+      } catch (e) { showToast('Error'); } finally { btn.innerText = 'Finalize Assignment'; }
+    }
+
+    // BULK LOGIC
+    let bulkEmails = [];
+    const bodyInput = document.getElementById('bulk-body');
+    const previewFrame = document.getElementById('email-preview');
+    bodyInput.oninput = () => {
+      const doc = previewFrame.contentDocument;
+      doc.open(); doc.write(bodyInput.value); doc.close();
+    };
+
+    function addEmail() {
+      const val = document.getElementById('new-email-input').value.trim();
+      if(val && !bulkEmails.includes(val)) {
+        bulkEmails.push(val);
+        document.getElementById('new-email-input').value = '';
+        renderTags();
       }
-
-      label.innerText = 'Bulk Send Complete';
-      summary.style.display = 'flex';
-      document.getElementById('sum-sent').innerText = `${sentCount} Sent`;
-      document.getElementById('sum-failed').innerText = `${failCount} Failed`;
-      showToast('Bulk process completed!');
-
-    } catch (err) {
-      console.error(err);
-      showToast('Connection error during bulk send.');
-    } finally {
-      btn.disabled = false;
-      btn.innerText = '🚀 Send to All Recipients';
     }
-  }
-
-  function addFeedItem(email, status, error = '') {
-    const feed = document.getElementById('prog-feed');
-    const icon = status === 'sent' ? '✓' : '✗';
-    const statusText = status === 'sent' ? 'Sent' : 'Failed';
-    
-    // Remove any "waiting" item for this email if it exists
-    const existing = document.querySelector(`[data-email="${email}"]`);
-    if (existing) existing.remove();
-
-    const div = document.createElement('div');
-    div.className = 'prog-item';
-    div.setAttribute('data-email', email);
-    div.innerHTML = `
-      <div class="prog-icon ${status}">${icon}</div>
-      <div class="prog-email">${email}${error ? `<br><small style="color:#f87171">${error}</small>` : ''}</div>
-      <div class="prog-status ${status}">${statusText}</div>
-    `;
-    feed.prepend(div);
-  }
-
-  function updateWaitingItem(index, seconds) {
-    const email = bulkEmails[index];
-    const feed = document.getElementById('prog-feed');
-    let item = document.querySelector(`[data-wait-idx="${index}"]`);
-    
-    if (!item) {
-      item = document.createElement('div');
-      item.className = 'prog-item';
-      item.setAttribute('data-wait-idx', index);
-      item.setAttribute('data-email', email);
-      feed.prepend(item);
+    function renderTags() {
+      const wrap = document.getElementById('email-tags');
+      wrap.innerHTML = bulkEmails.map((e, i) => `<div class="email-tag">${e}<button onclick="bulkEmails.splice(${i},1);renderTags()">✕</button></div>`).join('');
+      document.getElementById('email-count').innerText = `— ${bulkEmails.length}`;
     }
 
-    const offset = 88 - (seconds / 20) * 88;
-    item.innerHTML = `
-      <div class="countdown-ring">
-        <svg width="32" height="32"><circle class="track" cx="16" cy="16" r="14"/><circle class="fill" cx="16" cy="16" r="14" style="stroke-dashoffset:${offset}"/></svg>
-        <div class="num">${seconds}</div>
-      </div>
-      <div class="prog-email" style="color:rgba(255,255,255,0.4)">Next: ${email}</div>
-      <div class="prog-status waiting">Waiting</div>
-    `;
-  }
+    async function startBulkSend() {
+      const admin = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+      const res = await fetch('/api/admin/send-bulk-email', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ emails: bulkEmails, subject: document.getElementById('bulk-subject').value, htmlBody: bodyInput.value, adminEmail: admin.email })
+      });
+      document.getElementById('bulk-progress-wrap').style.display = 'block';
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      while(true) {
+        const { value, done } = await reader.read();
+        if(done) break;
+        const msgs = decoder.decode(value).split('\n');
+        msgs.forEach(m => {
+          if(!m) return;
+          const msg = JSON.parse(m);
+          if(msg.type === 'sent' || msg.type === 'failed') {
+            const feed = document.getElementById('prog-feed');
+            const div = document.createElement('div');
+            div.innerHTML = `<span style="color:${msg.type==='sent'?'#10b981':'#f87171'}">[${msg.type.toUpperCase()}]</span> ${msg.email}`;
+            feed.prepend(div);
+            const pct = ((msg.index + 1) / msg.total) * 100;
+            document.getElementById('prog-bar').style.width = pct + '%';
+            document.getElementById('prog-count').innerText = `${msg.index+1} / ${msg.total}`;
+          }
+        });
+      }
+      showToast('Bulk Deployment Complete');
+    }
 
-  function updateProgress(current, total) {
-    const pct = (current / total) * 100;
-    document.getElementById('prog-bar').style.width = pct + '%';
-    document.getElementById('prog-count').innerText = `${current} / ${total}`;
-  }
-</script>
+    function applyTemplatePreset() {
+      const preset = document.getElementById('template-preset').value;
+      if(preset === 'internship') {
+        document.getElementById('bulk-subject').value = 'Zorus 2.1: Join the AI Revolution 🚀';
+        bodyInput.value = '<h1>Welcome to Zorus</h1><p>We have a great internship opportunity for you...</p>';
+      }
+      bodyInput.oninput();
+    }
 
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.innerText = msg; t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
+      setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(100px)'; }, 3000);
+    }
+
+    // 3D Background
+    const canvas = document.getElementById('bg-canvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 5;
+    const pCount = 1000;
+    const pPos = new Float32Array(pCount * 3);
+    for(let i=0; i<pCount*3; i++) pPos[i] = (Math.random() - 0.5) * 15;
+    const pGeo = new THREE.BufferGeometry();
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    const pMat = new THREE.PointsMaterial({ size: 0.02, color: 0x3b5bdb, transparent: true, opacity: 0.5 });
+    const points = new THREE.Points(pGeo, pMat);
+    scene.add(points);
+    function animate() { requestAnimationFrame(animate); points.rotation.y += 0.0005; renderer.render(scene, camera); }
+    animate();
+    window.onresize = () => { renderer.setSize(window.innerWidth, window.innerHeight); camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); };
+  </script>
 </body>
 </html>

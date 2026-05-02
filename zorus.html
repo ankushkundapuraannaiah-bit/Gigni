@@ -119,8 +119,16 @@
   &copy; 2026 GIGNI. All rights reserved.
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
 <script>
+  // Lenis Smooth Scroll
+  const lenis = new Lenis();
+  function raf(time) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+  }
+  requestAnimationFrame(raf);
+
   // 3D Background
   const container = document.getElementById('canvas-container');
   const scene = new THREE.Scene();
