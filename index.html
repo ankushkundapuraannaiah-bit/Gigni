@@ -323,25 +323,41 @@
           <input type="text" id="p_college" placeholder="e.g. Stanford University" style="width:100%; padding:18px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:15px; color:#fff; outline:none;">
         </div>
         <div class="fg">
-          <label style="display:block; font-size:12px; opacity:0.5; margin-bottom:8px;">Year of Study</label>
+          <label style="display:block; font-size:12px; opacity:0.5; margin-bottom:8px;">Current Phase</label>
           <select id="p_year" style="width:100%; padding:18px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:15px; color:#fff; outline:none; appearance: none;">
-            <option value="1">1st Year</option>
-            <option value="2">2nd Year</option>
-            <option value="3">3rd Year</option>
-            <option value="4">4th Year</option>
-            <option value="PG">Post-Graduate</option>
+            <option value="1st Year">1st Year</option>
+            <option value="2nd Year">2nd Year</option>
+            <option value="3rd Year">3rd Year</option>
+            <option value="4th Year">4th Year</option>
+            <option value="Final Year / Intern">Final Year / Intern</option>
+            <option value="Post-Graduate">Post-Graduate</option>
+            <option value="Professional / Researcher">Professional / Researcher</option>
           </select>
         </div>
       </div>
 
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
         <div class="fg">
-          <label style="display:block; font-size:12px; opacity:0.5; margin-bottom:8px;">Field of Study</label>
-          <input type="text" id="p_field" placeholder="e.g. Computer Science" style="width:100%; padding:18px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:15px; color:#fff; outline:none;">
+          <label style="display:block; font-size:12px; opacity:0.5; margin-bottom:8px;">Domain</label>
+          <select id="p_field" style="width:100%; padding:18px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:15px; color:#fff; outline:none; appearance: none;">
+            <option value="Artificial Intelligence / ML">Artificial Intelligence / ML</option>
+            <option value="Web Development (Full Stack)">Web Development (Full Stack)</option>
+            <option value="Mobile App Development">Mobile App Development</option>
+            <option value="Cyber Security">Cyber Security</option>
+            <option value="Cloud Computing">Cloud Computing</option>
+            <option value="Data Science / Analytics">Data Science / Analytics</option>
+            <option value="UI/UX Design">UI/UX Design</option>
+            <option value="Blockchain / Web3">Blockchain / Web3</option>
+            <option value="Internet of Things (IoT)">Internet of Things (IoT)</option>
+            <option value="Game Development">Game Development</option>
+            <option value="Software Engineering">Software Engineering</option>
+            <option value="Robotics / Automation">Robotics / Automation</option>
+            <option value="Other / General Tech">Other / General Tech</option>
+          </select>
         </div>
         <div class="fg">
-          <label style="display:block; font-size:12px; opacity:0.5; margin-bottom:8px;">Area of Interest</label>
-          <input type="text" id="p_interest" placeholder="e.g. Machine Learning, Web3" style="width:100%; padding:18px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:15px; color:#fff; outline:none;">
+          <label style="display:block; font-size:12px; opacity:0.5; margin-bottom:8px;">Specific Interests</label>
+          <input type="text" id="p_interest" placeholder="e.g. LLMs, Computer Vision" style="width:100%; padding:18px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:15px; color:#fff; outline:none;">
         </div>
       </div>
 

@@ -268,19 +268,35 @@
           <div class="fg">
             <label>Phase</label>
             <select id="prof-year">
-              <option>1st Year</option><option>2nd Year</option>
-              <option>3rd Year</option><option>4th Year</option><option>Postgraduate</option>
+              <option>1st Year</option>
+              <option>2nd Year</option>
+              <option>3rd Year</option>
+              <option>4th Year</option>
+              <option>Final Year / Intern</option>
+              <option>Post-Graduate</option>
+              <option>Professional / Researcher</option>
             </select>
           </div>
           <div class="fg">
             <label>Domain</label>
             <select id="prof-field">
-              <option>Computer Science</option><option>Engineering</option>
-              <option>Design / UX</option><option>Data Science / AI</option>
-              <option>Business / Management</option><option>Marketing</option><option>Other</option>
+              <option>Artificial Intelligence / ML</option>
+              <option>Web Development (Full Stack)</option>
+              <option>Mobile App Development</option>
+              <option>Cyber Security</option>
+              <option>Cloud Computing</option>
+              <option>Data Science / Analytics</option>
+              <option>UI/UX Design</option>
+              <option>Blockchain / Web3</option>
+              <option>Internet of Things (IoT)</option>
+              <option>Game Development</option>
+              <option>Software Engineering</option>
+              <option>Robotics / Automation</option>
+              <option>Other / General Tech</option>
             </select>
           </div>
         </div>
+        <div class="fg"><label>Specific Interests</label><input type="text" id="prof-interest" placeholder="e.g. LLMs, Computer Vision"></div>
         <div class="fg"><label>LinkedIn Profile</label><input type="url" id="prof-linkedin" placeholder="https://linkedin.com/in/yourprofile"></div>
         <div class="fg"><label>GitHub Profile</label><input type="url" id="prof-github" placeholder="https://github.com/yourusername"></div>
         <div class="fg"><label>Agentic Bio</label><textarea id="prof-intro" rows="3"></textarea></div>
@@ -401,6 +417,7 @@
     document.getElementById('prof-college').value = user.college || '';
     document.getElementById('prof-year').value = user.year || '';
     document.getElementById('prof-field').value = user.field || '';
+    document.getElementById('prof-interest').value = user.interest || '';
     document.getElementById('prof-linkedin').value = user.linkedin || '';
     document.getElementById('prof-github').value = user.github || '';
     document.getElementById('prof-intro').value = user.intro || '';
@@ -514,7 +531,7 @@
       college: document.getElementById('prof-college').value,
       year: document.getElementById('prof-year').value,
       field: document.getElementById('prof-field').value,
-      interest: user.interest || '', // Maintain interest if not in form
+      interest: document.getElementById('prof-interest').value,
       intro: document.getElementById('prof-intro').value,
       linkedin: document.getElementById('prof-linkedin').value,
       github: document.getElementById('prof-github').value
