@@ -63,6 +63,10 @@ app.get('/api/init', async (req, res) => {
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS projects JSONB DEFAULT '[]';`);
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS certificates JSONB DEFAULT '[]';`);
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS hackathons JSONB DEFAULT '[]';`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS year VARCHAR(255);`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS field VARCHAR(255);`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS interest VARCHAR(255);`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS intro TEXT;`);
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS linkedin VARCHAR(255);`);
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS github VARCHAR(255);`);
         await client.query(`ALTER TABLE zorus_applications ADD COLUMN IF NOT EXISTS score INTEGER;`);

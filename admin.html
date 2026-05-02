@@ -254,12 +254,16 @@
     });
 
     async function fetchUsers() {
+      const tbody = document.getElementById('users-body');
       try {
         const res = await fetch('/api/users');
         const data = await res.json();
         if (data.success) {
-          const tbody = document.getElementById('users-body');
           tbody.innerHTML = '';
+          if (data.users.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:60px; color:var(--text-dim);">No members found in the grid.</td></tr>';
+            return;
+          }
           data.users.forEach(u => {
             const tr = document.createElement('tr');
             const githubLink = u.github && u.github !== '#' ? `<a href="${u.github}" target="_blank" style="color:var(--primary); margin-right:10px; font-weight:600;">GitHub</a>` : `<span style="opacity:0.2; font-size:11px;">GitHub N/A</span>`;
@@ -287,8 +291,13 @@
             `;
             tbody.appendChild(tr);
           });
+        } else {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:60px; color:#f87171;">Sync Failure: ${data.error}</td></tr>`;
         }
-      } catch (e) { showToast('Identity Sync Error'); }
+      } catch (e) { 
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:60px; color:#f87171;">Network Error: Database unreachable.</td></tr>`;
+        showToast('Identity Sync Error'); 
+      }
     }
 
     function viewProfile(user) {
@@ -313,12 +322,16 @@
     }
 
     async function fetchZorusApplications() {
+      const tbody = document.getElementById('zorus-body');
       try {
         const res = await fetch('/api/zorus-applications');
         const data = await res.json();
         if (data.success) {
-          const tbody = document.getElementById('zorus-body');
           tbody.innerHTML = '';
+          if (data.applications.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:60px; color:var(--text-dim);">No applications received yet.</td></tr>';
+            return;
+          }
           data.applications.forEach(a => {
             const tr = document.createElement('tr');
             const status = a.score === null ? 'Pending' : (a.score >= 85 ? `Pass (${a.score}%)` : `Fail (${a.score}%)`);
@@ -331,8 +344,12 @@
             `;
             tbody.appendChild(tr);
           });
+        } else {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:60px; color:#f87171;">Sync Failure: ${data.error}</td></tr>`;
         }
-      } catch (e) {}
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:60px; color:#f87171;">Network Error: Database unreachable.</td></tr>`;
+      }
     }
 
     function openModal(userId, type, name) {
