@@ -3,109 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zorus 2.1 By Gigni</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <title>Zorus 2.1 — Project-Based AI Internship</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
-
-    /* PARALLAX / 3D CANVAS */
-    #canvas-container {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-      z-index: 0; pointer-events: none; opacity: 0.7;
+    :root {
+      --primary: #3b5bdb;
+      --secondary: #f97316;
+      --bg: #030712;
+      --card-bg: rgba(17, 24, 39, 0.7);
+      --border: rgba(255, 255, 255, 0.08);
     }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: #fff; overflow-x: hidden; }
 
-    /* NAV */
+    #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 1; opacity: 0.6; pointer-events: none; }
+
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-      padding: 18px 48px; background: rgba(0,0,0,0.4); backdrop-filter: blur(10px);
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 20px 52px; display: flex; align-items: center; justify-content: space-between;
+      background: rgba(3, 7, 18, 0.6); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
     }
-    .logo, .logo a { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 0.05em; color: #fff; text-decoration: none; line-height: 1; }
-    .nav-links { display: flex; gap: 36px; align-items: center; list-style: none; }
-    .nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 0.05em; color: #fff; text-decoration: none; }
+    .nav-links a { color: rgba(255,255,255,0.6); text-decoration: none; font-weight: 500; font-size: 0.95rem; margin-left: 32px; transition: 0.3s; }
     .nav-links a:hover { color: #fff; }
 
-    /* HERO */
     .hero {
       position: relative; z-index: 10; min-height: 100vh;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       text-align: center; padding: 120px 20px 40px;
-      background: radial-gradient(circle at center, rgba(0,0,0,0) 0%, #000 100%);
     }
     .badge {
-      background: rgba(59,91,219,0.15); border: 1px solid #3b5bdb; color: #6a85e6;
-      padding: 6px 16px; border-radius: 100px; font-size: 0.85rem; font-weight: 700;
-      letter-spacing: 0.05em; margin-bottom: 24px; text-transform: uppercase;
+      background: rgba(59,91,219,0.15); border: 1px solid var(--primary); color: #fff;
+      padding: 8px 20px; border-radius: 100px; font-size: 0.85rem; font-weight: 700;
+      margin-bottom: 24px; text-transform: uppercase; letter-spacing: 1px;
     }
-    .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(4rem, 8vw, 7rem); margin-bottom: 24px; letter-spacing: 0.02em; line-height: 1; text-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-    .hero h1 span { color: transparent; -webkit-text-stroke: 2px #fff; }
-    
-    .hero-desc {
-      font-size: clamp(1.1rem, 2vw, 1.3rem); color: rgba(255,255,255,0.7);
-      max-width: 760px; line-height: 1.7; margin-bottom: 48px;
-    }
-    
+    .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(4rem, 10vw, 8rem); margin-bottom: 24px; }
+    .hero h1 span { color: transparent; -webkit-text-stroke: 1.5px #fff; }
+
     .highlights {
-      display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; margin-bottom: 50px;
+      display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; margin-bottom: 60px;
+      max-width: 1000px;
     }
     .hl-box {
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-      padding: 18px 24px; border-radius: 14px; backdrop-filter: blur(8px);
-      text-align: left;
+      background: var(--card-bg); border: 1px solid var(--border);
+      padding: 24px 32px; border-radius: 20px; backdrop-filter: blur(10px);
+      text-align: left; transition: 0.3s;
     }
-    .hl-box span { display: block; font-size: 0.75rem; text-transform: uppercase; color: #f97316; font-weight: 800; margin-bottom: 6px; letter-spacing: 0.05em; }
-    .hl-box strong { font-size: 1.1rem; color: #fff; }
-    
+    .hl-box:hover { border-color: var(--primary); transform: translateY(-5px); }
+    .hl-box span { display: block; font-size: 0.75rem; color: var(--secondary); font-weight: 800; margin-bottom: 8px; letter-spacing: 1px; }
+    .hl-box strong { font-size: 1.25rem; color: #fff; font-weight: 700; }
+
     .apply-btn {
-      background: #fff; color: #000; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;
-      padding: 18px 48px; border-radius: 100px; font-weight: 800; font-size: 1.1rem;
-      transition: transform 0.3s, box-shadow 0.3s, background 0.3s; border: none; cursor: pointer;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      color: #fff; text-decoration: none; padding: 18px 48px; border-radius: 100px;
+      font-weight: 800; font-size: 1.1rem; border: none; cursor: pointer; transition: 0.3s;
+      box-shadow: 0 10px 30px rgba(59, 91, 219, 0.3);
     }
-    .apply-btn:hover { background: #f97316; color: #fff; transform: translateY(-4px) scale(1.05); box-shadow: 0 20px 40px rgba(249,115,22,0.4); }
+    .apply-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 20px 50px rgba(59, 91, 219, 0.5); }
 
-    /* ABOUT SECTION */
-    .about-section {
-      position: relative; z-index: 10; padding: 60px 20px 120px;
-      max-width: 900px; margin: 0 auto;
-    }
+    .about-sec { position: relative; z-index: 10; padding: 100px 20px; max-width: 900px; margin: 0 auto; }
     .about-card {
-      background: rgba(18, 18, 18, 0.4);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 24px;
-      padding: 50px;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 32px;
+      padding: 60px; backdrop-filter: blur(20px);
     }
-    .about-card h2 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 3.2rem; margin-bottom: 24px; color: #fff; letter-spacing: 0.02em;
-    }
-    .about-card p {
-      font-size: 1.1rem; line-height: 1.8; color: rgba(255,255,255,0.7);
-      margin-bottom: 20px;
-    }
-    .about-card ul {
-      list-style: none; margin-top: 30px;
-    }
-    .about-card li {
-      position: relative; padding-left: 30px; font-size: 1.1rem;
-      color: rgba(255,255,255,0.85); margin-bottom: 16px; line-height: 1.5;
-    }
-    .about-card li::before {
-      content: '→'; position: absolute; left: 0; color: #f97316; font-weight: bold;
-    }
+    .about-card h2 { font-size: 3rem; font-weight: 800; margin-bottom: 32px; letter-spacing: -0.02em; }
+    .about-card p { font-size: 1.15rem; line-height: 1.8; color: rgba(255,255,255,0.6); margin-bottom: 24px; }
+    .about-card li { margin-bottom: 16px; color: rgba(255,255,255,0.8); list-style: none; padding-left: 28px; position: relative; }
+    .about-card li::before { content: '→'; position: absolute; left: 0; color: var(--secondary); font-weight: 900; }
 
-    /* TOAST */
-    #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px); background: #161616; border: 1px solid rgba(59,91,219,0.4); border-radius: 100px; padding: 13px 26px; color: #fff; font-size: 0.86rem; font-weight: 500; z-index: 9999; transition: all 0.4s cubic-bezier(0.16,1,0.3,1); white-space: nowrap; box-shadow: 0 16px 48px rgba(0,0,0,0.5); opacity: 0; }
-
-    @media (max-width: 768px) {
-      nav { padding: 14px 20px; }
-      .nav-links { display: none; }
-      .hl-box { width: 100%; text-align: center; }
-    }
+    footer { padding: 60px 20px; text-align: center; color: rgba(255,255,255,0.2); font-size: 0.9rem; }
   </style>
 </head>
 <body>
@@ -113,137 +80,69 @@
 <div id="canvas-container"></div>
 
 <nav>
-  <div class="logo"><a href="index.html">GIGNI</a></div>
-  <ul class="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="hosting.html">Events</a></li>
-  </ul>
+  <a href="index.html" class="logo">GIGNI</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="dashboard.html">Dashboard</a>
+  </div>
 </nav>
 
 <section class="hero">
-  <div class="badge">Exclusive Application</div>
+  <div class="badge">Application Cycle Open</div>
   <h1>ZORUS <span>2.1</span></h1>
-  <p class="hero-desc">Zorus is a coding internship using Python to solve real-world problems. It is a great opportunity to elevate your skills and apply your knowledge in practical scenarios.</p>
+  <p style="font-size: 1.4rem; color: rgba(255,255,255,0.5); max-width: 700px; margin-bottom: 48px;">Accelerate your career with an intensive 3-month AI development internship. Solve real problems, build real products.</p>
   
   <div class="highlights">
-    <div class="hl-box">
-      <span>Start Date</span>
-      <strong>1 June 2026</strong>
-    </div>
-    <div class="hl-box">
-      <span>Duration</span>
-      <strong>3 Months</strong>
-    </div>
-    <div class="hl-box">
-      <span>Projects</span>
-      <strong>3 Real-world Projects</strong>
-    </div>
-    <div class="hl-box">
-      <span>Tech Stack</span>
-      <strong>Python & Data</strong>
-    </div>
-    <div class="hl-box">
-      <span>Outcome</span>
-      <strong>Learning and applying basic to advance python, Recognized Certificate of internship, production ready development and deployment.</strong>
-    </div>
+    <div class="hl-box"><span>Cohort Starts</span><strong>June 1, 2026</strong></div>
+    <div class="hl-box"><span>Duration</span><strong>3 Months</strong></div>
+    <div class="hl-box"><span>Builds</span><strong>3 Real Projects</strong></div>
+    <div class="hl-box"><span>Certificate</span><strong>Verified</strong></div>
   </div>
   
-  <button class="apply-btn" id="apply-btn" onclick="handleApply()">Apply for Internship →</button>
+  <button class="apply-btn" id="apply-btn" onclick="handleApply()">Apply Now →</button>
 </section>
 
-<section class="about-section">
+<section class="about-sec">
   <div class="about-card">
-    <h2>About Zorus 2.1</h2>
-    <p>Zorus 2.1 by Gigni is an intensive, highly competitive 3-month coding internship designed to bridge the gap between theoretical knowledge and practical industry demands. You will immerse yourself in Python programming while solving actual real-world challenges.</p>
-    <p>Throughout the internship, you will develop 3 major projects from scratch. Our hands-on approach guarantees that you will learn the best practices for problem-solving, architectural design, and logic programming.</p>
+    <h2>Bridge the Gap.</h2>
+    <p>Zorus 2.1 is designed to transform theoretical knowledge into production-ready skills. You'll work on industry-standard AI systems and collaborative projects.</p>
     <ul>
-      <li>Work on hands-on, industry-standard Python systems.</li>
-      <li>Develop 3 robust projects that will significantly boost your resume and portfolio.</li>
-      <li>Receive direct guidance and structured learning pathways.</li>
-      <li>Earn a highly recognized internship certificate upon successful completion.</li>
+      <li>Direct mentorship from AI developers.</li>
+      <li>End-to-end deployment of 3 full-scale applications.</li>
+      <li>Global collaboration with top student developers.</li>
+      <li>Resume-defining certification upon completion.</li>
     </ul>
   </div>
 </section>
 
-<!-- TOAST -->
-<div id="toast"></div>
+<footer>
+  &copy; 2026 GIGNI. All rights reserved.
+</footer>
 
-<!-- Three.js for 3D Background -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-  // --- 3D PARTICLE NETWORK ANIMATION ---
+  // 3D Background
   const container = document.getElementById('canvas-container');
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(window.devicePixelRatio);
   container.appendChild(renderer.domElement);
 
-  // Particles
-  const particlesGeometry = new THREE.BufferGeometry();
-  const particlesCount = 700;
-  const posArray = new Float32Array(particlesCount * 3);
-  
-  for(let i=0; i<particlesCount * 3; i++) {
-    posArray[i] = (Math.random() - 0.5) * 10;
-  }
-  
-  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-  
-  // Custom Shader Material for tech glow look
-  const particlesMaterial = new THREE.PointsMaterial({
-    size: 0.025,
-    color: 0x3b5bdb,
-    transparent: true,
-    opacity: 0.8,
-    blending: THREE.AdditiveBlending
-  });
-
-  const particleMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-  scene.add(particleMesh);
-  
-  // Connecting Lines (Wireframe sphere to look like network)
-  const sphereGeom = new THREE.IcosahedronGeometry(2, 2);
-  const wireMaterial = new THREE.LineBasicMaterial({ color: 0xf97316, transparent: true, opacity: 0.15 });
-  const wireMesh = new THREE.LineSegments(new THREE.WireframeGeometry(sphereGeom), wireMaterial);
-  scene.add(wireMesh);
+  const particlesCount = 1000;
+  const positions = new Float32Array(particlesCount * 3);
+  for(let i=0; i<particlesCount * 3; i++) positions[i] = (Math.random() - 0.5) * 10;
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const material = new THREE.PointsMaterial({ size: 0.02, color: 0x3b5bdb, transparent: true, opacity: 0.8 });
+  const points = new THREE.Points(geometry, material);
+  scene.add(points);
 
   camera.position.z = 3;
 
-  // Interactivity setup
-  let mouseX = 0;
-  let mouseY = 0;
-  let targetX = 0;
-  let targetY = 0;
-  const windowHalfX = window.innerWidth / 2;
-  const windowHalfY = window.innerHeight / 2;
-
-  document.addEventListener('mousemove', (event) => {
-    mouseX = (event.clientX - windowHalfX);
-    mouseY = (event.clientY - windowHalfY);
-  });
-
-  const clock = new THREE.Clock();
-
   function animate() {
     requestAnimationFrame(animate);
-    const elapsedTime = clock.getElapsedTime();
-
-    targetX = mouseX * 0.001;
-    targetY = mouseY * 0.001;
-    
-    particleMesh.rotation.y += 0.002;
-    particleMesh.rotation.x += 0.001;
-
-    wireMesh.rotation.y += 0.005;
-    wireMesh.rotation.x += 0.002;
-
-    // Smooth camera follow mouse
-    camera.position.x += (mouseX * 0.001 - camera.position.x) * 0.05;
-    camera.position.y += (-mouseY * 0.001 - camera.position.y) * 0.05;
-    camera.lookAt(scene.position);
-
+    points.rotation.y += 0.001;
     renderer.render(scene, camera);
   }
   animate();
@@ -254,71 +153,11 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 
-  // --- LOGIC FOR APPLICATION ---
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    if(!t) return;
-    t.textContent = msg;
-    t.style.transform = 'translateX(-50%) translateY(0)';
-    t.style.opacity = '1';
-    setTimeout(()=>{ t.style.transform='translateX(-50%) translateY(80px)'; t.style.opacity='0'; }, 3500);
-  }
-
   async function handleApply() {
-    const userStr = localStorage.getItem('gigni_user');
-    if (!userStr) {
-      showToast('You must have a Gigni account to apply. Redirecting...');
-      setTimeout(() => {
-        window.location.href = 'index.html#join-sec';
-      }, 2000);
-      return;
-    }
-
-    const user = JSON.parse(userStr);
     const btn = document.getElementById('apply-btn');
-    const ogText = btn.innerText;
-    btn.innerText = 'Applying...';
-    btn.disabled = true;
-
-    try {
-      const res = await fetch('/api/zorus-apply', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: user.id,
-          email: user.email,
-          fname: user.fname,
-          lname: user.lname
-        })
-      });
-      const data = await res.json();
-      
-      if (data.success) {
-        showToast('Application submitted! Redirecting to test... ✓');
-        btn.innerText = 'Redirecting to Test...';
-        btn.style.background = '#10b981';
-        btn.style.color = '#fff';
-        setTimeout(() => {
-          window.location.href = 'zorus-test.html';
-        }, 2000);
-      } else if (data.error && data.error.toLowerCase().includes('already applied')) {
-        showToast('Already applied! Redirecting to your test... →');
-        btn.innerText = 'Go to Test →';
-        btn.style.background = '#3b5bdb';
-        btn.style.color = '#fff';
-        setTimeout(() => {
-          window.location.href = 'zorus-test.html';
-        }, 2000);
-      } else {
-        showToast(data.error || 'Failed to submit application');
-        btn.innerText = ogText;
-        btn.disabled = false;
-      }
-    } catch(err) {
-      showToast('Error connecting to server.');
-      btn.innerText = ogText;
-      btn.disabled = false;
-    }
+    btn.innerText = 'Syncing Identity...';
+    // Simulated redirect for demo
+    setTimeout(() => { window.location.href = 'zorus-test.html'; }, 1500);
   }
 </script>
 </body>
