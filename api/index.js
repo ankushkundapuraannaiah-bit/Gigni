@@ -41,6 +41,8 @@ app.get('/api/init', async (req, res) => {
             field VARCHAR(255),
             interest VARCHAR(255),
             intro TEXT,
+            linkedin VARCHAR(255),
+            github VARCHAR(255),
             projects JSONB DEFAULT '[]',
             certificates JSONB DEFAULT '[]',
             hackathons JSONB DEFAULT '[]'
@@ -61,6 +63,8 @@ app.get('/api/init', async (req, res) => {
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS projects JSONB DEFAULT '[]';`);
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS certificates JSONB DEFAULT '[]';`);
         await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS hackathons JSONB DEFAULT '[]';`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS linkedin VARCHAR(255);`);
+        await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS github VARCHAR(255);`);
         await client.query(`ALTER TABLE zorus_applications ADD COLUMN IF NOT EXISTS score INTEGER;`);
 
 
@@ -74,17 +78,17 @@ app.get('/api/init', async (req, res) => {
 
 // Auth Endpoints
 app.post('/api/register', async (req, res) => {
-    const { fname, lname, email, password, college, year, field, interest, intro } = req.body;
+    const { fname, lname, email, password, college, year, field, interest, intro, linkedin, github } = req.body;
     let client;
     try {
         client = createClient();
         await client.connect();
         const query = `
-            INSERT INTO users (fname, lname, email, password, college, year, field, interest, intro)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+            INSERT INTO users (fname, lname, email, password, college, year, field, interest, intro, linkedin, github)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
             RETURNING id;
         `;
-        const values = [fname, lname, email, password, college, year, field, interest, intro];
+        const values = [fname, lname, email, password, college, year, field, interest, intro, linkedin, github];
         const result = await client.query(query, values);
         
         // Send Welcome Email
@@ -158,7 +162,7 @@ app.get('/api/user/:id', async (req, res) => {
         client = createClient();
         await client.connect();
         const result = await client.query(
-            `SELECT id, fname, lname, email, college, year, field, interest, intro, projects, certificates, hackathons FROM users WHERE id = $1;`,
+            `SELECT id, fname, lname, email, college, year, field, interest, intro, linkedin, github, projects, certificates, hackathons FROM users WHERE id = $1;`,
             [id]
         );
         if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
@@ -176,7 +180,7 @@ app.get('/api/users', async (req, res) => {
     try {
         client = createClient();
         await client.connect();
-        const result = await client.query(`SELECT id, fname, lname, email, college, year, field, interest, intro FROM users ORDER BY id DESC;`);
+        const result = await client.query(`SELECT id, fname, lname, email, college, year, field, interest, intro, linkedin, github FROM users ORDER BY id DESC;`);
         res.status(200).json({ success: true, users: result.rows });
     } catch (err) {
         res.status(500).json({ error: err.message });

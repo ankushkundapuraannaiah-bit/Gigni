@@ -174,7 +174,7 @@
   </div>
   <div class="nav-user">
     <div class="user-av" id="nav-av">G</div>
-    <a href="index.html" class="logout-btn">Sign out</a>
+    <a href="index.html" onclick="localStorage.removeItem('gigni_user')" class="logout-btn">Sign out</a>
   </div>
 </nav>
 
@@ -271,6 +271,8 @@
             </select>
           </div>
         </div>
+        <div class="fg"><label>LinkedIn Profile</label><input type="url" id="prof-linkedin" placeholder="https://linkedin.com/in/yourprofile"></div>
+        <div class="fg"><label>GitHub Profile</label><input type="url" id="prof-github" placeholder="https://github.com/yourusername"></div>
         <div class="fg"><label>Agentic Bio</label><textarea id="prof-intro" rows="3"></textarea></div>
         <button class="btn-act" onclick="saveProfile()">Sync Changes</button>
       </div>
@@ -352,6 +354,8 @@
         college: 'Global Tech Institute',
         year: '3rd Year',
         field: 'Data Science / AI',
+        linkedin: 'https://linkedin.com/in/gigni-member',
+        github: 'https://github.com/gigni-member',
         intro: 'Aspiring AI developer focused on building agentic workflows and stunning web experiences.',
         projects: [
           { title: 'Neural Web Builder', desc: 'An AI agent that generates responsive web layouts from natural language descriptions.', link: '#' }
@@ -387,6 +391,8 @@
     document.getElementById('prof-college').value = user.college || '';
     document.getElementById('prof-year').value = user.year || '';
     document.getElementById('prof-field').value = user.field || '';
+    document.getElementById('prof-linkedin').value = user.linkedin || '';
+    document.getElementById('prof-github').value = user.github || '';
     document.getElementById('prof-intro').value = user.intro || '';
 
     renderDashboardCards(user);
@@ -494,6 +500,8 @@
     user.college = document.getElementById('prof-college').value;
     user.year = document.getElementById('prof-year').value;
     user.field = document.getElementById('prof-field').value;
+    user.linkedin = document.getElementById('prof-linkedin').value;
+    user.github = document.getElementById('prof-github').value;
     user.intro = document.getElementById('prof-intro').value;
     localStorage.setItem('gigni_user', JSON.stringify(user));
     renderAll(user);

@@ -227,14 +227,16 @@
   
   <div class="card" style="overflow-x:auto;">
     <table id="users-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
+       <thead>
+         <tr>
+           <th>ID</th>
+           <th>Name</th>
+           <th>Email</th>
+           <th>LinkedIn</th>
+           <th>GitHub</th>
+           <th>Actions</th>
+         </tr>
+       </thead>
       <tbody id="users-body">
         <tr><td colspan="4" style="text-align:center; padding: 40px; color:rgba(255,255,255,0.4);">Loading users...</td></tr>
       </tbody>
@@ -382,7 +384,7 @@
               const tbody = document.getElementById('users-body');
               tbody.innerHTML = '';
               if (data.users.length === 0) {
-                  tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No users found</td></tr>';
+                   tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No users found</td></tr>';
                   return;
               }
               
@@ -393,18 +395,20 @@
                   const f = u.fname || '';
                   const l = u.lname || '';
                   
-                  tr.innerHTML = `
-                    <td>#${u.id}</td>
-                    <td><strong style="margin-right:8px">${f} ${l}</strong><br><small style="color:rgba(255,255,255,0.4)">${u.college || 'No college'}</small></td>
-                    <td>${u.email}</td>
-                    <td>
-                      <div class="actions">
-                        <button class="btn-act" onclick="openModal(${u.id}, 'project', '${f}')">+ Project</button>
-                        <button class="btn-act btn-cert" onclick="openModal(${u.id}, 'certificate', '${f}')">+ Certificate</button>
-                        <button class="btn-act btn-hack" onclick="openModal(${u.id}, 'hackathon', '${f}')">+ Hackathon</button>
-                      </div>
-                    </td>
-                  `;
+                   tr.innerHTML = `
+                     <td>#${u.id}</td>
+                     <td><strong style="margin-right:8px">${f} ${l}</strong><br><small style="color:rgba(255,255,255,0.4)">${u.college || 'No college'}</small></td>
+                     <td>${u.email}</td>
+                     <td><a href="${u.linkedin || '#'}" target="_blank" style="color:#3b5bdb;text-decoration:none;">${u.linkedin ? 'LinkedIn' : '-'}</a></td>
+                     <td><a href="${u.github || '#'}" target="_blank" style="color:#3b5bdb;text-decoration:none;">${u.github ? 'GitHub' : '-'}</a></td>
+                     <td>
+                       <div class="actions">
+                         <button class="btn-act" onclick="openModal(${u.id}, 'project', '${f}')">+ Project</button>
+                         <button class="btn-act btn-cert" onclick="openModal(${u.id}, 'certificate', '${f}')">+ Certificate</button>
+                         <button class="btn-act btn-hack" onclick="openModal(${u.id}, 'hackathon', '${f}')">+ Hackathon</button>
+                       </div>
+                     </td>
+                   `;
                   tbody.appendChild(tr);
               });
           } else {
