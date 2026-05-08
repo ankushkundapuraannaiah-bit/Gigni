@@ -21,7 +21,6 @@ const transporter = nodemailer.createTransport({
 app.use(cors());
 app.use(express.json());
 
-
 // Initialize Database Schema
 app.get('/api/init', async (req, res) => {
     let client;

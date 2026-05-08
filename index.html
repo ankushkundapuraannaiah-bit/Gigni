@@ -11,7 +11,6 @@
 <!-- SCRIPTS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
 
 <style>
   :root {
@@ -19,16 +18,12 @@
     --accent: #8b5cf6;
     --orange: #f97316;
     --bg: #010409;
-    --card-bg: rgba(13, 17, 23, 0.6);
+    --card-bg: rgba(13, 17, 23, 0.4);
     --border: rgba(255, 255, 255, 0.1);
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html.lenis { height: auto; }
-  .lenis-smooth { scroll-behavior: auto !important; }
-  .lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
-  .lenis-stopped { overflow: hidden; }
-
+  
   body { 
     font-family: 'Outfit', sans-serif; 
     background: var(--bg); 
@@ -38,7 +33,7 @@
 
   /* LINE WAVES CANVAS BACKGROUND */
   #line-waves-canvas {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
     z-index: 1; pointer-events: none;
     background: #010409;
   }
@@ -208,12 +203,6 @@
   .v-card p { color: rgba(255,255,255,0.6); font-size: 1.1rem; line-height: 1.6; }
   .v-icon { font-size: 3rem; margin-bottom: 24px; display: inline-block; }
 
-  /* STRIP */
-  .strip { background: linear-gradient(90deg, var(--bg), var(--primary), var(--bg)); padding: 20px 0; overflow: hidden; white-space: nowrap; border-top: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1); }
-  .strip-track { display: inline-block; animation: scrollStrip 20s linear infinite; }
-  .strip-track span { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; margin: 0 40px; color: #fff; letter-spacing: 2px;}
-  @keyframes scrollStrip { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-
   /* LOVED BY DEVELOPERS SECTION */
   .testimonials { padding: 120px 0; display: block; min-height: auto; overflow: hidden; position: relative; }
   .marquee-container {
@@ -262,78 +251,19 @@
   .footer-links a { color: rgba(255,255,255,0.6); text-decoration: none; transition: 0.3s; font-size: 0.95rem; }
   .footer-links a:hover { color: #fff; padding-left: 5px; }
 
-  /* MODALS */
-  .ovl {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(1,4,9,0.95); backdrop-filter: blur(20px);
-    z-index: 2000; display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: 0.4s;
-  }
-  .ovl.active { opacity: 1; pointer-events: auto; }
-  .modal {
-    background: rgba(13, 17, 23, 0.9); border: 1px solid rgba(255,255,255,0.15); border-radius: 30px;
-    padding: 50px; width: 100%; max-width: 480px; transform: scale(0.95); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-  }
-  .ovl.active .modal { transform: scale(1); }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-
-  /* INPUT STYLES FOR MODALS */
-  .modal input, .modal select, .modal textarea {
-    width: 100%; padding: 16px; background: rgba(255,255,255,0.03); 
-    border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff; 
-    outline: none; transition: 0.3s; font-family: 'Inter', sans-serif;
-  }
-  .modal input:focus, .modal select:focus, .modal textarea:focus {
-    border-color: var(--accent); background: rgba(255,255,255,0.05);
-  }
-  .modal label {
-    display: block; font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;
-  }
-
-  /* MOBILE MENU */
-  .mobile-menu-btn {
-    display: none; flex-direction: column; gap: 6px; background: none; border: none; cursor: pointer; z-index: 2001; padding: 10px;
-  }
-  .mobile-menu-btn span { width: 30px; height: 2px; background: #fff; transition: 0.3s; }
-  .mobile-menu-btn.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
-  .mobile-menu-btn.active span:nth-child(2) { opacity: 0; }
-  .mobile-menu-btn.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
-
-  .mobile-menu-ovl {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-    background: rgba(1, 4, 9, 0.98); backdrop-filter: blur(20px);
-    z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; transition: 0.5s;
-  }
-  .mobile-menu-ovl.active { opacity: 1; pointer-events: auto; }
-  .mobile-menu-ovl a {
-    font-size: 2.5rem; font-weight: 700; color: #fff; text-decoration: none;
-    margin: 15px 0; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px;
-    transition: 0.3s;
-  }
-  .mobile-menu-ovl a:hover { color: var(--primary); }
-
   @media (max-width: 1024px) {
     .bento-grid { grid-template-columns: 1fr; }
     .bento-1, .bento-2, .bento-3, .bento-4 { grid-column: span 1; }
     nav { padding: 15px 20px; }
     .logo { font-size: 2.2rem; }
     .nav-links { display: none; }
-    .mobile-menu-btn { display: flex; }
     .hero-h1 { font-size: clamp(3rem, 12vw, 4.5rem); }
     .hero-p { font-size: 1.1rem; margin-bottom: 30px; }
     section { padding: 0 5vw; }
     .hero { min-height: 80vh; padding-top: 120px; }
-    .hero-actions { flex-direction: column; width: 100%; gap: 15px; }
-    .hero-actions .ui-btn { width: 100%; text-align: center; }
     .bento, .testimonials { padding: 80px 0; }
     .v-card { padding: 30px; border-radius: 20px; }
-    .v-card h3 { font-size: 1.8rem; }
     .footer-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
-    footer { padding: 60px 20px 40px; }
-    .form-row { grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
-    .marquee-container { margin-left: -5vw; width: 100vw; }
   }
 </style>
 </head>
@@ -348,21 +278,9 @@
       <a href="about.html">About</a>
       <a href="hosting.html">Hosting</a>
       <a href="zorus.html">Zorus 2.1</a>
-      <a href="javascript:void(0)" onclick="openOvl('signin')" style="margin-left: 10px;">Login</a>
-      <button class="ui-btn ui-btn-primary" onclick="openOvl('signup')">Join Community</button>
+      <button class="ui-btn ui-btn-primary" onclick="window.location.href='zorus.html'">Join Community</button>
     </div>
-    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
-      <span></span><span></span><span></span>
-    </button>
   </nav>
-
-  <div class="mobile-menu-ovl" id="mobile-menu">
-    <a href="about.html" onclick="toggleMobileMenu()">About</a>
-    <a href="hosting.html" onclick="toggleMobileMenu()">Hosting</a>
-    <a href="zorus.html" onclick="toggleMobileMenu()">Zorus 2.1</a>
-    <a href="javascript:void(0)" onclick="toggleMobileMenu(); openOvl('signin')">Login</a>
-    <a href="javascript:void(0)" onclick="toggleMobileMenu(); openOvl('signup')" style="color: var(--primary);">Join Community</a>
-  </div>
 
   <div class="main-wrapper">
     
@@ -373,21 +291,13 @@
         <h1 class="hero-h1">THE AGENTIC<br><span>REVOLUTION</span></h1>
         <p class="hero-p">Gigni is the first AI developer community built by students, for students. Create, collaborate, and evolve in the age of agentic intelligence.</p>
         <div class="hero-actions">
-          <button class="ui-btn ui-btn-primary" style="padding: 18px 48px; font-size: 1.1rem;" onclick="openOvl('signup')">Start Building</button>
+          <button class="ui-btn ui-btn-primary" style="padding: 18px 48px; font-size: 1.1rem;" onclick="window.location.href='zorus.html'">Start Building</button>
           <a href="about.html" class="ui-btn" style="padding: 18px 48px; font-size: 1.1rem;">Explore Platform</a>
         </div>
       </div>
     </section>
 
-    <!-- STRIP -->
-    <div class="strip">
-      <div class="strip-track">
-        <span>AI DRIVEN</span><span>GLOBAL COMMUNITY</span><span>STUDENT EMPOWERMENT</span><span>AGENTIC BUILDING</span><span>FUTURE OF WORK</span>
-        <span>AI DRIVEN</span><span>GLOBAL COMMUNITY</span><span>STUDENT EMPOWERMENT</span><span>AGENTIC BUILDING</span><span>FUTURE OF WORK</span>
-      </div>
-    </div>
-
-    <!-- ABOUT / FEATURES SECTION -->
+    <!-- BENTO GRID (VENGEANCE UI STYLE) -->
     <section id="features" class="bento reveal">
       <div class="section-header">
         <h2>Next-Gen Capabilities</h2>
@@ -421,44 +331,6 @@
             <div class="v-icon">🎯</div>
             <h3>Impact First</h3>
             <p>We solve real problems using autonomous systems and cutting-edge tech.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- HOSTING / TOOLS SECTION -->
-    <section id="hosting" class="bento reveal" style="padding-top: 40px;">
-      <div class="section-header">
-        <h2>AI Tools Hub</h2>
-        <p>Discover Gigni's suite of agentic creation tools designed for students to host and build stunning products.</p>
-      </div>
-      <div class="bento-grid">
-        <div class="v-card bento-3">
-          <div class="v-card-content">
-            <div class="v-icon">🌐</div>
-            <h3>Web Builder</h3>
-            <p>Generate stunning, production-ready websites from a simple prompt. Hosting included, responsive, SEO-optimized.</p>
-          </div>
-        </div>
-        <div class="v-card bento-3">
-          <div class="v-card-content">
-            <div class="v-icon">🎵</div>
-            <h3>Music Composer</h3>
-            <p>AI-powered soundtracks and melodies for your digital projects, composed in real-time.</p>
-          </div>
-        </div>
-        <div class="v-card bento-3">
-          <div class="v-card-content">
-            <div class="v-icon">📊</div>
-            <h3>Smart Decks</h3>
-            <p>Automate your presentations with AI-driven visual storytelling and stunning aesthetics.</p>
-          </div>
-        </div>
-        <div class="v-card bento-3">
-          <div class="v-card-content">
-            <div class="v-icon">⚙️</div>
-            <h3>Automations</h3>
-            <p>Complex intelligent agents that handle the heavy lifting, so you can focus on pure innovation.</p>
           </div>
         </div>
       </div>
@@ -566,110 +438,6 @@
 
   </div>
 
-  <!-- AUTH MODALS (Preserved Logic) -->
-  <div class="ovl" id="signin-ovl" onclick="closeOvl(event,'signin')">
-    <div class="modal" onclick="event.stopPropagation()">
-      <h3 style="font-size:2.2rem; margin-bottom:10px; font-weight: 800;">Welcome Back</h3>
-      <p style="color:rgba(255,255,255,0.5); margin-bottom:40px;">Resume your agentic journey.</p>
-      <input type="email" placeholder="Email" id="l_email" style="margin-bottom:20px;">
-      <input type="password" placeholder="Password" id="l_password" style="margin-bottom:30px;">
-      <button onclick="handleLogin()" class="ui-btn ui-btn-primary" style="width:100%; padding:18px;">Initialize Login</button>
-      <p style="text-align:center; margin-top:25px; color:rgba(255,255,255,0.5); font-size: 0.9rem;">New here? <a href="javascript:void(0)" onclick="closeOvl(null,'signin'); openOvl('signup')" style="color:var(--accent); font-weight: 600; text-decoration: none;">Create Identity</a></p>
-    </div>
-  </div>
-
-  <div class="ovl" id="signup-ovl" onclick="closeOvl(event,'signup')">
-    <div class="modal" style="max-width:800px; max-height: 90vh; overflow-y: auto;" onclick="event.stopPropagation()">
-      <h3 style="font-size:2.2rem; margin-bottom:10px; font-weight: 800;">Join GIGNI</h3>
-      <p style="color:rgba(255,255,255,0.5); margin-bottom:30px;">Create your global identity. Fill in all details to sync with the community.</p>
-      
-      <div class="form-row">
-        <div class="fg">
-          <label>First Name</label>
-          <input type="text" id="p_fname" placeholder="First Name">
-        </div>
-        <div class="fg">
-          <label>Last Name</label>
-          <input type="text" id="p_lname" placeholder="Last Name">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="fg">
-          <label>Email Address</label>
-          <input type="email" id="p_email" placeholder="Email">
-        </div>
-        <div class="fg">
-          <label>Identity Password</label>
-          <input type="password" id="p_password" placeholder="Password">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="fg">
-          <label>College / University</label>
-          <input type="text" id="p_college" placeholder="e.g. Stanford University">
-        </div>
-        <div class="fg">
-          <label>Current Phase</label>
-          <select id="p_year">
-            <option value="1st Year">1st Year</option>
-            <option value="2nd Year">2nd Year</option>
-            <option value="3rd Year">3rd Year</option>
-            <option value="4th Year">4th Year</option>
-            <option value="Final Year / Intern">Final Year / Intern</option>
-            <option value="Post-Graduate">Post-Graduate</option>
-            <option value="Professional / Researcher">Professional / Researcher</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="fg">
-          <label>Domain</label>
-          <select id="p_field">
-            <option value="Artificial Intelligence / ML">Artificial Intelligence / ML</option>
-            <option value="Web Development (Full Stack)">Web Development (Full Stack)</option>
-            <option value="Mobile App Development">Mobile App Development</option>
-            <option value="Cyber Security">Cyber Security</option>
-            <option value="Cloud Computing">Cloud Computing</option>
-            <option value="Data Science / Analytics">Data Science / Analytics</option>
-            <option value="UI/UX Design">UI/UX Design</option>
-            <option value="Blockchain / Web3">Blockchain / Web3</option>
-            <option value="Internet of Things (IoT)">Internet of Things (IoT)</option>
-            <option value="Game Development">Game Development</option>
-            <option value="Software Engineering">Software Engineering</option>
-            <option value="Robotics / Automation">Robotics / Automation</option>
-            <option value="Other / General Tech">Other / General Tech</option>
-          </select>
-        </div>
-        <div class="fg">
-          <label>Specific Interests</label>
-          <input type="text" id="p_interest" placeholder="e.g. LLMs, Computer Vision">
-        </div>
-      </div>
-
-      <div class="fg" style="margin-bottom:20px;">
-        <label>Brief Introduction</label>
-        <textarea id="p_intro" placeholder="Tell us about your agentic goals..." style="height:100px; resize:none;"></textarea>
-      </div>
-
-      <div class="form-row" style="margin-bottom:30px;">
-        <div class="fg">
-          <label>LinkedIn URL</label>
-          <input type="text" id="p_linkedin" placeholder="https://linkedin.com/in/...">
-        </div>
-        <div class="fg">
-          <label>GitHub URL</label>
-          <input type="text" id="p_github" placeholder="https://github.com/...">
-        </div>
-      </div>
-
-      <button onclick="submitForm()" class="ui-btn ui-btn-primary" style="width:100%; padding:18px; font-size:1.05rem;">Create Global Identity →</button>
-      <p style="text-align:center; margin-top:25px; color:rgba(255,255,255,0.5); font-size: 0.9rem;">Already have an identity? <a href="javascript:void(0)" onclick="closeOvl(null,'signup'); openOvl('signin')" style="color:var(--accent); font-weight: 600; text-decoration: none;">Login</a></p>
-    </div>
-  </div>
-
   <script>
     // ─── REACTBITS STYLE LINE WAVES BACKGROUND ──────────────────────────────
     const canvas = document.getElementById('line-waves-canvas');
@@ -724,22 +492,6 @@
     }
     drawWaves();
 
-    // ─── GSAP & LENIS ──────────────────────────────────────────
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      direction: 'vertical',
-      gestureDirection: 'vertical',
-      smooth: true,
-      mouseMultiplier: 1,
-      smoothTouch: false,
-      touchMultiplier: 2,
-      infinite: false,
-    });
-    lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add((time)=>{ lenis.raf(time * 1000); });
-    gsap.ticker.lagSmoothing(0);
-
     // HERO ENTRANCE
     gsap.to('.hero-content', {
       opacity: 1, y: 0, duration: 1.5, ease: 'expo.out', delay: 0.2
@@ -777,84 +529,6 @@
     const track = document.getElementById('marquee-track');
     if(track) {
       track.innerHTML += track.innerHTML;
-    }
-
-    // MODAL LOGIC
-    function openOvl(id) { document.getElementById(id + '-ovl').classList.add('active'); }
-    function closeOvl(e, id) { if(e && e.target !== e.currentTarget) return; document.getElementById(id + '-ovl').classList.remove('active'); }
-
-    // MOBILE MENU LOGIC
-    function toggleMobileMenu() {
-      const ovl = document.getElementById('mobile-menu');
-      const btn = document.querySelector('.mobile-menu-btn');
-      ovl.classList.toggle('active');
-      btn.classList.toggle('active');
-    }
-
-    // AUTH (Real Integration preserved)
-    async function handleLogin() {
-      const email = document.getElementById('l_email').value;
-      const password = document.getElementById('l_password').value;
-      if(!email || !password) return alert('Please fill in all fields.');
-
-      try {
-        const res = await fetch('/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        const data = await res.json();
-        if(data.success) {
-          localStorage.setItem('gigni_user', JSON.stringify(data.user));
-          if(data.user.email === 'ankushka2089@gmail.com') {
-            window.location.href = 'admin.html';
-          } else {
-            window.location.href = 'dashboard.html';
-          }
-        } else {
-          alert(data.error || 'Login failed.');
-        }
-      } catch (e) {
-        console.error(e);
-        alert('Connection error.');
-      }
-    }
-
-    async function submitForm() {
-      const fname = document.getElementById('p_fname').value;
-      const lname = document.getElementById('p_lname').value;
-      const email = document.getElementById('p_email').value;
-      const password = document.getElementById('p_password').value;
-      const college = document.getElementById('p_college').value;
-      const year = document.getElementById('p_year').value;
-      const field = document.getElementById('p_field').value;
-      const interest = document.getElementById('p_interest').value;
-      const intro = document.getElementById('p_intro').value;
-      const linkedin = document.getElementById('p_linkedin').value;
-      const github = document.getElementById('p_github').value;
-      
-      if(!fname || !email || !college || !password) return alert('Please fill in all required fields.');
-
-      try {
-        const res = await fetch('/api/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fname, lname, email, password, college, year, field, interest, intro, linkedin, github })
-        });
-        const data = await res.json();
-        if(data.success) {
-          alert('Registration successful! Redirecting to dashboard...');
-          localStorage.setItem('gigni_user', JSON.stringify({ 
-            id: data.id, fname, lname, email, college, year, field, interest, intro, linkedin, github 
-          }));
-          window.location.href = 'dashboard.html';
-        } else {
-          alert(data.error || 'Registration failed.');
-        }
-      } catch (e) {
-        console.error(e);
-        alert('Connection error.');
-      }
     }
   </script>
 </body>
