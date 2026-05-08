@@ -20,7 +20,7 @@ const transporter = nodemailer.createTransport({
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname + '/..')); // Serve root files
+
 
 // Initialize Database Schema
 app.get('/api/init', async (req, res) => {
