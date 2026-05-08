@@ -77,11 +77,20 @@
     .bento-card.full h3 { font-size: 4rem; }
     .bento-card.full p { font-size: 1.5rem; max-width: 800px; margin: 0 auto; }
 
-    footer { padding: 60px 52px; border-top: 1px solid var(--border); text-align: center; color: rgba(255,255,255,0.3); position: relative; z-index: 10; }
+    /* FOOTER */
+    footer { padding: 100px 60px 40px; background: #000; border-top: 1px solid var(--border); position: relative; z-index: 10; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 80px; max-width: 1200px; margin: 0 auto; text-align: left; }
+    .footer-col h4 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); margin-bottom: 30px; font-weight: 700;}
+    .footer-col p { color: rgba(255,255,255,0.5); line-height: 1.8; max-width: 300px; }
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 12px; }
+    .footer-links a { color: rgba(255,255,255,0.6); text-decoration: none; transition: 0.3s; font-size: 0.95rem; }
+    .footer-links a:hover { color: #fff; padding-left: 5px; }
 
     @media (max-width: 900px) {
       .bento-grid { grid-template-columns: 1fr; }
       .bento-card.large, .bento-card.full { grid-column: span 1; }
+      .footer-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
     }
   </style>
 </head>
@@ -134,7 +143,33 @@
 </section>
 
 <footer>
-  &copy; 2026 GIGNI. Built for the AI Generation.
+  <div class="footer-grid">
+    <div class="footer-col">
+      <a href="index.html" class="logo" style="display:block; margin-bottom:20px; font-size: 2.2rem;">GIGNI</a>
+      <p>Revolutionizing student innovation through agentic AI. Connect, build, and lead the future community of developers.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigation</h4>
+      <ul class="footer-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="hosting.html">Hosting</a></li>
+        <li><a href="zorus.html">Zorus 2.1</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <ul class="footer-links">
+        <li><a href="#">Discord Community</a></li>
+        <li><a href="https://www.linkedin.com/company/gigni/?viewAsMember=true" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+        <li><a href="#">Twitter / X</a></li>
+        <li><a href="mailto:hello@gigni.ai">Support</a></li>
+      </ul>
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:80px; color:rgba(255,255,255,0.2); font-size:0.9rem; font-family: 'Outfit', sans-serif;">
+    &copy; 2026 GIGNI. Built for the AI Generation.
+  </div>
 </footer>
 
 </body>

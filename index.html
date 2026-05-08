@@ -251,6 +251,35 @@
   .footer-links a { color: rgba(255,255,255,0.6); text-decoration: none; transition: 0.3s; font-size: 0.95rem; }
   .footer-links a:hover { color: #fff; padding-left: 5px; }
 
+  /* MODALS */
+  .ovl {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(1,4,9,0.95); backdrop-filter: blur(20px);
+    z-index: 2000; display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: 0.4s;
+  }
+  .ovl.active { opacity: 1; pointer-events: auto; }
+  .modal {
+    background: rgba(13, 17, 23, 0.9); border: 1px solid rgba(255,255,255,0.15); border-radius: 30px;
+    padding: 50px; width: 100%; max-width: 480px; transform: scale(0.95); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  }
+  .ovl.active .modal { transform: scale(1); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+
+  /* INPUT STYLES FOR MODALS */
+  .modal input, .modal select, .modal textarea {
+    width: 100%; padding: 16px; background: rgba(255,255,255,0.03); 
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff; 
+    outline: none; transition: 0.3s; font-family: 'Inter', sans-serif;
+  }
+  .modal input:focus, .modal select:focus, .modal textarea:focus {
+    border-color: var(--accent); background: rgba(255,255,255,0.05);
+  }
+  .modal label {
+    display: block; font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;
+  }
+
   @media (max-width: 1024px) {
     .bento-grid { grid-template-columns: 1fr; }
     .bento-1, .bento-2, .bento-3, .bento-4 { grid-column: span 1; }
@@ -278,7 +307,8 @@
       <a href="about.html">About</a>
       <a href="hosting.html">Hosting</a>
       <a href="zorus.html">Zorus 2.1</a>
-      <button class="ui-btn ui-btn-primary" onclick="window.location.href='zorus.html'">Join Community</button>
+      <a href="javascript:void(0)" onclick="openOvl('signin')" style="margin-left: 10px;">Login</a>
+      <button class="ui-btn ui-btn-primary" onclick="openOvl('signup')">Join Community</button>
     </div>
   </nav>
 
@@ -291,7 +321,7 @@
         <h1 class="hero-h1">THE AGENTIC<br><span>REVOLUTION</span></h1>
         <p class="hero-p">Gigni is the first AI developer community built by students, for students. Create, collaborate, and evolve in the age of agentic intelligence.</p>
         <div class="hero-actions">
-          <button class="ui-btn ui-btn-primary" style="padding: 18px 48px; font-size: 1.1rem;" onclick="window.location.href='zorus.html'">Start Building</button>
+          <button class="ui-btn ui-btn-primary" style="padding: 18px 48px; font-size: 1.1rem;" onclick="openOvl('signup')">Start Building</button>
           <a href="about.html" class="ui-btn" style="padding: 18px 48px; font-size: 1.1rem;">Explore Platform</a>
         </div>
       </div>
@@ -425,7 +455,7 @@
           <h4>Connect</h4>
           <ul class="footer-links">
             <li><a href="#">Discord Community</a></li>
-            <li><a href="#">LinkedIn</a></li>
+            <li><a href="https://www.linkedin.com/company/gigni/?viewAsMember=true" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
             <li><a href="#">Twitter / X</a></li>
             <li><a href="mailto:hello@gigni.ai">Support</a></li>
           </ul>
@@ -436,6 +466,110 @@
       </div>
     </footer>
 
+  </div>
+
+  <!-- AUTH MODALS -->
+  <div class="ovl" id="signin-ovl" onclick="closeOvl(event,'signin')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <h3 style="font-size:2.2rem; margin-bottom:10px; font-weight: 800;">Welcome Back</h3>
+      <p style="color:rgba(255,255,255,0.5); margin-bottom:40px;">Resume your agentic journey.</p>
+      <input type="email" placeholder="Email" id="l_email" style="margin-bottom:20px;">
+      <input type="password" placeholder="Password" id="l_password" style="margin-bottom:30px;">
+      <button onclick="handleLogin()" class="ui-btn ui-btn-primary" style="width:100%; padding:18px;">Initialize Login</button>
+      <p style="text-align:center; margin-top:25px; color:rgba(255,255,255,0.5); font-size: 0.9rem;">New here? <a href="javascript:void(0)" onclick="closeOvl(null,'signin'); openOvl('signup')" style="color:var(--accent); font-weight: 600; text-decoration: none;">Create Identity</a></p>
+    </div>
+  </div>
+
+  <div class="ovl" id="signup-ovl" onclick="closeOvl(event,'signup')">
+    <div class="modal" style="max-width:800px; max-height: 90vh; overflow-y: auto;" onclick="event.stopPropagation()">
+      <h3 style="font-size:2.2rem; margin-bottom:10px; font-weight: 800;">Join GIGNI</h3>
+      <p style="color:rgba(255,255,255,0.5); margin-bottom:30px;">Create your global identity.</p>
+      
+      <div class="form-row">
+        <div class="fg">
+          <label>First Name</label>
+          <input type="text" id="p_fname" placeholder="First Name">
+        </div>
+        <div class="fg">
+          <label>Last Name</label>
+          <input type="text" id="p_lname" placeholder="Last Name">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="fg">
+          <label>Email Address</label>
+          <input type="email" id="p_email" placeholder="Email">
+        </div>
+        <div class="fg">
+          <label>Identity Password</label>
+          <input type="password" id="p_password" placeholder="Password">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="fg">
+          <label>College / University</label>
+          <input type="text" id="p_college" placeholder="e.g. Stanford University">
+        </div>
+        <div class="fg">
+          <label>Current Phase</label>
+          <select id="p_year">
+            <option value="1st Year">1st Year</option>
+            <option value="2nd Year">2nd Year</option>
+            <option value="3rd Year">3rd Year</option>
+            <option value="4th Year">4th Year</option>
+            <option value="Final Year / Intern">Final Year / Intern</option>
+            <option value="Post-Graduate">Post-Graduate</option>
+            <option value="Professional / Researcher">Professional / Researcher</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="fg">
+          <label>Domain</label>
+          <select id="p_field">
+            <option value="Artificial Intelligence / ML">Artificial Intelligence / ML</option>
+            <option value="Web Development (Full Stack)">Web Development (Full Stack)</option>
+            <option value="Mobile App Development">Mobile App Development</option>
+            <option value="Cyber Security">Cyber Security</option>
+            <option value="Cloud Computing">Cloud Computing</option>
+            <option value="Data Science / Analytics">Data Science / Analytics</option>
+            <option value="UI/UX Design">UI/UX Design</option>
+            <option value="Blockchain / Web3">Blockchain / Web3</option>
+            <option value="Internet of Things (IoT)">Internet of Things (IoT)</option>
+            <option value="Game Development">Game Development</option>
+            <option value="Software Engineering">Software Engineering</option>
+            <option value="Robotics / Automation">Robotics / Automation</option>
+            <option value="Other / General Tech">Other / General Tech</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Specific Interests</label>
+          <input type="text" id="p_interest" placeholder="e.g. LLMs, Computer Vision">
+        </div>
+      </div>
+
+      <div class="fg" style="margin-bottom:20px;">
+        <label>Brief Introduction</label>
+        <textarea id="p_intro" placeholder="Tell us about your agentic goals..." style="height:100px; resize:none;"></textarea>
+      </div>
+
+      <div class="form-row" style="margin-bottom:30px;">
+        <div class="fg">
+          <label>LinkedIn URL</label>
+          <input type="text" id="p_linkedin" placeholder="https://linkedin.com/in/...">
+        </div>
+        <div class="fg">
+          <label>GitHub URL</label>
+          <input type="text" id="p_github" placeholder="https://github.com/...">
+        </div>
+      </div>
+
+      <button onclick="submitForm()" class="ui-btn ui-btn-primary" style="width:100%; padding:18px; font-size:1.05rem;">Create Global Identity →</button>
+      <p style="text-align:center; margin-top:25px; color:rgba(255,255,255,0.5); font-size: 0.9rem;">Already have an identity? <a href="javascript:void(0)" onclick="closeOvl(null,'signup'); openOvl('signin')" style="color:var(--accent); font-weight: 600; text-decoration: none;">Login</a></p>
+    </div>
   </div>
 
   <script>
@@ -529,6 +663,76 @@
     const track = document.getElementById('marquee-track');
     if(track) {
       track.innerHTML += track.innerHTML;
+    }
+
+    // MODAL LOGIC
+    function openOvl(id) { document.getElementById(id + '-ovl').classList.add('active'); }
+    function closeOvl(e, id) { if(e && e.target !== e.currentTarget) return; document.getElementById(id + '-ovl').classList.remove('active'); }
+
+    // AUTH (Real Integration preserved)
+    async function handleLogin() {
+      const email = document.getElementById('l_email').value;
+      const password = document.getElementById('l_password').value;
+      if(!email || !password) return alert('Please fill in all fields.');
+
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if(data.success) {
+          localStorage.setItem('gigni_user', JSON.stringify(data.user));
+          if(data.user.email === 'ankushka2089@gmail.com') {
+            window.location.href = 'admin.html';
+          } else {
+            window.location.href = 'dashboard.html';
+          }
+        } else {
+          alert(data.error || 'Login failed.');
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Connection error.');
+      }
+    }
+
+    async function submitForm() {
+      const fname = document.getElementById('p_fname').value;
+      const lname = document.getElementById('p_lname').value;
+      const email = document.getElementById('p_email').value;
+      const password = document.getElementById('p_password').value;
+      const college = document.getElementById('p_college').value;
+      const year = document.getElementById('p_year').value;
+      const field = document.getElementById('p_field').value;
+      const interest = document.getElementById('p_interest').value;
+      const intro = document.getElementById('p_intro').value;
+      const linkedin = document.getElementById('p_linkedin').value;
+      const github = document.getElementById('p_github').value;
+      
+      if(!fname || !email || !college || !password) return alert('Please fill in all required fields.');
+
+      try {
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fname, lname, email, password, college, year, field, interest, intro, linkedin, github })
+        });
+        const data = await res.json();
+        if(data.success) {
+          alert('Registration successful! Redirecting to dashboard...');
+          localStorage.setItem('gigni_user', JSON.stringify({ 
+            id: data.id, fname, lname, email, college, year, field, interest, intro, linkedin, github 
+          }));
+          window.location.href = 'dashboard.html';
+        } else {
+          alert(data.error || 'Registration failed.');
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Connection error.');
+      }
     }
   </script>
 </body>
