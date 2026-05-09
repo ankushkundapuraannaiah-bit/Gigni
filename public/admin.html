@@ -425,70 +425,82 @@
 
     async function startBulkSend() {
       if (bulkEmails.length === 0) return showToast('Please add at least one recipient email');
-      if (!document.getElementById('bulk-subject').value.trim()) return showToast('Please enter a subject');
-      if (!bodyInput.value.trim()) return showToast('Please enter email content');
+      const subject = document.getElementById('bulk-subject').value.trim();
+      const body = bodyInput.value.trim();
+      if (!subject) return showToast('Please enter a subject');
+      if (!body) return showToast('Please enter email content');
       const admin = JSON.parse(localStorage.getItem('gigni_user') || '{}');
       if (!admin.email) return showToast('Admin authentication required');
       
+      const delayVal = parseInt(document.getElementById('bulk-delay').value) || 1;
+
       // Reset UI
-      document.getElementById('prog-feed').innerHTML = '';
-      document.getElementById('prog-bar').style.width = '0%';
-      document.getElementById('prog-count').innerText = '0 / ' + bulkEmails.length;
+      const feed = document.getElementById('prog-feed');
+      const label = document.getElementById('prog-label');
+      const bar = document.getElementById('prog-bar');
+      const countLabel = document.getElementById('prog-count');
+      
+      feed.innerHTML = '';
+      bar.style.width = '0%';
+      countLabel.innerText = `0 / ${bulkEmails.length}`;
       document.getElementById('bulk-progress-wrap').style.display = 'block';
       
-      const res = await fetch('/api/admin/send-bulk-email', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({
-          emails: bulkEmails,
-          subject: document.getElementById('bulk-subject').value,
-          htmlBody: bodyInput.value,
-          adminEmail: admin.email,
-          delay: document.getElementById('bulk-delay').value
-        })
-      });
+      label.innerText = 'Initializing Agentic Dispatch...';
 
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-
-      while(true) {
-        const { value, done } = await reader.read();
-        if(done) break;
+      for (let i = 0; i < bulkEmails.length; i++) {
+        const email = bulkEmails[i];
+        label.innerText = `Dispatching to ${email}...`;
         
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop();
+        try {
+          const res = await fetch('/api/admin/send-single-email', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({
+              email,
+              subject,
+              htmlBody: body,
+              adminEmail: admin.email
+            })
+          });
+          
+          const data = await res.json();
+          const div = document.createElement('div');
+          div.style.padding = '8px';
+          div.style.background = 'rgba(255,255,255,0.03)';
+          div.style.borderRadius = '8px';
+          div.style.fontSize = '13px';
 
-        for (const line of lines) {
-          if(!line.trim()) continue;
-          try {
-            const msg = JSON.parse(line);
-            const feed = document.getElementById('prog-feed');
-            const label = document.getElementById('prog-label');
-            
-            if (msg.type === 'sent' || msg.type === 'failed') {
-              const div = document.createElement('div');
-              div.style.padding = '8px';
-              div.style.background = 'rgba(255,255,255,0.03)';
-              div.style.borderRadius = '8px';
-              div.style.fontSize = '13px';
-              
-              const errorDetail = msg.type === 'failed' ? `<br><small style="color:#f87171; margin-left:20px;">Error: ${msg.error || 'Unknown error'}</small>` : '';
-              div.innerHTML = `<span style="color:${msg.type==='sent'?'#10b981':'#f87171'}; font-weight:800; margin-right:10px;">[${msg.type.toUpperCase()}]</span> ${msg.email}${errorDetail}`;
-              feed.prepend(div);
-              
-              const pct = ((msg.index + 1) / msg.total) * 100;
-              document.getElementById('prog-bar').style.width = pct + '%';
-              document.getElementById('prog-count').innerText = `${msg.index+1} / ${msg.total}`;
-              label.innerText = 'Sending Emails...';
-            } else if (msg.type === 'waiting') {
-              label.innerHTML = `<span style="color:var(--orange)">Throttling:</span> Next dispatch in ${msg.secondsLeft}s...`;
-            }
-          } catch(e) { console.error("Stream parse error:", e); }
+          if (data.success) {
+            div.innerHTML = `<span style="color:#10b981; font-weight:800; margin-right:10px;">[SENT]</span> ${email}`;
+          } else {
+            div.innerHTML = `<span style="color:#f87171; font-weight:800; margin-right:10px;">[FAILED]</span> ${email}<br><small style="color:#f87171; margin-left:20px;">Error: ${data.error || 'Internal Error'}</small>`;
+          }
+          feed.prepend(div);
+        } catch (e) {
+          const div = document.createElement('div');
+          div.style.padding = '8px';
+          div.style.background = 'rgba(255,255,255,0.03)';
+          div.style.borderRadius = '8px';
+          div.style.fontSize = '13px';
+          div.innerHTML = `<span style="color:#f87171; font-weight:800; margin-right:10px;">[ERROR]</span> ${email}<br><small style="color:#f87171; margin-left:20px;">Network Failure</small>`;
+          feed.prepend(div);
+        }
+
+        // Update Progress
+        const pct = ((i + 1) / bulkEmails.length) * 100;
+        bar.style.width = pct + '%';
+        countLabel.innerText = `${i + 1} / ${bulkEmails.length}`;
+
+        // Throttling
+        if (i < bulkEmails.length - 1) {
+          for (let s = delayVal; s > 0; s--) {
+            label.innerHTML = `<span style="color:var(--orange)">Throttling:</span> Next dispatch in ${s}s...`;
+            await new Promise(r => setTimeout(r, 1000));
+          }
         }
       }
-      document.getElementById('prog-label').innerText = 'Bulk Send Complete';
+
+      label.innerText = 'Bulk Send Complete';
       showToast('Bulk Emails Sent Successfully');
     }
 

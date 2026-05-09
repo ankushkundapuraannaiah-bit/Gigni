@@ -377,8 +377,8 @@ app.post('/api/admin/send-bulk-email', async (req, res) => {
     res.setHeader('Content-Type', 'application/x-ndjson');
     res.setHeader('Transfer-Encoding', 'chunked');
     res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('X-Accel-Buffering', 'no'); // Disable nginx buffering
-    res.flushHeaders(); // Flush headers immediately so streaming begins
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders();
 
     try {
         for (let i = 0; i < emails.length; i++) {
@@ -397,8 +397,9 @@ app.post('/api/admin/send-bulk-email', async (req, res) => {
                 res.write(JSON.stringify({ type: 'failed', email, index: i, total: emails.length, error: error.message }) + '\n');
             }
 
+            // Throttling to prevent Vercel/Gmail issues
             if (i < emails.length - 1) {
-                const emailDelay = parseInt(delay) || 2; // Configurable delay, default 2s
+                const emailDelay = parseInt(delay) || 1; 
                 for (let s = emailDelay; s > 0; s--) {
                     res.write(JSON.stringify({ type: 'waiting', index: i + 1, secondsLeft: s }) + '\n');
                     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -410,6 +411,24 @@ app.post('/api/admin/send-bulk-email', async (req, res) => {
         res.write(JSON.stringify({ type: 'error', message: err.message }) + '\n');
     } finally {
         res.end();
+    }
+});
+
+// Single Email Endpoint (Helper for reliable bulk sending from client)
+app.post('/api/admin/send-single-email', async (req, res) => {
+    const { email, subject, htmlBody, adminEmail } = req.body;
+    if (adminEmail !== 'ankushka2089@gmail.com') return res.status(403).json({ error: 'Unauthorized' });
+    
+    try {
+        await transporter.sendMail({
+            from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
+            to: email,
+            subject: subject,
+            html: htmlBody
+        });
+        res.status(200).json({ success: true });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
     }
 });
 
