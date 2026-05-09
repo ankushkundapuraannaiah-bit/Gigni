@@ -3,11 +3,16 @@ const express = require('express');
 const cors = require('cors');
 const { createClient } = require('@vercel/postgres');
 const nodemailer = require('nodemailer');
+const bcrypt = require('bcryptjs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Email Transporter Configuration
+if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+    console.warn("WARNING: GMAIL_USER or GMAIL_APP_PASSWORD not set. Email services will fail.");
+}
+
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
@@ -85,10 +90,11 @@ app.get('/api/init', async (req, res) => {
         // Ensure Admin User Exists
         const adminCheck = await client.query(`SELECT id FROM users WHERE email = $1;`, ['ankushka2089@gmail.com']);
         if (adminCheck.rows.length === 0) {
+            const hashedPassword = await bcrypt.hash('Ankush@2026', 10);
             await client.query(`
                 INSERT INTO users (fname, lname, email, password, college)
                 VALUES ($1, $2, $3, $4, $5);
-            `, ['Ankush', 'Admin', 'ankushka2089@gmail.com', 'Ankush@2026', 'Gigni Headquarters']);
+            `, ['Ankush', 'Admin', 'ankushka2089@gmail.com', hashedPassword, 'Gigni Headquarters']);
         }
 
         res.status(200).json({ success: true, message: 'Database initialized and admin checked' });
@@ -106,12 +112,13 @@ app.post('/api/register', async (req, res) => {
     try {
         client = createClient();
         await client.connect();
+        const hashedPassword = await bcrypt.hash(password, 10);
         const query = `
             INSERT INTO users (fname, lname, email, password, college, year, field, interest, intro, linkedin, github)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
             RETURNING id;
         `;
-        const values = [fname, lname, email, password, college, year, field, interest, intro, linkedin, github];
+        const values = [fname, lname, email, hashedPassword, college, year, field, interest, intro, linkedin, github];
         const result = await client.query(query, values);
         
         // Send Welcome Email
@@ -137,7 +144,7 @@ app.post('/api/register', async (req, res) => {
                         <li>Professional networking events and workshops</li>
                     </ul>
                     <div style="text-align: center; margin-top: 30px;">
-                        <a href="https://www.gigniconnect.space/dashboard.html" style="background: #3b5bdb; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: bold; display: inline-block;">Access Your Professional Dashboard</a>
+                        <a href="${process.env.BASE_URL || 'https://www.gigniconnect.space'}/dashboard.html" style="background: #3b5bdb; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: bold; display: inline-block;">Access Your Professional Dashboard</a>
                     </div>
                     <p style="font-size: 14px; color: #666; margin-top: 40px; text-align: center;">
                         Together, we are shaping the future of technology. Welcome aboard.
@@ -168,7 +175,11 @@ app.post('/api/login', async (req, res) => {
         await client.connect();
         const result = await client.query(`SELECT * FROM users WHERE email = $1;`, [email]);
         const user = result.rows[0];
-        if (!user || user.password !== password) return res.status(401).json({ error: 'Invalid email or password' });
+        if (!user) return res.status(401).json({ error: 'Invalid email or password' });
+        
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.status(401).json({ error: 'Invalid email or password' });
+        
         res.status(200).json({ success: true, user });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -297,7 +308,7 @@ app.post('/api/zorus-apply', async (req, res) => {
                         • Have scratch paper and pen ready for calculations
                     </p>
                     <div style="text-align: center; margin-top: 30px;">
-                        <a href="https://www.gigniconnect.space/zorus-test.html" style="background: #f97316; color: #fff; padding: 15px 35px; text-decoration: none; border-radius: 50px; font-weight: bold; display: inline-block; font-size: 18px;">Begin Technical Assessment</a>
+                        <a href="${process.env.BASE_URL || 'https://www.gigniconnect.space'}/zorus-test.html" style="background: #f97316; color: #fff; padding: 15px 35px; text-decoration: none; border-radius: 50px; font-weight: bold; display: inline-block; font-size: 18px;">Begin Technical Assessment</a>
                     </div>
                     <p style="font-size: 14px; color: #666; margin-top: 40px; text-align: center;">
                         Important: Please ensure you have a stable internet connection and complete the assessment in one sitting. The test will automatically submit when time expires.
@@ -348,10 +359,20 @@ app.post('/api/zorus-submit-score', async (req, res) => {
     }
 });
 
-// Bulk Email Sender with 20s Delay
+// Bulk Email Sender
 app.post('/api/admin/send-bulk-email', async (req, res) => {
-    const { emails, subject, htmlBody, adminEmail } = req.body;
+    const { emails, subject, htmlBody, adminEmail, delay } = req.body;
     if (adminEmail !== 'ankushka2089@gmail.com') return res.status(403).json({ error: 'Unauthorized' });
+    if (!emails || !Array.isArray(emails) || emails.length === 0) return res.status(400).json({ error: 'No emails provided' });
+    if (!subject || !htmlBody) return res.status(400).json({ error: 'Subject and body required' });
+
+    // Verify transporter
+    try {
+        await transporter.verify();
+    } catch (error) {
+        console.error('Email transporter verification failed:', error.message);
+        return res.status(500).json({ error: 'Email service unavailable' });
+    }
 
     res.setHeader('Content-Type', 'application/x-ndjson');
     res.setHeader('Transfer-Encoding', 'chunked');
@@ -359,30 +380,37 @@ app.post('/api/admin/send-bulk-email', async (req, res) => {
     res.setHeader('X-Accel-Buffering', 'no'); // Disable nginx buffering
     res.flushHeaders(); // Flush headers immediately so streaming begins
 
-    for (let i = 0; i < emails.length; i++) {
-        const email = emails[i];
-        
-        try {
-            await transporter.sendMail({
-                from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
-                to: email,
-                subject: subject,
-                html: htmlBody
-            });
-            res.write(JSON.stringify({ type: 'sent', email, index: i, total: emails.length }) + '\n');
-        } catch (error) {
-            res.write(JSON.stringify({ type: 'failed', email, index: i, total: emails.length, error: error.message }) + '\n');
-        }
+    try {
+        for (let i = 0; i < emails.length; i++) {
+            const email = emails[i];
+            
+            try {
+                await transporter.sendMail({
+                    from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
+                    to: email,
+                    subject: subject,
+                    html: htmlBody
+                });
+                res.write(JSON.stringify({ type: 'sent', email, index: i, total: emails.length }) + '\n');
+            } catch (error) {
+                console.error(`Bulk send failure for ${email}:`, error.message);
+                res.write(JSON.stringify({ type: 'failed', email, index: i, total: emails.length, error: error.message }) + '\n');
+            }
 
-        if (i < emails.length - 1) {
-            for (let s = 20; s > 0; s--) {
-                res.write(JSON.stringify({ type: 'waiting', index: i + 1, secondsLeft: s }) + '\n');
-                await new Promise(resolve => setTimeout(resolve, 1000));
+            if (i < emails.length - 1) {
+                const emailDelay = parseInt(delay) || 2; // Configurable delay, default 2s
+                for (let s = emailDelay; s > 0; s--) {
+                    res.write(JSON.stringify({ type: 'waiting', index: i + 1, secondsLeft: s }) + '\n');
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
             }
         }
+    } catch (err) {
+        console.error("Critical bulk stream error:", err.message);
+        res.write(JSON.stringify({ type: 'error', message: err.message }) + '\n');
+    } finally {
+        res.end();
     }
-
-    res.end();
 });
 
 

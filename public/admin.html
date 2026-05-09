@@ -112,7 +112,6 @@
 
     #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1a1a1a; border: 1px solid var(--primary); padding: 14px 28px; border-radius: 50px; color: #fff; z-index: 10000; transition: 0.4s; opacity: 0; }
   </style>
-<script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
 
@@ -178,8 +177,8 @@
     <!-- BULK EMAIL SECTION -->
     <div class="section" style="padding-top:0;">
       <div class="header-info">
-        <h1>Bulk Agentic Communications</h1>
-        <p>Distribute mass updates with automated delivery intervals (20s).</p>
+        <h1>Bulk Email Sender</h1>
+        <p>Distribute mass updates with configurable delivery intervals (default 2s).</p>
       </div>
       <div class="card">
         <div class="email-grid">
@@ -194,6 +193,7 @@
               <div style="display:flex; gap:12px;">
                 <input type="email" id="new-email-input" placeholder="Enter email address" style="flex:1;">
                 <button class="btn-act" onclick="addEmail()" style="margin:0; padding:12px 24px;">+ Add</button>
+                <button class="btn-sec" onclick="clearEmails()" style="margin:0; padding:12px 16px;">Clear All</button>
               </div>
             </div>
             <div class="fg">
@@ -204,7 +204,11 @@
                 <option value="internship">Zorus Opportunity</option>
               </select>
             </div>
-            <button class="btn-act" id="send-bulk-btn" onclick="startBulkSend()" style="width:100%; padding:18px; font-size:16px; background:var(--orange); margin-top:20px;">Deploy Bulk Stream</button>
+            <div class="fg">
+              <label>Delay Between Emails (seconds)</label>
+              <input type="number" id="bulk-delay" value="2" min="0" max="60" placeholder="2">
+            </div>
+            <button class="btn-act" id="send-bulk-btn" onclick="startBulkSend()" style="width:100%; padding:18px; font-size:16px; background:var(--orange); margin-top:20px;">Send Bulk Emails</button>
           </div>
           <div>
             <div class="fg">
@@ -408,6 +412,11 @@
         renderTags();
       }
     }
+
+    function clearEmails() {
+      bulkEmails = [];
+      renderTags();
+    }
     function renderTags() {
       const wrap = document.getElementById('email-tags');
       wrap.innerHTML = bulkEmails.map((e, i) => `<div class="email-tag">${e}<button onclick="bulkEmails.splice(${i},1);renderTags()">✕</button></div>`).join('');
@@ -415,37 +424,72 @@
     }
 
     async function startBulkSend() {
-      if (bulkEmails.length === 0) return showToast('No recipients');
+      if (bulkEmails.length === 0) return showToast('Please add at least one recipient email');
+      if (!document.getElementById('bulk-subject').value.trim()) return showToast('Please enter a subject');
+      if (!bodyInput.value.trim()) return showToast('Please enter email content');
       const admin = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+      if (!admin.email) return showToast('Admin authentication required');
+      
+      // Reset UI
+      document.getElementById('prog-feed').innerHTML = '';
+      document.getElementById('prog-bar').style.width = '0%';
+      document.getElementById('prog-count').innerText = '0 / ' + bulkEmails.length;
+      document.getElementById('bulk-progress-wrap').style.display = 'block';
+      
       const res = await fetch('/api/admin/send-bulk-email', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ emails: bulkEmails, subject: document.getElementById('bulk-subject').value, htmlBody: bodyInput.value, adminEmail: admin.email })
+        body: JSON.stringify({
+          emails: bulkEmails,
+          subject: document.getElementById('bulk-subject').value,
+          htmlBody: bodyInput.value,
+          adminEmail: admin.email,
+          delay: document.getElementById('bulk-delay').value
+        })
       });
-      document.getElementById('bulk-progress-wrap').style.display = 'block';
+
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
+      let buffer = '';
+
       while(true) {
         const { value, done } = await reader.read();
         if(done) break;
-        const msgs = decoder.decode(value).split('\n');
-        msgs.forEach(m => {
-          if(!m) return;
+        
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+
+        for (const line of lines) {
+          if(!line.trim()) continue;
           try {
-            const msg = JSON.parse(m);
-            if(msg.type === 'sent' || msg.type === 'failed') {
-              const feed = document.getElementById('prog-feed');
+            const msg = JSON.parse(line);
+            const feed = document.getElementById('prog-feed');
+            const label = document.getElementById('prog-label');
+            
+            if (msg.type === 'sent' || msg.type === 'failed') {
               const div = document.createElement('div');
-              div.innerHTML = `<span style="color:${msg.type==='sent'?'#10b981':'#f87171'}">[${msg.type.toUpperCase()}]</span> ${msg.email}`;
+              div.style.padding = '8px';
+              div.style.background = 'rgba(255,255,255,0.03)';
+              div.style.borderRadius = '8px';
+              div.style.fontSize = '13px';
+              
+              const errorDetail = msg.type === 'failed' ? `<br><small style="color:#f87171; margin-left:20px;">Error: ${msg.error || 'Unknown error'}</small>` : '';
+              div.innerHTML = `<span style="color:${msg.type==='sent'?'#10b981':'#f87171'}; font-weight:800; margin-right:10px;">[${msg.type.toUpperCase()}]</span> ${msg.email}${errorDetail}`;
               feed.prepend(div);
+              
               const pct = ((msg.index + 1) / msg.total) * 100;
               document.getElementById('prog-bar').style.width = pct + '%';
               document.getElementById('prog-count').innerText = `${msg.index+1} / ${msg.total}`;
+              label.innerText = 'Sending Emails...';
+            } else if (msg.type === 'waiting') {
+              label.innerHTML = `<span style="color:var(--orange)">Throttling:</span> Next dispatch in ${msg.secondsLeft}s...`;
             }
-          } catch(e) {}
-        });
+          } catch(e) { console.error("Stream parse error:", e); }
+        }
       }
-      showToast('Bulk Deployment Complete');
+      document.getElementById('prog-label').innerText = 'Bulk Send Complete';
+      showToast('Bulk Emails Sent Successfully');
     }
 
     function applyTemplatePreset() {
@@ -540,4 +584,3 @@
   </div>
 </body>
 </html>
-

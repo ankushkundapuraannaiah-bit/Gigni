@@ -14,7 +14,27 @@
       --border: rgba(255, 255, 255, 0.08);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: #fff; overflow-x: hidden; }
+    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: #fff; overflow-x: hidden; position: relative; }
+
+    /* Interactive Background */
+    .interactive-bg {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: -1; pointer-events: none; overflow: hidden;
+      background: radial-gradient(circle at center, #030712 0%, #000 100%);
+    }
+    .bg-element {
+      position: absolute; border-radius: 50%;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.2), transparent);
+      animation: drift 20s infinite linear;
+    }
+    .bg-element:nth-child(1) { width: 300px; height: 300px; top: 10%; left: 10%; animation-duration: 25s; }
+    .bg-element:nth-child(2) { width: 200px; height: 200px; top: 50%; left: 70%; animation-duration: 30s; background: radial-gradient(circle, rgba(59, 91, 219, 0.2), transparent); }
+    .bg-element:nth-child(3) { width: 150px; height: 150px; top: 80%; left: 20%; animation-duration: 22s; }
+    @keyframes drift {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(100px, -50px) rotate(180deg); }
+      100% { transform: translate(0, 0) rotate(360deg); }
+    }
 
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
@@ -29,6 +49,12 @@
     .hero { text-align: center; padding: 160px 20px 80px; }
     .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 6vw, 5rem); margin-bottom: 16px; }
     .hero p { color: rgba(255,255,255,0.5); max-width: 600px; margin: 0 auto; font-size: 1.1rem; line-height: 1.6; }
+    .scroll-explore {
+      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+      color: rgba(255,255,255,0.6); font-size: 0.9rem; text-transform: uppercase;
+      letter-spacing: 2px; animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
 
     .tools-grid { max-width: 1300px; margin: 0 auto 120px; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; }
     
@@ -37,7 +63,7 @@
       padding: 48px 32px; text-align: center; backdrop-filter: blur(12px);
       transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .tool-card:hover { border-color: var(--primary); transform: translateY(-10px); background: rgba(17, 24, 39, 0.9); }
+    .tool-card:hover { border-color: var(--primary); transform: translateY(-10px) scale(1.05); background: rgba(17, 24, 39, 0.9); box-shadow: 0 20px 40px rgba(59, 91, 219, 0.2); }
     .tool-icon { font-size: 3.5rem; margin-bottom: 24px; }
     .tool-card h3 { font-size: 1.8rem; font-weight: 700; margin-bottom: 12px; }
     .tool-card p { color: rgba(255,255,255,0.5); line-height: 1.6; margin-bottom: 32px; }
@@ -62,9 +88,14 @@
       .footer-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
     }
   </style>
-<script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
+
+<div class="interactive-bg">
+  <div class="bg-element"></div>
+  <div class="bg-element"></div>
+  <div class="bg-element"></div>
+</div>
 
 <nav>
   <a href="index.html" class="logo">GIGNI</a>
@@ -78,6 +109,7 @@
 <section class="hero">
   <h1>ZORUS 2.1 ECOSYSTEM</h1>
   <p>Discover Gigni's comprehensive suite of agentic assessment and creation tools built on the Zorus 2.1 engine.</p>
+  <div class="scroll-explore">scroll to explore</div>
 </section>
 
 <div class="tools-grid">
@@ -139,4 +171,3 @@
 
 </body>
 </html>
-
