@@ -24,6 +24,10 @@ const transporter = nodemailer.createTransport({
 app.use(cors());
 app.use(express.json());
 
+// Health Check
+app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date() }));
+app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date() }));
+
 // Authentication Middleware
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -127,7 +131,7 @@ app.get('/api/init', async (req, res) => {
 });
 
 // Auth Endpoints
-app.post('/api/register', async (req, res) => {
+app.post(['/api/register', '/register'], async (req, res) => {
     const { fname, lname, email, password, college, year, field, interest, intro, linkedin, github } = req.body;
     
     // Input validation
@@ -203,7 +207,7 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-app.post('/api/login', async (req, res) => {
+app.post(['/api/login', '/login'], async (req, res) => {
     const { email, password } = req.body;
     
     // Input validation
