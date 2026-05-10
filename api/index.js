@@ -112,14 +112,17 @@ app.get('/api/init', async (req, res) => {
         } catch (e) { if (e.code !== '42701') console.error(`Error adding score to zorus_applications:`, e.message); }
 
 
-        // Ensure Admin User Exists
+        // Force Reset/Ensure Admin User
+        const hashedPassword = await bcrypt.hash('AdminPassword@2026', 10);
         const adminCheck = await client.query(`SELECT id FROM users WHERE email = $1;`, ['ankushka2089@gmail.com']);
+        
         if (adminCheck.rows.length === 0) {
-            const hashedPassword = await bcrypt.hash('AdminPassword@2026', 10);
             await client.query(`
                 INSERT INTO users (fname, lname, email, password, college)
                 VALUES ($1, $2, $3, $4, $5);
             `, ['Ankush', 'Admin', 'ankushka2089@gmail.com', hashedPassword, 'Gigni Headquarters']);
+        } else {
+            await client.query(`UPDATE users SET password = $1 WHERE email = $2`, [hashedPassword, 'ankushka2089@gmail.com']);
         }
 
         res.status(200).json({ success: true, message: 'Database initialized and admin checked' });
