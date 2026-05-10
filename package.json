@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "engines": {
-    "node": ">=20.x"
+    "node": "20.x"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -19,7 +19,7 @@
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.0",
-    "express": "^5.2.1",
+    "express": "^4.19.2",
     "jsonwebtoken": "^9.0.3",
     "nodemailer": "^8.0.7"
   }
