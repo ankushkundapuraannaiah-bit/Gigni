@@ -25,8 +25,27 @@ app.use(cors());
 app.use(express.json());
 
 // Health Check
-app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date() }));
-app.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date() }));
+app.get('/api/health', async (req, res) => {
+    let dbStatus = 'disconnected';
+    let dbHost = 'none';
+    try {
+        const client = createClient();
+        await client.connect();
+        dbStatus = 'connected';
+        const url = new URL(process.env.POSTGRES_URL);
+        dbHost = url.hostname;
+        await client.end();
+    } catch (e) { dbStatus = 'error: ' + e.message; }
+
+    res.json({ 
+        status: 'ok', 
+        timestamp: new Date(),
+        database: {
+            status: dbStatus,
+            host: dbHost
+        }
+    });
+});
 
 // Authentication Middleware
 const authenticateToken = (req, res, next) => {
