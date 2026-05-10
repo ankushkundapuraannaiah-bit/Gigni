@@ -684,6 +684,7 @@
         });
         const data = await res.json();
         if(data.success) {
+          localStorage.setItem('gigni_token', data.token);
           localStorage.setItem('gigni_user', JSON.stringify(data.user));
           if(data.user.email === 'ankushka2089@gmail.com') {
             window.location.href = 'admin.html';

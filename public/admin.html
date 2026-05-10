@@ -259,8 +259,11 @@
 
     async function fetchUsers() {
       const tbody = document.getElementById('users-body');
+      const token = localStorage.getItem('gigni_token');
       try {
-        const res = await fetch('/api/users');
+        const res = await fetch('/api/users', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
         const data = await res.json();
         if (data.success) {
           tbody.innerHTML = '';
@@ -327,8 +330,11 @@
 
     async function fetchZorusApplications() {
       const tbody = document.getElementById('zorus-body');
+      const token = localStorage.getItem('gigni_token');
       try {
-        const res = await fetch('/api/zorus-applications');
+        const res = await fetch('/api/zorus-applications', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
         const data = await res.json();
         if (data.success) {
           tbody.innerHTML = '';
@@ -382,7 +388,15 @@
         }
       };
       try {
-        const res = await fetch('/api/user/add-item', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
+        const token = localStorage.getItem('gigni_token');
+        const res = await fetch('/api/user/add-item', { 
+          method: 'POST', 
+          headers: {
+            'Content-Type':'application/json',
+            'Authorization': `Bearer ${token}`
+          }, 
+          body: JSON.stringify(body) 
+        });
         if((await res.json()).success) { showToast('Build Assigned'); closeModal(); }
       } catch (e) { showToast('Error'); } finally { btn.innerText = originalText; }
     }
@@ -417,9 +431,13 @@
     async function startBulkSend() {
       if (bulkEmails.length === 0) return showToast('No recipients');
       const admin = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+      const token = localStorage.getItem('gigni_token');
       const res = await fetch('/api/admin/send-bulk-email', {
         method: 'POST',
-        headers: {'Content-Type':'application/json'},
+        headers: {
+          'Content-Type':'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ emails: bulkEmails, subject: document.getElementById('bulk-subject').value, htmlBody: bodyInput.value, adminEmail: admin.email })
       });
       document.getElementById('bulk-progress-wrap').style.display = 'block';

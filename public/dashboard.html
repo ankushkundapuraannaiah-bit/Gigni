@@ -394,12 +394,14 @@
     renderAll(user);
 
     if (user.id) {
+      const token = localStorage.getItem('gigni_token');
       try {
-        const res = await fetch('/api/user/' + user.id);
+        const res = await fetch('/api/user/' + user.id, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
         const data = await res.json();
         if (data.success) {
           const fresh = data.user;
-          fresh.password = user.password;
           localStorage.setItem('gigni_user', JSON.stringify(fresh));
           renderAll(fresh);
         }
@@ -539,9 +541,13 @@
     };
 
     try {
+      const token = localStorage.getItem('gigni_token');
       const res = await fetch('/api/user/update', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(updated)
       });
       const data = await res.json();

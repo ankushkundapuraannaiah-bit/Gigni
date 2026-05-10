@@ -156,7 +156,15 @@
       });
       const pct = Math.round((score/questions.length)*100);
       const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
-      if(user.id) await fetch('/api/zorus-submit-score', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userId:user.id, score:pct}) });
+      const token = localStorage.getItem('gigni_token');
+      if(user.id) await fetch('/api/zorus-submit-score', { 
+        method:'POST', 
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization': `Bearer ${token}`
+        }, 
+        body:JSON.stringify({userId:user.id, score:pct}) 
+      });
       
       document.getElementById('score-text').innerText = pct + '%';
       document.getElementById('modal-title').innerText = pct >= 85 ? 'Selection Qualified' : 'Sync Complete';
