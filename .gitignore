@@ -1,5 +1,6 @@
 .vercel
-node_modules
 .env
-database.sqlite
-*.log
+.env.local
+node_modules/
+*.sqlite
+*.sqlite3
