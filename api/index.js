@@ -132,7 +132,7 @@ app.get('/api/init', async (req, res) => {
 
 
         // Force Reset/Ensure Admin User
-        const hashedPassword = await bcrypt.hash('AdminPassword@2026', 10);
+        const hashedPassword = await bcrypt.hash('Ankushceo@2026', 10);
         const adminCheck = await client.query(`SELECT id FROM users WHERE email = $1;`, ['ankushka2089@gmail.com']);
         
         if (adminCheck.rows.length === 0) {
