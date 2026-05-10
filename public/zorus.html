@@ -200,12 +200,49 @@
   });
 
   async function handleApply() {
+    const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+    if (!user.id) {
+      alert('Authentication Required: Please login or join the community first to apply for Zorus 2.1.');
+      return;
+    }
+
     const btn = document.getElementById('apply-btn');
+    const originalText = btn.innerText;
     btn.innerText = 'Syncing Identity...';
-    // Simulated redirect for demo
-    setTimeout(() => { window.location.href = 'zorus-test.html'; }, 1500);
+    btn.disabled = true;
+
+    try {
+      const res = await fetch('/api/zorus-apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          email: user.email,
+          fname: user.fname,
+          lname: user.lname
+        })
+      });
+      const data = await res.json();
+      
+      if (data.success || data.error === 'Already applied') {
+        if (data.error === 'Already applied') {
+          alert('Sync Note: You have already applied for this cohort. Redirecting to assessment...');
+        } else {
+          alert('Application Successful! A technical assessment invitation has been sent to your email. Redirecting to assessment portal...');
+        }
+        window.location.href = 'zorus-test.html';
+      } else {
+        alert('Sync Error: ' + data.error);
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Network Error: Database unreachable. Please try again later.');
+      btn.innerText = originalText;
+      btn.disabled = false;
+    }
   }
 </script>
 </body>
 </html>
-

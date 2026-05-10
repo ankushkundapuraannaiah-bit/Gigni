@@ -509,8 +509,31 @@ app.post('/api/admin/send-bulk-email', authenticateToken, async (req, res) => {
             }
         }
     }
-
     res.end();
+});
+
+// Single Email Endpoint (Helper for reliable bulk sending from client)
+app.post('/api/admin/send-single-email', async (req, res) => {
+    const { email, subject, htmlBody, adminEmail } = req.body;
+    // Basic authorization check
+    if (adminEmail !== 'ankushka2089@gmail.com') return res.status(403).json({ error: 'Unauthorized' });
+    
+    if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
+        return res.status(500).json({ success: false, error: "Email service credentials not configured on server." });
+    }
+
+    try {
+        await transporter.sendMail({
+            from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
+            to: email,
+            subject: subject,
+            html: htmlBody
+        });
+        res.status(200).json({ success: true });
+    } catch (error) {
+        console.error(`Email delivery failed to ${email}:`, error.message);
+        res.status(500).json({ success: false, error: error.message });
+    }
 });
 
 
