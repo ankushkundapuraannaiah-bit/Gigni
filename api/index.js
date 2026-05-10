@@ -4,15 +4,13 @@ const cors = require('cors');
 const { createClient } = require('@vercel/postgres');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
 // Email Transporter Configuration
-if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
-    console.warn("WARNING: GMAIL_USER or GMAIL_APP_PASSWORD not set. Email services will fail.");
-}
-
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
@@ -25,6 +23,29 @@ const transporter = nodemailer.createTransport({
 
 app.use(cors());
 app.use(express.json());
+
+// Authentication Middleware
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    
+    if (!token) return res.status(401).json({ error: 'No token provided' });
+    
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) return res.status(403).json({ error: 'Invalid token' });
+        req.user = user;
+        next();
+    });
+};
+
+// Input Validation Helper
+const validateEmail = (email) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+const validatePassword = (password) => {
+    return password && password.length >= 8;
+};
 
 // Initialize Database Schema
 app.get('/api/init', async (req, res) => {
@@ -90,7 +111,7 @@ app.get('/api/init', async (req, res) => {
         // Ensure Admin User Exists
         const adminCheck = await client.query(`SELECT id FROM users WHERE email = $1;`, ['ankushka2089@gmail.com']);
         if (adminCheck.rows.length === 0) {
-            const hashedPassword = await bcrypt.hash('Ankush@2026', 10);
+            const hashedPassword = await bcrypt.hash('AdminPassword@2026', 10);
             await client.query(`
                 INSERT INTO users (fname, lname, email, password, college)
                 VALUES ($1, $2, $3, $4, $5);
@@ -108,11 +129,26 @@ app.get('/api/init', async (req, res) => {
 // Auth Endpoints
 app.post('/api/register', async (req, res) => {
     const { fname, lname, email, password, college, year, field, interest, intro, linkedin, github } = req.body;
+    
+    // Input validation
+    if (!fname || !lname || !email || !password || !college) {
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+    if (!validateEmail(email)) {
+        return res.status(400).json({ error: 'Invalid email format' });
+    }
+    if (!validatePassword(password)) {
+        return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    }
+    
     let client;
     try {
         client = createClient();
         await client.connect();
+        
+        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
+        
         const query = `
             INSERT INTO users (fname, lname, email, password, college, year, field, interest, intro, linkedin, github)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
@@ -144,7 +180,7 @@ app.post('/api/register', async (req, res) => {
                         <li>Professional networking events and workshops</li>
                     </ul>
                     <div style="text-align: center; margin-top: 30px;">
-                        <a href="${process.env.BASE_URL || 'https://www.gigniconnect.space'}/dashboard.html" style="background: #3b5bdb; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: bold; display: inline-block;">Access Your Professional Dashboard</a>
+                        <a href="https://www.gigniconnect.space/dashboard.html" style="background: #3b5bdb; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: bold; display: inline-block;">Access Your Professional Dashboard</a>
                     </div>
                     <p style="font-size: 14px; color: #666; margin-top: 40px; text-align: center;">
                         Together, we are shaping the future of technology. Welcome aboard.
@@ -169,18 +205,47 @@ app.post('/api/register', async (req, res) => {
 
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
+    
+    // Input validation
+    if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password are required' });
+    }
+    
     let client;
     try {
         client = createClient();
         await client.connect();
         const result = await client.query(`SELECT * FROM users WHERE email = $1;`, [email]);
         const user = result.rows[0];
-        if (!user) return res.status(401).json({ error: 'Invalid email or password' });
         
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(401).json({ error: 'Invalid email or password' });
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
         
-        res.status(200).json({ success: true, user });
+        // Compare hashed password
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+            return res.status(401).json({ error: 'Invalid email or password' });
+        }
+        
+        // Create JWT token
+        const token = jwt.sign(
+            { id: user.id, email: user.email },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+        
+        res.status(200).json({ 
+            success: true, 
+            token,
+            user: {
+                id: user.id,
+                fname: user.fname,
+                lname: user.lname,
+                email: user.email,
+                college: user.college
+            }
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     } finally {
@@ -189,8 +254,14 @@ app.post('/api/login', async (req, res) => {
 });
 
 // Get single user's full profile (for dashboard refresh)
-app.get('/api/user/:id', async (req, res) => {
+app.get('/api/user/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
+    
+    // Verify user is accessing their own profile or is admin
+    if (req.user.id != id && req.user.email !== 'ankushka2089@gmail.com') {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    
     let client;
     try {
         client = createClient();
@@ -209,7 +280,12 @@ app.get('/api/user/:id', async (req, res) => {
 });
 
 // Admin Endpoints
-app.get('/api/users', async (req, res) => {
+app.get('/api/users', authenticateToken, async (req, res) => {
+    // Only admin can view all users
+    if (req.user.email !== 'ankushka2089@gmail.com') {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    
     let client;
     try {
         client = createClient();
@@ -223,8 +299,14 @@ app.get('/api/users', async (req, res) => {
     }
 });
 
-app.post('/api/user/add-item', async (req, res) => {
+app.post('/api/user/add-item', authenticateToken, async (req, res) => {
     const { userId, type, item } = req.body;
+    
+    // Verify user is updating their own profile
+    if (req.user.id != userId) {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    
     if (!['projects', 'certificates', 'hackathons'].includes(type + 's') && !['projects', 'certificates', 'hackathons'].includes(type)) {
         return res.status(400).json({ error: 'Invalid item type' });
     }
@@ -243,8 +325,14 @@ app.post('/api/user/add-item', async (req, res) => {
     }
 });
 
-app.post('/api/user/update', async (req, res) => {
+app.post('/api/user/update', authenticateToken, async (req, res) => {
     const { userId, fname, lname, college, year, field, interest, intro, linkedin, github } = req.body;
+    
+    // Verify user is updating their own profile
+    if (req.user.id != userId) {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    
     let client;
     try {
         client = createClient();
@@ -265,8 +353,14 @@ app.post('/api/user/update', async (req, res) => {
 });
 
 // Zorus Internship Endpoints
-app.post('/api/zorus-apply', async (req, res) => {
+app.post('/api/zorus-apply', authenticateToken, async (req, res) => {
     const { userId, email, fname, lname } = req.body;
+    
+    // Verify user is applying as themselves
+    if (req.user.id != userId) {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    
     let client;
     try {
         client = createClient();
@@ -308,7 +402,7 @@ app.post('/api/zorus-apply', async (req, res) => {
                         • Have scratch paper and pen ready for calculations
                     </p>
                     <div style="text-align: center; margin-top: 30px;">
-                        <a href="${process.env.BASE_URL || 'https://www.gigniconnect.space'}/zorus-test.html" style="background: #f97316; color: #fff; padding: 15px 35px; text-decoration: none; border-radius: 50px; font-weight: bold; display: inline-block; font-size: 18px;">Begin Technical Assessment</a>
+                        <a href="https://www.gigniconnect.space/zorus-test.html" style="background: #f97316; color: #fff; padding: 15px 35px; text-decoration: none; border-radius: 50px; font-weight: bold; display: inline-block; font-size: 18px;">Begin Technical Assessment</a>
                     </div>
                     <p style="font-size: 14px; color: #666; margin-top: 40px; text-align: center;">
                         Important: Please ensure you have a stable internet connection and complete the assessment in one sitting. The test will automatically submit when time expires.
@@ -330,7 +424,12 @@ app.post('/api/zorus-apply', async (req, res) => {
     }
 });
 
-app.get('/api/zorus-applications', async (req, res) => {
+app.get('/api/zorus-applications', authenticateToken, async (req, res) => {
+    // Only admin can view applications
+    if (req.user.email !== 'ankushka2089@gmail.com') {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    
     let client;
     try {
         client = createClient();
@@ -344,8 +443,14 @@ app.get('/api/zorus-applications', async (req, res) => {
     }
 });
 
-app.post('/api/zorus-submit-score', async (req, res) => {
+app.post('/api/zorus-submit-score', authenticateToken, async (req, res) => {
     const { userId, score } = req.body;
+    
+    // Verify user is submitting their own score
+    if (req.user.id != userId) {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    
     let client;
     try {
         client = createClient();
@@ -359,19 +464,21 @@ app.post('/api/zorus-submit-score', async (req, res) => {
     }
 });
 
-// Bulk Email Sender
-app.post('/api/admin/send-bulk-email', async (req, res) => {
-    const { emails, subject, htmlBody, adminEmail, delay } = req.body;
-    if (adminEmail !== 'ankushka2089@gmail.com') return res.status(403).json({ error: 'Unauthorized' });
-    if (!emails || !Array.isArray(emails) || emails.length === 0) return res.status(400).json({ error: 'No emails provided' });
-    if (!subject || !htmlBody) return res.status(400).json({ error: 'Subject and body required' });
-
-    // Verify transporter
-    try {
-        await transporter.verify();
-    } catch (error) {
-        console.error('Email transporter verification failed:', error.message);
-        return res.status(500).json({ error: 'Email service unavailable' });
+// Bulk Email Sender with 20s Delay
+app.post('/api/admin/send-bulk-email', authenticateToken, async (req, res) => {
+    const { emails, subject, htmlBody } = req.body;
+    
+    // Only admin can send bulk emails
+    if (req.user.email !== 'ankushka2089@gmail.com') {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    
+    // Validate input
+    if (!emails || !Array.isArray(emails) || emails.length === 0) {
+        return res.status(400).json({ error: 'Invalid emails array' });
+    }
+    if (!subject || !htmlBody) {
+        return res.status(400).json({ error: 'Subject and htmlBody are required' });
     }
 
     res.setHeader('Content-Type', 'application/x-ndjson');
@@ -380,56 +487,30 @@ app.post('/api/admin/send-bulk-email', async (req, res) => {
     res.setHeader('X-Accel-Buffering', 'no');
     res.flushHeaders();
 
-    try {
-        for (let i = 0; i < emails.length; i++) {
-            const email = emails[i];
-            
-            try {
-                await transporter.sendMail({
-                    from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
-                    to: email,
-                    subject: subject,
-                    html: htmlBody
-                });
-                res.write(JSON.stringify({ type: 'sent', email, index: i, total: emails.length }) + '\n');
-            } catch (error) {
-                console.error(`Bulk send failure for ${email}:`, error.message);
-                res.write(JSON.stringify({ type: 'failed', email, index: i, total: emails.length, error: error.message }) + '\n');
-            }
+    for (let i = 0; i < emails.length; i++) {
+        const email = emails[i];
+        
+        try {
+            await transporter.sendMail({
+                from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
+                to: email,
+                subject: subject,
+                html: htmlBody
+            });
+            res.write(JSON.stringify({ type: 'sent', email, index: i, total: emails.length }) + '\n');
+        } catch (error) {
+            res.write(JSON.stringify({ type: 'failed', email, index: i, total: emails.length, error: error.message }) + '\n');
+        }
 
-            // Throttling to prevent Vercel/Gmail issues
-            if (i < emails.length - 1) {
-                const emailDelay = parseInt(delay) || 1; 
-                for (let s = emailDelay; s > 0; s--) {
-                    res.write(JSON.stringify({ type: 'waiting', index: i + 1, secondsLeft: s }) + '\n');
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                }
+        if (i < emails.length - 1) {
+            for (let s = 20; s > 0; s--) {
+                res.write(JSON.stringify({ type: 'waiting', index: i + 1, secondsLeft: s }) + '\n');
+                await new Promise(resolve => setTimeout(resolve, 1000));
             }
         }
-    } catch (err) {
-        console.error("Critical bulk stream error:", err.message);
-        res.write(JSON.stringify({ type: 'error', message: err.message }) + '\n');
-    } finally {
-        res.end();
     }
-});
 
-// Single Email Endpoint (Helper for reliable bulk sending from client)
-app.post('/api/admin/send-single-email', async (req, res) => {
-    const { email, subject, htmlBody, adminEmail } = req.body;
-    if (adminEmail !== 'ankushka2089@gmail.com') return res.status(403).json({ error: 'Unauthorized' });
-    
-    try {
-        await transporter.sendMail({
-            from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
-            to: email,
-            subject: subject,
-            html: htmlBody
-        });
-        res.status(200).json({ success: true });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
+    res.end();
 });
 
 

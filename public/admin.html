@@ -112,6 +112,7 @@
 
     #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1a1a1a; border: 1px solid var(--primary); padding: 14px 28px; border-radius: 50px; color: #fff; z-index: 10000; transition: 0.4s; opacity: 0; }
   </style>
+<script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
 
@@ -177,8 +178,8 @@
     <!-- BULK EMAIL SECTION -->
     <div class="section" style="padding-top:0;">
       <div class="header-info">
-        <h1>Bulk Email Sender</h1>
-        <p>Distribute mass updates with configurable delivery intervals (default 2s).</p>
+        <h1>Bulk Agentic Communications</h1>
+        <p>Distribute mass updates with automated delivery intervals (20s).</p>
       </div>
       <div class="card">
         <div class="email-grid">
@@ -193,7 +194,6 @@
               <div style="display:flex; gap:12px;">
                 <input type="email" id="new-email-input" placeholder="Enter email address" style="flex:1;">
                 <button class="btn-act" onclick="addEmail()" style="margin:0; padding:12px 24px;">+ Add</button>
-                <button class="btn-sec" onclick="clearEmails()" style="margin:0; padding:12px 16px;">Clear All</button>
               </div>
             </div>
             <div class="fg">
@@ -204,11 +204,7 @@
                 <option value="internship">Zorus Opportunity</option>
               </select>
             </div>
-            <div class="fg">
-              <label>Delay Between Emails (seconds)</label>
-              <input type="number" id="bulk-delay" value="2" min="0" max="60" placeholder="2">
-            </div>
-            <button class="btn-act" id="send-bulk-btn" onclick="startBulkSend()" style="width:100%; padding:18px; font-size:16px; background:var(--orange); margin-top:20px;">Send Bulk Emails</button>
+            <button class="btn-act" id="send-bulk-btn" onclick="startBulkSend()" style="width:100%; padding:18px; font-size:16px; background:var(--orange); margin-top:20px;">Deploy Bulk Stream</button>
           </div>
           <div>
             <div class="fg">
@@ -412,11 +408,6 @@
         renderTags();
       }
     }
-
-    function clearEmails() {
-      bulkEmails = [];
-      renderTags();
-    }
     function renderTags() {
       const wrap = document.getElementById('email-tags');
       wrap.innerHTML = bulkEmails.map((e, i) => `<div class="email-tag">${e}<button onclick="bulkEmails.splice(${i},1);renderTags()">✕</button></div>`).join('');
@@ -424,84 +415,37 @@
     }
 
     async function startBulkSend() {
-      if (bulkEmails.length === 0) return showToast('Please add at least one recipient email');
-      const subject = document.getElementById('bulk-subject').value.trim();
-      const body = bodyInput.value.trim();
-      if (!subject) return showToast('Please enter a subject');
-      if (!body) return showToast('Please enter email content');
+      if (bulkEmails.length === 0) return showToast('No recipients');
       const admin = JSON.parse(localStorage.getItem('gigni_user') || '{}');
-      if (!admin.email) return showToast('Admin authentication required');
-      
-      const delayVal = parseInt(document.getElementById('bulk-delay').value) || 1;
-
-      // Reset UI
-      const feed = document.getElementById('prog-feed');
-      const label = document.getElementById('prog-label');
-      const bar = document.getElementById('prog-bar');
-      const countLabel = document.getElementById('prog-count');
-      
-      feed.innerHTML = '';
-      bar.style.width = '0%';
-      countLabel.innerText = `0 / ${bulkEmails.length}`;
+      const res = await fetch('/api/admin/send-bulk-email', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ emails: bulkEmails, subject: document.getElementById('bulk-subject').value, htmlBody: bodyInput.value, adminEmail: admin.email })
+      });
       document.getElementById('bulk-progress-wrap').style.display = 'block';
-      
-      label.innerText = 'Initializing Agentic Dispatch...';
-
-      for (let i = 0; i < bulkEmails.length; i++) {
-        const email = bulkEmails[i];
-        label.innerText = `Dispatching to ${email}...`;
-        
-        try {
-          const res = await fetch('/api/admin/send-single-email', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({
-              email,
-              subject,
-              htmlBody: body,
-              adminEmail: admin.email
-            })
-          });
-          
-          const data = await res.json();
-          const div = document.createElement('div');
-          div.style.padding = '8px';
-          div.style.background = 'rgba(255,255,255,0.03)';
-          div.style.borderRadius = '8px';
-          div.style.fontSize = '13px';
-
-          if (data.success) {
-            div.innerHTML = `<span style="color:#10b981; font-weight:800; margin-right:10px;">[SENT]</span> ${email}`;
-          } else {
-            div.innerHTML = `<span style="color:#f87171; font-weight:800; margin-right:10px;">[FAILED]</span> ${email}<br><small style="color:#f87171; margin-left:20px;">Error: ${data.error || 'Internal Error'}</small>`;
-          }
-          feed.prepend(div);
-        } catch (e) {
-          const div = document.createElement('div');
-          div.style.padding = '8px';
-          div.style.background = 'rgba(255,255,255,0.03)';
-          div.style.borderRadius = '8px';
-          div.style.fontSize = '13px';
-          div.innerHTML = `<span style="color:#f87171; font-weight:800; margin-right:10px;">[ERROR]</span> ${email}<br><small style="color:#f87171; margin-left:20px;">Network Failure</small>`;
-          feed.prepend(div);
-        }
-
-        // Update Progress
-        const pct = ((i + 1) / bulkEmails.length) * 100;
-        bar.style.width = pct + '%';
-        countLabel.innerText = `${i + 1} / ${bulkEmails.length}`;
-
-        // Throttling
-        if (i < bulkEmails.length - 1) {
-          for (let s = delayVal; s > 0; s--) {
-            label.innerHTML = `<span style="color:var(--orange)">Throttling:</span> Next dispatch in ${s}s...`;
-            await new Promise(r => setTimeout(r, 1000));
-          }
-        }
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      while(true) {
+        const { value, done } = await reader.read();
+        if(done) break;
+        const msgs = decoder.decode(value).split('\n');
+        msgs.forEach(m => {
+          if(!m) return;
+          try {
+            const msg = JSON.parse(m);
+            if(msg.type === 'sent' || msg.type === 'failed') {
+              const feed = document.getElementById('prog-feed');
+              const div = document.createElement('div');
+              div.innerHTML = `<span style="color:${msg.type==='sent'?'#10b981':'#f87171'}">[${msg.type.toUpperCase()}]</span> ${msg.email}`;
+              feed.prepend(div);
+              const pct = ((msg.index + 1) / msg.total) * 100;
+              document.getElementById('prog-bar').style.width = pct + '%';
+              document.getElementById('prog-count').innerText = `${msg.index+1} / ${msg.total}`;
+            }
+          } catch(e) {}
+        });
       }
-
-      label.innerText = 'Bulk Send Complete';
-      showToast('Bulk Emails Sent Successfully');
+      showToast('Bulk Deployment Complete');
     }
 
     function applyTemplatePreset() {
@@ -596,3 +540,4 @@
   </div>
 </body>
 </html>
+
