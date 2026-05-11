@@ -185,7 +185,7 @@
   </div>
   <div class="nav-user">
     <div class="user-av" id="nav-av">G</div>
-    <a href="index.html" onclick="localStorage.removeItem('gigni_user')" class="logout-btn">Sign out</a>
+    <a href="index.html" onclick="localStorage.removeItem('gigni_user'); localStorage.removeItem('gigni_token');" class="logout-btn">Sign out</a>
   </div>
 </nav>
 
@@ -395,10 +395,17 @@
 
     if (user.id) {
       const token = localStorage.getItem('gigni_token');
+      if (!token) { window.location.href = 'index.html'; return; }
       try {
         const res = await fetch('/api/user/' + user.id, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem('gigni_user');
+          localStorage.removeItem('gigni_token');
+          window.location.href = 'index.html';
+          return;
+        }
         const data = await res.json();
         if (data.success) {
           const fresh = data.user;
@@ -406,6 +413,8 @@
           renderAll(fresh);
         }
       } catch (e) { console.warn('Sync failed:', e); }
+    } else {
+      window.location.href = 'index.html';
     }
   });
 

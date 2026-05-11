@@ -402,7 +402,8 @@
       const data = await res.json();
       if(data.success) {
         alert('Registration successful!');
-        localStorage.setItem('gigni_user', JSON.stringify({ id: data.id, fname, lname, email, college, year }));
+        localStorage.setItem('gigni_token', data.token);
+        localStorage.setItem('gigni_user', JSON.stringify(data.user));
         window.location.href = 'dashboard.html';
       } else {
         alert(data.error || 'Registration failed.');

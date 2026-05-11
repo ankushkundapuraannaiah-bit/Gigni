@@ -220,7 +220,25 @@ app.post(['/api/register', '/register'], async (req, res) => {
             console.error("Welcome email failed to send:", mailErr);
         }
 
-        res.status(201).json({ success: true, id: result.rows[0].id });
+        // Create JWT token
+        const token = jwt.sign(
+            { id: result.rows[0].id, email: email },
+            JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+        
+        res.status(201).json({ 
+            success: true, 
+            id: result.rows[0].id,
+            token,
+            user: {
+                id: result.rows[0].id,
+                fname,
+                lname,
+                email,
+                college
+            }
+        });
     } catch (err) {
         if (err.code === '23505') return res.status(400).json({ error: "Email already exists" });
         res.status(500).json({ error: err.message });
