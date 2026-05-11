@@ -557,10 +557,11 @@ app.post('/api/admin/send-bulk-email', authenticateToken, async (req, res) => {
 });
 
 // Single Email Endpoint (Helper for reliable bulk sending from client)
-app.post('/api/admin/send-single-email', async (req, res) => {
-    const { email, subject, htmlBody, adminEmail } = req.body;
-    // Basic authorization check
-    if (adminEmail !== 'ankushka2089@gmail.com') return res.status(403).json({ error: 'Unauthorized' });
+app.post('/api/admin/send-single-email', authenticateToken, async (req, res) => {
+    const { email, subject, htmlBody } = req.body;
+    
+    // Only admin can send emails
+    if (req.user.email !== 'ankushka2089@gmail.com') return res.status(403).json({ error: 'Unauthorized' });
     
     if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
         return res.status(500).json({ success: false, error: "Email service credentials not configured on server." });
