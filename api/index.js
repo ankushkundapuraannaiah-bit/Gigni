@@ -24,29 +24,6 @@ const transporter = nodemailer.createTransport({
 app.use(cors());
 app.use(express.json());
 
-// Health Check
-app.get('/api/health', async (req, res) => {
-    let dbStatus = 'disconnected';
-    let dbHost = 'none';
-    try {
-        const client = createClient();
-        await client.connect();
-        dbStatus = 'connected';
-        const url = new URL(process.env.POSTGRES_URL);
-        dbHost = url.hostname;
-        await client.end();
-    } catch (e) { dbStatus = 'error: ' + e.message; }
-
-    res.json({ 
-        status: 'ok', 
-        timestamp: new Date(),
-        database: {
-            status: dbStatus,
-            host: dbHost
-        }
-    });
-});
-
 // Authentication Middleware
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -131,17 +108,14 @@ app.get('/api/init', async (req, res) => {
         } catch (e) { if (e.code !== '42701') console.error(`Error adding score to zorus_applications:`, e.message); }
 
 
-        // Force Reset/Ensure Admin User
-        const hashedPassword = await bcrypt.hash('Ankushceo@2026', 10);
+        // Ensure Admin User Exists
         const adminCheck = await client.query(`SELECT id FROM users WHERE email = $1;`, ['ankushka2089@gmail.com']);
-        
         if (adminCheck.rows.length === 0) {
+            const hashedPassword = await bcrypt.hash('AdminPassword@2026', 10);
             await client.query(`
                 INSERT INTO users (fname, lname, email, password, college)
                 VALUES ($1, $2, $3, $4, $5);
             `, ['Ankush', 'Admin', 'ankushka2089@gmail.com', hashedPassword, 'Gigni Headquarters']);
-        } else {
-            await client.query(`UPDATE users SET password = $1 WHERE email = $2`, [hashedPassword, 'ankushka2089@gmail.com']);
         }
 
         res.status(200).json({ success: true, message: 'Database initialized and admin checked' });
@@ -153,7 +127,7 @@ app.get('/api/init', async (req, res) => {
 });
 
 // Auth Endpoints
-app.post(['/api/register', '/register'], async (req, res) => {
+app.post('/api/register', async (req, res) => {
     const { fname, lname, email, password, college, year, field, interest, intro, linkedin, github } = req.body;
     
     // Input validation
@@ -220,25 +194,7 @@ app.post(['/api/register', '/register'], async (req, res) => {
             console.error("Welcome email failed to send:", mailErr);
         }
 
-        // Create JWT token
-        const token = jwt.sign(
-            { id: result.rows[0].id, email: email },
-            JWT_SECRET,
-            { expiresIn: '24h' }
-        );
-        
-        res.status(201).json({ 
-            success: true, 
-            id: result.rows[0].id,
-            token,
-            user: {
-                id: result.rows[0].id,
-                fname,
-                lname,
-                email,
-                college
-            }
-        });
+        res.status(201).json({ success: true, id: result.rows[0].id });
     } catch (err) {
         if (err.code === '23505') return res.status(400).json({ error: "Email already exists" });
         res.status(500).json({ error: err.message });
@@ -247,7 +203,7 @@ app.post(['/api/register', '/register'], async (req, res) => {
     }
 });
 
-app.post(['/api/login', '/login'], async (req, res) => {
+app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
     
     // Input validation
@@ -553,32 +509,8 @@ app.post('/api/admin/send-bulk-email', authenticateToken, async (req, res) => {
             }
         }
     }
+
     res.end();
-});
-
-// Single Email Endpoint (Helper for reliable bulk sending from client)
-app.post('/api/admin/send-single-email', authenticateToken, async (req, res) => {
-    const { email, subject, htmlBody } = req.body;
-    
-    // Only admin can send emails
-    if (req.user.email !== 'ankushka2089@gmail.com') return res.status(403).json({ error: 'Unauthorized' });
-    
-    if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
-        return res.status(500).json({ success: false, error: "Email service credentials not configured on server." });
-    }
-
-    try {
-        await transporter.sendMail({
-            from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
-            to: email,
-            subject: subject,
-            html: htmlBody
-        });
-        res.status(200).json({ success: true });
-    } catch (error) {
-        console.error(`Email delivery failed to ${email}:`, error.message);
-        res.status(500).json({ success: false, error: error.message });
-    }
 });
 
 
