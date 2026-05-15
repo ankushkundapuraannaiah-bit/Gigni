@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Gigni — The AI Developer Community</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #3b5bdb;
+      --accent: #8b5cf6;
+      --bg: #030712;
+      --card-bg: rgba(17, 24, 39, 0.7);
+      --border: rgba(255, 255, 255, 0.08);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: #fff; overflow-x: hidden; position: relative; }
+
+    /* ReactBits Light Pillar Simulation */
+    .light-pillars {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: -1; pointer-events: none; overflow: hidden;
+      background: radial-gradient(circle at center, #0a0a1a 0%, #030712 100%);
+    }
+    .pillar {
+      position: absolute; bottom: -20vh; width: 100px; height: 140vh;
+      background: linear-gradient(to top, rgba(139, 92, 246, 0.8), transparent);
+      filter: blur(40px); opacity: 0;
+      animation: rise 8s infinite ease-in-out alternate;
+    }
+    .pillar:nth-child(1) { left: 10%; width: 150px; animation-duration: 12s; animation-delay: 0s; }
+    .pillar:nth-child(2) { left: 30%; width: 80px; animation-duration: 9s; animation-delay: 2s; background: linear-gradient(to top, rgba(59, 91, 219, 0.8), transparent); }
+    .pillar:nth-child(3) { left: 50%; width: 200px; animation-duration: 15s; animation-delay: 1s; }
+    .pillar:nth-child(4) { left: 70%; width: 120px; animation-duration: 11s; animation-delay: 4s; background: linear-gradient(to top, rgba(59, 91, 219, 0.8), transparent); }
+    .pillar:nth-child(5) { left: 90%; width: 90px; animation-duration: 10s; animation-delay: 3s; }
+
+    @keyframes rise {
+      0% { transform: translateY(10%) scaleY(0.8); opacity: 0.1; }
+      50% { opacity: 0.5; }
+      100% { transform: translateY(-10%) scaleY(1.2); opacity: 0.2; }
+    }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 20px 52px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(3, 7, 18, 0.4); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 0.05em; color: #fff; text-decoration: none; }
+    .nav-links a { color: rgba(255,255,255,0.8); text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: 0.3s; margin-left: 32px; text-transform: uppercase; letter-spacing: 1px; }
+    .nav-links a:hover { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+
+    .hero {
+      height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 0 20px; position: relative; z-index: 10;
+    }
+    .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(5rem, 12vw, 10rem); line-height: 0.9; margin-bottom: 24px; text-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .hero h1 span { background: linear-gradient(to right, #fff, var(--accent), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { font-size: 1.5rem; color: rgba(255,255,255,0.7); max-width: 600px; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+
+    .content-sec { padding: 100px 52px; max-width: 1200px; margin: 0 auto; position: relative; z-index: 10; }
+    
+    .bento-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;
+    }
+    .bento-card {
+      background: rgba(17, 24, 39, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 30px; padding: 40px; transition: 0.4s;
+    }
+    .bento-card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2); }
+    .bento-card.large { grid-column: span 2; }
+    .bento-card.full { grid-column: span 3; text-align: center; padding: 80px 40px; background: linear-gradient(135deg, rgba(59,91,219,0.2), rgba(139,92,246,0.2)); }
+    
+    .bento-card h3 { font-size: 2rem; font-weight: 800; margin-bottom: 20px; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; }
+    .bento-card p { font-size: 1.1rem; line-height: 1.6; color: rgba(255,255,255,0.7); }
+    .bento-card.full h3 { font-size: 4rem; }
+    .bento-card.full p { font-size: 1.5rem; max-width: 800px; margin: 0 auto; }
+
+    /* FOOTER */
+    footer { padding: 100px 60px 40px; background: #000; border-top: 1px solid var(--border); position: relative; z-index: 10; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 80px; max-width: 1200px; margin: 0 auto; text-align: left; }
+    .footer-col h4 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); margin-bottom: 30px; font-weight: 700;}
+    .footer-col p { color: rgba(255,255,255,0.5); line-height: 1.8; max-width: 300px; }
+    .footer-links { list-style: none; }
+    .footer-links li { margin-bottom: 12px; }
+    .footer-links a { color: rgba(255,255,255,0.6); text-decoration: none; transition: 0.3s; font-size: 0.95rem; }
+    .footer-links a:hover { color: #fff; padding-left: 5px; }
+
+    @media (max-width: 900px) {
+      .bento-grid { grid-template-columns: 1fr; }
+      .bento-card.large, .bento-card.full { grid-column: span 1; }
+      .footer-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+    }
+  </style>
+<script defer src="/_vercel/speed-insights/script.js"></script>
+</head>
+<body>
+
+<div class="light-pillars">
+  <div class="pillar"></div>
+  <div class="pillar"></div>
+  <div class="pillar"></div>
+  <div class="pillar"></div>
+  <div class="pillar"></div>
+</div>
+
+<nav>
+  <a href="index.html" class="logo">GIGNI</a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="hosting.html">Hosting</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <h1>WE ARE<br><span>GIGNI.</span></h1>
+  <p>Empowering the next generation of AI creators through collaboration and community.</p>
+</section>
+
+<section class="content-sec">
+  <div class="bento-grid">
+    <div class="bento-card large">
+      <h3>The Community Vision</h3>
+      <p>Gigni isn't just a platform; it's a student-driven ecosystem. We believe that the best way to learn AI is to build with it, alongside peers from across the globe. Our network spans 50+ countries, connecting young talent with real-world opportunities.</p>
+    </div>
+    <div class="bento-card">
+      <h3>Student-Driven</h3>
+      <p>Built by students for students, ensuring every tool and opportunity is relevant to your growth and career trajectory.</p>
+    </div>
+    <div class="bento-card">
+      <h3>Agentic Building</h3>
+      <p>Access cutting-edge AI agents to build websites, music, and automations with unprecedented speed.</p>
+    </div>
+    <div class="bento-card large">
+      <h3>Project-Based Careers</h3>
+      <p>Ditch the traditional resume. Build real-world products through our platform and showcase your verified builds to the world's leading tech companies directly.</p>
+    </div>
+    <div class="bento-card full">
+      <h3>Our Mission</h3>
+      <p>To connect every student developer with the AI tools and global network they need to solve real-world problems and launch impactful careers.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <a href="index.html" class="logo" style="display:block; margin-bottom:20px; font-size: 2.2rem;">GIGNI</a>
+      <p>Revolutionizing student innovation through agentic AI. Connect, build, and lead the future community of developers.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigation</h4>
+      <ul class="footer-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="hosting.html">Hosting</a></li>
+        <li><a href="zorus.html">Zorus 2.1</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <ul class="footer-links">
+        <li><a href="#">Discord Community</a></li>
+        <li><a href="https://www.linkedin.com/company/gigni/?viewAsMember=true" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+        <li><a href="#">Twitter / X</a></li>
+        <li><a href="mailto:hello@gigni.ai">Support</a></li>
+      </ul>
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:80px; color:rgba(255,255,255,0.2); font-size:0.9rem; font-family: 'Outfit', sans-serif;">
+    &copy; 2026 GIGNI. Built for the AI Generation.
+  </div>
+</footer>
+
+</body>
+</html>
+

@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIGNI — The Future of Agentic AI</title>
+<meta name="description" content="Gigni is the world's first student-driven AI developer community. Experience 3D agentic building, global collaboration, and project-based careers.">
+<link rel="icon" type="image/png" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- SCRIPTS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
+
+<style>
+  :root {
+    --primary: #3b5bdb;
+    --accent: #8b5cf6;
+    --orange: #f97316;
+    --bg: #010409;
+    --card-bg: rgba(13, 17, 23, 0.4);
+    --border: rgba(255, 255, 255, 0.1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body { 
+    font-family: 'Outfit', sans-serif; 
+    background: var(--bg); 
+    color: #fff; 
+    overflow-x: hidden;
+  }
+
+  /* LINE WAVES CANVAS BACKGROUND */
+  #line-waves-canvas {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 1; pointer-events: none;
+    background: #010409;
+  }
+
+  /* LAYOUT */
+  .main-wrapper { position: relative; z-index: 10; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    padding: 24px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  nav.scrolled {
+    padding: 16px 60px;
+    background: rgba(1, 4, 9, 0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo { 
+    font-family: 'Bebas Neue', sans-serif; 
+    font-size: 2.8rem; letter-spacing: 0.05em; 
+    text-decoration: none; color: #fff;
+    background: linear-gradient(45deg, #fff, var(--primary));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .nav-links { display: flex; align-items: center; gap: 40px; }
+  .nav-links a { 
+    color: rgba(255,255,255,0.6); text-decoration: none; 
+    font-weight: 600; font-size: 0.95rem; text-transform: uppercase; 
+    letter-spacing: 1px; transition: 0.3s;
+  }
+  .nav-links a:hover { color: #fff; }
+
+  /* UIVERSE STYLED BUTTONS */
+  .ui-btn {
+    position: relative;
+    padding: 14px 28px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50px;
+    color: #fff;
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .ui-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transform: translateX(-100%);
+    transition: 0.5s;
+  }
+  .ui-btn:hover::before { transform: translateX(100%); }
+  .ui-btn:hover {
+    border-color: #fff;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+    transform: scale(1.02);
+  }
+  .ui-btn-primary {
+    background: linear-gradient(45deg, var(--primary), var(--accent));
+    border: none;
+  }
+  .ui-btn-primary:hover {
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+    border: none;
+  }
+
+  /* HERO */
+  section { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 0 10vw; position: relative; }
+  
+  .hero { align-items: center; text-align: center; }
+  .hero-content { max-width: 1000px; opacity: 0; transform: translateY(50px); z-index: 2; position: relative;}
+  
+  .hero-badge {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 100px;
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .hero-h1 { 
+    font-size: clamp(4rem, 10vw, 8.5rem); font-weight: 900; line-height: 0.9; 
+    margin-bottom: 30px; letter-spacing: -0.04em; 
+  }
+  .hero-h1 span { 
+    background: linear-gradient(to right, #fff, var(--accent), var(--primary));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-p { 
+    font-size: 1.4rem; color: rgba(255,255,255,0.6); 
+    line-height: 1.5; max-width: 700px; margin: 0 auto 50px; 
+    font-weight: 400;
+  }
+
+  .hero-actions {
+    display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
+  }
+
+  /* SECTION REVEALS */
+  .reveal { opacity: 0; transform: translateY(100px); transition: 1s cubic-bezier(0.2, 1, 0.3, 1); }
+  .reveal.active { opacity: 1; transform: translateY(0); }
+
+  /* BENTO GRID (VENGEANCE UI STYLE) */
+  .bento { padding: 120px 0; display: block; min-height: auto; }
+  .section-header { text-align: center; margin-bottom: 80px; }
+  .section-header h2 { font-size: clamp(3rem, 6vw, 4.5rem); font-weight: 800; margin-bottom: 20px; letter-spacing: -0.02em; }
+  .section-header p { font-size: 1.2rem; color: rgba(255,255,255,0.5); max-width: 600px; margin: 0 auto; }
+
+  .bento-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; width: 100%;
+  }
+  
+  .v-card {
+    position: relative;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 40px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(20px);
+  }
+  .v-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(139, 92, 246, 0.15), transparent 40%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .v-card:hover::before { opacity: 1; }
+  .v-card:hover {
+    border-color: rgba(139, 92, 246, 0.4);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  }
+  .v-card-content { position: relative; z-index: 2; }
+
+  .bento-1 { grid-column: span 2; grid-row: span 2; }
+  .bento-2 { grid-column: span 2; }
+  .bento-3 { grid-column: span 1; }
+  .bento-4 { grid-column: span 1; }
+
+  .v-card h3 { font-size: 2.2rem; font-weight: 700; margin-bottom: 16px; }
+  .v-card p { color: rgba(255,255,255,0.6); font-size: 1.1rem; line-height: 1.6; }
+  .v-icon { font-size: 3rem; margin-bottom: 24px; display: inline-block; }
+
+  /* LOVED BY DEVELOPERS SECTION */
+  .testimonials { padding: 120px 0; display: block; min-height: auto; overflow: hidden; position: relative; }
+  .marquee-container {
+    display: flex;
+    width: 100vw;
+    margin-left: -10vw; /* offset the section padding */
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    padding: 20px 0;
+  }
+  .marquee-track {
+    display: flex; gap: 24px;
+    animation: scrollMarquee 40s linear infinite;
+    min-width: 200%;
+    padding-left: 24px;
+  }
+  .marquee-track:hover { animation-play-state: paused; }
+  @keyframes scrollMarquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  
+  .t-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 30px;
+    width: 400px;
+    backdrop-filter: blur(20px);
+    display: flex; flex-direction: column; gap: 20px;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+  }
+  .t-card:hover { border-color: var(--primary); transform: translateY(-5px); }
+  .t-header { display: flex; align-items: center; gap: 15px; }
+  .t-avatar { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--accent)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; }
+  .t-info { display: flex; flex-direction: column; }
+  .t-name { font-weight: 700; font-size: 1.1rem; }
+  .t-role { font-size: 0.9rem; color: rgba(255,255,255,0.5); font-family: 'Inter', sans-serif;}
+  .t-text { font-size: 1rem; line-height: 1.6; color: rgba(255,255,255,0.8); font-family: 'Inter', sans-serif; }
+
+  /* FOOTER */
+  footer { padding: 100px 60px 40px; background: #000; border-top: 1px solid var(--border); position: relative; z-index: 10; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 80px; max-width: 1200px; margin: 0 auto; }
+  .footer-col h4 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); margin-bottom: 30px; font-weight: 700;}
+  .footer-col p { color: rgba(255,255,255,0.5); line-height: 1.8; max-width: 300px; }
+  .footer-links { list-style: none; }
+  .footer-links li { margin-bottom: 12px; }
+  .footer-links a { color: rgba(255,255,255,0.6); text-decoration: none; transition: 0.3s; font-size: 0.95rem; }
+  .footer-links a:hover { color: #fff; padding-left: 5px; }
+
+  /* MODALS */
+  .ovl {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(1,4,9,0.95); backdrop-filter: blur(20px);
+    z-index: 2000; display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: 0.4s;
+  }
+  .ovl.active { opacity: 1; pointer-events: auto; }
+  .modal {
+    background: rgba(13, 17, 23, 0.9); border: 1px solid rgba(255,255,255,0.15); border-radius: 30px;
+    padding: 50px; width: 100%; max-width: 480px; transform: scale(0.95); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  }
+  .ovl.active .modal { transform: scale(1); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+
+  /* INPUT STYLES FOR MODALS */
+  .modal input, .modal select, .modal textarea {
+    width: 100%; padding: 16px; background: rgba(255,255,255,0.03); 
+    border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff; 
+    outline: none; transition: 0.3s; font-family: 'Inter', sans-serif;
+  }
+  .modal input:focus, .modal select:focus, .modal textarea:focus {
+    border-color: var(--accent); background: rgba(255,255,255,0.05);
+  }
+  .modal label {
+    display: block; font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;
+  }
+
+  @media (max-width: 1024px) {
+    .bento-grid { grid-template-columns: 1fr; }
+    .bento-1, .bento-2, .bento-3, .bento-4 { grid-column: span 1; }
+    nav { padding: 15px 20px; }
+    .logo { font-size: 2.2rem; }
+    .nav-links { display: none; }
+    .hero-h1 { font-size: clamp(3rem, 12vw, 4.5rem); }
+    .hero-p { font-size: 1.1rem; margin-bottom: 30px; }
+    section { padding: 0 5vw; }
+    .hero { min-height: 80vh; padding-top: 120px; }
+    .bento, .testimonials { padding: 80px 0; }
+    .v-card { padding: 30px; border-radius: 20px; }
+    .footer-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- REACTBITS STYLE LINE WAVES -->
+  <canvas id="line-waves-canvas"></canvas>
+
+  <nav id="navbar">
+    <a href="index.html" class="logo">GIGNI</a>
+    <div class="nav-links">
+      <a href="about.html">About</a>
+      <a href="hosting.html">Hosting</a>
+      <a href="zorus.html">Zorus 2.1</a>
+      <a href="javascript:void(0)" onclick="openOvl('signin')" style="margin-left: 10px;">Login</a>
+      <button class="ui-btn ui-btn-primary" onclick="openOvl('signup')">Join Community</button>
+    </div>
+  </nav>
+
+  <div class="main-wrapper">
+    
+    <!-- HERO SECTION -->
+    <section class="hero" id="home">
+      <div class="hero-content">
+        <div class="hero-badge">Student-Driven Ecosystem</div>
+        <h1 class="hero-h1">THE AGENTIC<br><span>REVOLUTION</span></h1>
+        <p class="hero-p">Gigni is the first AI developer community built by students, for students. Create, collaborate, and evolve in the age of agentic intelligence.</p>
+        <div class="hero-actions">
+          <button class="ui-btn ui-btn-primary" style="padding: 18px 48px; font-size: 1.1rem;" onclick="openOvl('signup')">Start Building</button>
+          <a href="about.html" class="ui-btn" style="padding: 18px 48px; font-size: 1.1rem;">Explore Platform</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- BENTO GRID (VENGEANCE UI STYLE) -->
+    <section id="features" class="bento reveal">
+      <div class="section-header">
+        <h2>Next-Gen Capabilities</h2>
+        <p>Everything you need to build the future of AI. Designed with premium components and agentic speed.</p>
+      </div>
+      <div class="bento-grid">
+        <div class="v-card bento-1">
+          <div class="v-card-content">
+            <div class="v-icon">🌍</div>
+            <h3>The Global Network</h3>
+            <p>Join 10,000+ students across 50 countries. Gigni bridges the gap between local learning and global innovation, creating a decentralized powerhouse of young AI talent.</p>
+          </div>
+        </div>
+        <div class="v-card bento-2">
+          <div class="v-card-content">
+            <div class="v-icon">🚀</div>
+            <h3>Project-Based Careers</h3>
+            <p>Ditch the traditional resume. Build real-world products through Zorus 2.1 and showcase your verified builds to the world's leading tech companies.</p>
+            <a href="zorus.html" class="ui-btn" style="margin-top: 24px;">View Zorus 2.1</a>
+          </div>
+        </div>
+        <div class="v-card bento-3">
+          <div class="v-card-content">
+            <div class="v-icon">⚡</div>
+            <h3>Agentic Speed</h3>
+            <p>Build at the speed of thought with integrated AI agents handling the heavy lifting.</p>
+          </div>
+        </div>
+        <div class="v-card bento-4">
+          <div class="v-card-content">
+            <div class="v-icon">🎯</div>
+            <h3>Impact First</h3>
+            <p>We solve real problems using autonomous systems and cutting-edge tech.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOVED BY DEVELOPERS SECTION -->
+    <section id="testimonials" class="testimonials reveal">
+      <div class="section-header" style="margin-bottom: 50px;">
+        <div class="hero-badge" style="background: rgba(249, 115, 22, 0.1); border-color: rgba(249, 115, 22, 0.3); color: var(--orange);">Community</div>
+        <h2>Loved by Developers</h2>
+        <p>Trusted by student builders and teams shipping the future of AI products.</p>
+      </div>
+      
+      <div class="marquee-container">
+        <div class="marquee-track" id="marquee-track">
+          <!-- Testimonials will be duplicated for infinite scroll via JS -->
+          <div class="t-card">
+            <div class="t-header">
+              <div class="t-avatar">AC</div>
+              <div class="t-info">
+                <span class="t-name">Alex Chen</span>
+                <span class="t-role">CS Student @ Stanford</span>
+              </div>
+            </div>
+            <p class="t-text">"Gigni's agentic tools transformed how I build projects. The ecosystem is unmatched. Way to go 🤩"</p>
+          </div>
+          
+          <div class="t-card">
+            <div class="t-header">
+              <div class="t-avatar" style="background: linear-gradient(135deg, #f97316, #eab308);">SJ</div>
+              <div class="t-info">
+                <span class="t-name">Sarah Jenkins</span>
+                <span class="t-role">Full Stack Developer</span>
+              </div>
+            </div>
+            <p class="t-text">"Found my co-founder and shipped our first AI product within a month. Incredible community! Looks beautifully designed mate."</p>
+          </div>
+
+          <div class="t-card">
+            <div class="t-header">
+              <div class="t-avatar" style="background: linear-gradient(135deg, #10b981, #3b82f6);">MT</div>
+              <div class="t-info">
+                <span class="t-name">Michael T.</span>
+                <span class="t-role">AI Engineer</span>
+              </div>
+            </div>
+            <p class="t-text">"The Zorus 2.1 platform got me directly in front of top tech recruiters. It's sick. Can't wait to see what's next!"</p>
+          </div>
+
+          <div class="t-card">
+            <div class="t-header">
+              <div class="t-avatar" style="background: linear-gradient(135deg, #ef4444, #8b5cf6);">PP</div>
+              <div class="t-info">
+                <span class="t-name">Priya Patel</span>
+                <span class="t-role">UX & Frontend</span>
+              </div>
+            </div>
+            <p class="t-text">"Beautifully designed platform. The resources and agentic speed are game-changing for students."</p>
+          </div>
+
+          <div class="t-card">
+            <div class="t-header">
+              <div class="t-avatar" style="background: linear-gradient(135deg, #06b6d4, #3b82f6);">DL</div>
+              <div class="t-info">
+                <span class="t-name">David L.</span>
+                <span class="t-role">Developer</span>
+              </div>
+            </div>
+            <p class="t-text">"Gigni is insane af. We built an autonomous scheduling bot that went viral on campus. You guys rock 🚀"</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-grid">
+        <div class="footer-col">
+          <a href="#" class="logo" style="display:block; margin-bottom:20px; font-size: 2.2rem;">GIGNI</a>
+          <p>Revolutionizing student innovation through agentic AI. Connect, build, and lead the future community of developers.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="hosting.html">Hosting</a></li>
+            <li><a href="zorus.html">Zorus 2.1</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <ul class="footer-links">
+            <li><a href="#">Discord Community</a></li>
+            <li><a href="https://www.linkedin.com/company/gigni/?viewAsMember=true" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+            <li><a href="#">Twitter / X</a></li>
+            <li><a href="mailto:hello@gigni.ai">Support</a></li>
+          </ul>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:80px; color:rgba(255,255,255,0.2); font-size:0.9rem; font-family: 'Inter', sans-serif;">
+        &copy; 2026 GIGNI. Built for the AI Generation.
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- AUTH MODALS -->
+  <div class="ovl" id="signin-ovl" onclick="closeOvl(event,'signin')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <h3 style="font-size:2.2rem; margin-bottom:10px; font-weight: 800;">Welcome Back</h3>
+      <p style="color:rgba(255,255,255,0.5); margin-bottom:40px;">Resume your agentic journey.</p>
+      <input type="email" placeholder="Email" id="l_email" style="margin-bottom:20px;">
+      <input type="password" placeholder="Password" id="l_password" style="margin-bottom:30px;">
+      <button onclick="handleLogin()" class="ui-btn ui-btn-primary" style="width:100%; padding:18px;">Initialize Login</button>
+      <p style="text-align:center; margin-top:25px; color:rgba(255,255,255,0.5); font-size: 0.9rem;">New here? <a href="javascript:void(0)" onclick="closeOvl(null,'signin'); openOvl('signup')" style="color:var(--accent); font-weight: 600; text-decoration: none;">Create Identity</a></p>
+    </div>
+  </div>
+
+  <div class="ovl" id="signup-ovl" onclick="closeOvl(event,'signup')">
+    <div class="modal" style="max-width:800px; max-height: 90vh; overflow-y: auto;" onclick="event.stopPropagation()">
+      <h3 style="font-size:2.2rem; margin-bottom:10px; font-weight: 800;">Join GIGNI</h3>
+      <p style="color:rgba(255,255,255,0.5); margin-bottom:30px;">Create your global identity.</p>
+      
+      <div class="form-row">
+        <div class="fg">
+          <label>First Name</label>
+          <input type="text" id="p_fname" placeholder="First Name">
+        </div>
+        <div class="fg">
+          <label>Last Name</label>
+          <input type="text" id="p_lname" placeholder="Last Name">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="fg">
+          <label>Email Address</label>
+          <input type="email" id="p_email" placeholder="Email">
+        </div>
+        <div class="fg">
+          <label>Identity Password</label>
+          <input type="password" id="p_password" placeholder="Password">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="fg">
+          <label>College / University</label>
+          <input type="text" id="p_college" placeholder="e.g. Stanford University">
+        </div>
+        <div class="fg">
+          <label>Current Phase</label>
+          <select id="p_year">
+            <option value="1st Year">1st Year</option>
+            <option value="2nd Year">2nd Year</option>
+            <option value="3rd Year">3rd Year</option>
+            <option value="4th Year">4th Year</option>
+            <option value="Final Year / Intern">Final Year / Intern</option>
+            <option value="Post-Graduate">Post-Graduate</option>
+            <option value="Professional / Researcher">Professional / Researcher</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="fg">
+          <label>Domain</label>
+          <select id="p_field">
+            <option value="Artificial Intelligence / ML">Artificial Intelligence / ML</option>
+            <option value="Web Development (Full Stack)">Web Development (Full Stack)</option>
+            <option value="Mobile App Development">Mobile App Development</option>
+            <option value="Cyber Security">Cyber Security</option>
+            <option value="Cloud Computing">Cloud Computing</option>
+            <option value="Data Science / Analytics">Data Science / Analytics</option>
+            <option value="UI/UX Design">UI/UX Design</option>
+            <option value="Blockchain / Web3">Blockchain / Web3</option>
+            <option value="Internet of Things (IoT)">Internet of Things (IoT)</option>
+            <option value="Game Development">Game Development</option>
+            <option value="Software Engineering">Software Engineering</option>
+            <option value="Robotics / Automation">Robotics / Automation</option>
+            <option value="Other / General Tech">Other / General Tech</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Specific Interests</label>
+          <input type="text" id="p_interest" placeholder="e.g. LLMs, Computer Vision">
+        </div>
+      </div>
+
+      <div class="fg" style="margin-bottom:20px;">
+        <label>Brief Introduction</label>
+        <textarea id="p_intro" placeholder="Tell us about your agentic goals..." style="height:100px; resize:none;"></textarea>
+      </div>
+
+      <div class="form-row" style="margin-bottom:30px;">
+        <div class="fg">
+          <label>LinkedIn URL</label>
+          <input type="text" id="p_linkedin" placeholder="https://linkedin.com/in/...">
+        </div>
+        <div class="fg">
+          <label>GitHub URL</label>
+          <input type="text" id="p_github" placeholder="https://github.com/...">
+        </div>
+      </div>
+
+      <button onclick="submitForm()" class="ui-btn ui-btn-primary" style="width:100%; padding:18px; font-size:1.05rem;">Create Global Identity →</button>
+      <p style="text-align:center; margin-top:25px; color:rgba(255,255,255,0.5); font-size: 0.9rem;">Already have an identity? <a href="javascript:void(0)" onclick="closeOvl(null,'signup'); openOvl('signin')" style="color:var(--accent); font-weight: 600; text-decoration: none;">Login</a></p>
+    </div>
+  </div>
+
+  <script>
+    // ─── REACTBITS STYLE LINE WAVES BACKGROUND ──────────────────────────────
+    const canvas = document.getElementById('line-waves-canvas');
+    const ctx = canvas.getContext('2d');
+    let w, h;
+
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    let time = 0;
+    function drawWaves() {
+      ctx.fillStyle = '#010409';
+      ctx.fillRect(0, 0, w, h);
+      
+      const numLines = 40;
+      const amplitude = 80;
+      const frequency = 0.002;
+      const speed = 0.015;
+      const verticalSpacing = h / (numLines + 2);
+
+      ctx.lineWidth = 1.5;
+
+      for (let i = 0; i < numLines; i++) {
+        ctx.beginPath();
+        const yCenter = verticalSpacing * (i + 1);
+        
+        const alpha = 0.05 + (i / numLines) * 0.3;
+        // Blend between primary and accent colors
+        const r = Math.floor(59 + (139 - 59) * (i / numLines));
+        const g = Math.floor(91 + (92 - 91) * (i / numLines));
+        const b = Math.floor(219 + (246 - 219) * (i / numLines));
+        
+        ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+
+        for (let x = 0; x <= w; x += 15) {
+          // Complex organic wave
+          const wave1 = Math.sin(x * frequency + time + i * 0.1) * amplitude;
+          const wave2 = Math.sin(x * frequency * 1.5 - time * 0.8 + i * 0.05) * (amplitude * 0.5);
+          const y = yCenter + wave1 + wave2;
+          
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+      time += speed;
+      requestAnimationFrame(drawWaves);
+    }
+    drawWaves();
+
+    // HERO ENTRANCE
+    gsap.to('.hero-content', {
+      opacity: 1, y: 0, duration: 1.5, ease: 'expo.out', delay: 0.2
+    });
+
+    // REVEAL ANIMATIONS
+    const reveals = document.querySelectorAll('.reveal');
+    reveals.forEach(el => {
+      ScrollTrigger.create({
+        trigger: el,
+        start: 'top 85%',
+        onEnter: () => el.classList.add('active')
+      });
+    });
+
+    // NAVBAR SCROLL
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('navbar');
+      if(window.scrollY > 50) nav.classList.add('scrolled');
+      else nav.classList.remove('scrolled');
+    });
+
+    // VENGEANCE UI CARD HOVER (Mouse Tracking)
+    document.querySelectorAll('.v-card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      });
+    });
+
+    // DUPLICATE MARQUEE CONTENT FOR INFINITE SCROLL
+    const track = document.getElementById('marquee-track');
+    if(track) {
+      track.innerHTML += track.innerHTML;
+    }
+
+    // MODAL LOGIC
+    function openOvl(id) { document.getElementById(id + '-ovl').classList.add('active'); }
+    function closeOvl(e, id) { if(e && e.target !== e.currentTarget) return; document.getElementById(id + '-ovl').classList.remove('active'); }
+
+    // AUTH (Real Integration preserved)
+    async function handleLogin() {
+      const email = document.getElementById('l_email').value;
+      const password = document.getElementById('l_password').value;
+      if(!email || !password) return alert('Please fill in all fields.');
+
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if(data.success) {
+          localStorage.setItem('gigni_user', JSON.stringify(data.user));
+          localStorage.setItem('gigni_token', data.token);
+          if(data.user.email === 'ankushka2089@gmail.com') {
+            window.location.href = 'admin.html';
+          } else {
+            window.location.href = 'dashboard.html';
+          }
+        } else {
+          alert(data.error || 'Login failed.');
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Connection error.');
+      }
+    }
+
+    async function submitForm() {
+      const fname = document.getElementById('p_fname').value;
+      const lname = document.getElementById('p_lname').value;
+      const email = document.getElementById('p_email').value;
+      const password = document.getElementById('p_password').value;
+      const college = document.getElementById('p_college').value;
+      const year = document.getElementById('p_year').value;
+      const field = document.getElementById('p_field').value;
+      const interest = document.getElementById('p_interest').value;
+      const intro = document.getElementById('p_intro').value;
+      const linkedin = document.getElementById('p_linkedin').value;
+      const github = document.getElementById('p_github').value;
+      
+      if(!fname || !email || !college || !password) return alert('Please fill in all required fields.');
+
+      try {
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fname, lname, email, password, college, year, field, interest, intro, linkedin, github })
+        });
+        const data = await res.json();
+        if(data.success) {
+          alert('Registration successful! Redirecting to dashboard...');
+          localStorage.setItem('gigni_user', JSON.stringify(data.user || { 
+            id: data.id, fname, lname, email, college, year, field, interest, intro, linkedin, github 
+          }));
+          if(data.token) {
+            localStorage.setItem('gigni_token', data.token);
+          }
+          window.location.href = 'dashboard.html';
+        } else {
+          alert(data.error || 'Registration failed.');
+        }
+      } catch (e) {
+        console.error(e);
+        alert('Connection error.');
+      }
+    }
+  </script>
+</body>
+</html>

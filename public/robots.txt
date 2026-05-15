@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Allow: /about.html
+Disallow: /api/
+Disallow: /dashboard.html
+
+Sitemap: https://www.gigniconnect.space/sitemap.xml
