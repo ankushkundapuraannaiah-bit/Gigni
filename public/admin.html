@@ -226,14 +226,36 @@
     <div class="section" style="padding-top:0;">
       <div class="header-info">
         <h1>Brand Collaboration</h1>
-        <p>Send a unique collaboration pitch for Zorus 2.1 to prospective companies.</p>
+        <p>Send a unique, personalized collaboration pitch for Zorus 2.1 to prospective companies.</p>
       </div>
       <div class="card">
-        <div class="fg" style="margin-bottom: 16px;">
-          <label>Company Email</label>
-          <input type="email" id="brand-email" placeholder="e.g. hr@company.com">
+        <div class="email-grid">
+          <!-- EDITOR -->
+          <div class="editor-card">
+            <div class="fg" style="margin-bottom: 16px;">
+              <label>Company / Brand Name</label>
+              <input type="text" id="brand-name" placeholder="e.g. Google, Microsoft" oninput="updateBrandPreview()">
+            </div>
+            <div class="fg" style="margin-bottom: 16px;">
+              <label>Company Email</label>
+              <input type="email" id="brand-email" placeholder="e.g. hr@company.com">
+            </div>
+            <button class="btn-act" onclick="sendBrandEmail(event)" style="width:100%; padding:15px; font-size:16px; font-weight:800; background:linear-gradient(45deg, var(--accent), var(--primary)); text-transform:uppercase; letter-spacing:1px; margin-top:16px;">Send Collaboration Pitch</button>
+          </div>
+
+          <!-- PREVIEW -->
+          <div class="preview-card" style="height: auto; min-height: 400px;">
+            <div class="preview-header">
+              <span>Live Preview</span>
+              <div style="display:flex; gap:4px;">
+                <div style="width:8px; height:8px; border-radius:50%; background:#ef4444;"></div>
+                <div style="width:8px; height:8px; border-radius:50%; background:#f59e0b;"></div>
+                <div style="width:8px; height:8px; border-radius:50%; background:#10b981;"></div>
+              </div>
+            </div>
+            <iframe id="brand-email-preview" style="flex:1; border:none; background:#fff; min-height: 400px;"></iframe>
+          </div>
         </div>
-        <button class="btn-act" onclick="sendBrandEmail(event)" style="width:100%; padding:15px; font-size:16px; font-weight:800; background:linear-gradient(45deg, var(--accent), var(--primary)); text-transform:uppercase; letter-spacing:1px;">Send Collaboration Pitch</button>
       </div>
     </div>
 
@@ -373,6 +395,7 @@
       if (user.email !== 'ankushka2089@gmail.com' || !token) { window.location.href = 'index.html'; return; }
       fetchUsers();
       fetchZorusApplications();
+      setTimeout(updateBrandPreview, 500);
     });
 
     async function fetchUsers() {
@@ -770,47 +793,74 @@
       setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(100px)'; }, 3000);
     }
 
-    async function sendBrandEmail(event) {
-      const email = document.getElementById('brand-email').value.trim();
-      if(!email) return showToast('Please enter a company email');
-      
-      const subject = 'Partner with Zorus 2.1 - Hire Pre-Trained Innovators 🚀';
-      const htmlBody = `
-<div style="font-family: 'Outfit', Helvetica, Arial, sans-serif; background-color: #030712; color: #f3f4f6; padding: 0; margin: 0; border-radius: 24px; overflow: hidden; max-width: 600px; margin: auto; border: 1px solid rgba(255,255,255,0.08);">
-  <div style="background: linear-gradient(135deg, #3b5bdb, #8b5cf6); padding: 50px 40px; text-align: center;">
-    <h1 style="font-size: 48px; color: #fff; margin: 0; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px;">ZORUS 2.1 COLLABORATION</h1>
-    <p style="font-size: 18px; color: rgba(255,255,255,0.8); margin-top: 10px; font-weight: 500;">EMPOWERING THE NEXT GENERATION</p>
+    function getBrandEmailHtml(brandName) {
+      const displayBrand = brandName ? brandName : 'your esteemed organization';
+      return `
+<div style="font-family: 'Outfit', Helvetica, Arial, sans-serif; background-color: #050505; color: #f3f4f6; padding: 0; margin: 0; border-radius: 16px; overflow: hidden; max-width: 600px; margin: auto; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+  <div style="background: linear-gradient(135deg, #111827, #000000); padding: 60px 40px; text-align: center; position: relative; overflow: hidden;">
+    <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 60%);"></div>
+    <h1 style="font-size: 42px; color: #fff; margin: 0; font-family: 'Bebas Neue', sans-serif; letter-spacing: 3px; position: relative; z-index: 1;">ZORUS 2.1 <span style="color:#8b5cf6;">x</span> <span style="color: #f97316;">${displayBrand.toUpperCase()}</span></h1>
+    <p style="font-size: 16px; color: rgba(255,255,255,0.6); margin-top: 15px; font-weight: 500; letter-spacing: 2px; position: relative; z-index: 1;">A STRATEGIC TALENT PARTNERSHIP</p>
   </div>
   
-  <div style="padding: 40px;">
-    <p style="font-size: 16px; line-height: 1.8; color: #f3f4f6;">We invite your esteemed organization to collaborate with <strong>Zorus 2.1</strong>, our intensive agentic AI internship program.</p>
+  <div style="padding: 40px 40px 50px; background: #0a0a0a;">
+    <p style="font-size: 18px; line-height: 1.6; color: #e5e7eb; margin-top: 0;">Greetings to the team at <strong style="color: #fff;">${displayBrand}</strong>,</p>
+    <p style="font-size: 16px; line-height: 1.8; color: #9ca3af;">We are writing to invite you to an exclusive collaboration with <strong>Zorus 2.1</strong>, Gigni's premier intensive agentic AI internship program.</p>
     
-    <div style="margin: 30px 0; background: rgba(255,255,255,0.03); border-radius: 20px; padding: 30px; border: 1px solid rgba(255,255,255,0.05);">
-      <h3 style="color: #f97316; margin-top: 0; text-transform: uppercase; font-size: 14px; letter-spacing: 1px;">Why Collaborate With Us?</h3>
-      <ul style="padding-left: 0; list-style: none;">
-        <li style="margin-bottom: 15px; display: flex; align-items: flex-start; gap: 10px; color: #d1d5db;">
-          <span style="color: #f97316;">✓</span> 
-          <span><strong>Hire Trained Innovators:</strong> Recruit students who have directly worked on your projects. You gain access to a talent pool that already understands the specific problems you are solving and the tools you use.</span>
+    <div style="margin: 40px 0; background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); border-radius: 16px; padding: 30px; border: 1px solid rgba(255,255,255,0.05); position: relative;">
+      <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(to bottom, #8b5cf6, #f97316); border-radius: 16px 0 0 16px;"></div>
+      <h3 style="color: #fff; margin-top: 0; font-size: 18px; letter-spacing: 0.5px; margin-bottom: 25px;">Why Partner With Us?</h3>
+      <ul style="padding-left: 0; list-style: none; margin: 0;">
+        <li style="margin-bottom: 20px; display: flex; align-items: flex-start; gap: 15px; color: #d1d5db;">
+          <div style="background: rgba(139,92,246,0.2); color: #8b5cf6; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; margin-top: 2px;">✦</div>
+          <div><strong style="color: #fff; display: block; margin-bottom: 4px;">Hire Pre-Trained Innovators</strong> Recruit top-tier student developers who have already worked on architectures relevant to ${displayBrand}'s technological goals.</div>
         </li>
-        <li style="margin-bottom: 15px; display: flex; align-items: flex-start; gap: 10px; color: #d1d5db;">
-          <span style="color: #f97316;">✓</span> 
-          <span><strong>Brand Recognition:</strong> Create a powerful image of your company across thousands of bright minds from various prestigious colleges.</span>
+        <li style="margin-bottom: 0; display: flex; align-items: flex-start; gap: 15px; color: #d1d5db;">
+          <div style="background: rgba(249,115,22,0.2); color: #f97316; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; margin-top: 2px;">✦</div>
+          <div><strong style="color: #fff; display: block; margin-bottom: 4px;">Elevate Brand Presence</strong> Establish a powerful presence across thousands of bright minds from prestigious universities globally.</div>
         </li>
       </ul>
     </div>
 
-    <p style="font-size: 16px; line-height: 1.8; color: #f3f4f6;">By partnering with Zorus, you are not just hiring interns; you are investing in pre-trained professionals ready to deploy into your workflows.</p>
+    <p style="font-size: 16px; line-height: 1.8; color: #9ca3af;">By partnering with Zorus, you are not just offering internships; you are securing access to a pipeline of elite, agentic-ready professionals.</p>
 
-    <div style="text-align: center; margin-top: 40px;">
-      <a href="https://gigniconnect.space" style="background: #fff; color: #000; padding: 16px 40px; border-radius: 100px; text-decoration: none; font-weight: 800; font-size: 16px; display: inline-block;">Discover Gigni</a>
+    <div style="text-align: center; margin-top: 45px;">
+      <a href="https://gigniconnect.space" style="background: #fff; color: #000; padding: 18px 45px; border-radius: 100px; text-decoration: none; font-weight: 800; font-size: 16px; display: inline-block; box-shadow: 0 10px 25px -5px rgba(255,255,255,0.2);">Explore the Platform</a>
     </div>
 
-    <p style="font-size: 14px; color: #9ca3af; text-align: center; margin-top: 50px; line-height: 1.6;">
-      <strong>Contact us directly to initiate collaboration:</strong><br>
-      <a href="mailto:ankushka2089@gmail.com" style="color: #3b5bdb; text-decoration: none;">ankushka2089@gmail.com</a>
-    </p>
+    <div style="margin-top: 50px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center;">
+      <p style="font-size: 13px; color: #6b7280; line-height: 1.6; margin-bottom: 10px;">
+        To initiate this collaboration, please reach out directly:
+      </p>
+      <a href="mailto:gigniconnect@gmail.com" style="color: #f97316; text-decoration: none; font-weight: 600; font-size: 15px; letter-spacing: 0.5px;">gigniconnect@gmail.com</a>
+    </div>
   </div>
 </div>`;
+    }
+
+    function updateBrandPreview() {
+      const brandNameInput = document.getElementById('brand-name');
+      const brandName = brandNameInput ? brandNameInput.value.trim() : '';
+      const iframe = document.getElementById('brand-email-preview');
+      if (iframe) {
+        const doc = iframe.contentDocument;
+        if (doc) {
+          doc.open(); 
+          doc.write(getBrandEmailHtml(brandName)); 
+          doc.close();
+        }
+      }
+    }
+
+    async function sendBrandEmail(event) {
+      const email = document.getElementById('brand-email').value.trim();
+      const brandNameInput = document.getElementById('brand-name');
+      const brandName = brandNameInput ? brandNameInput.value.trim() : '';
+      
+      if(!email) return showToast('Please enter a company email');
+      
+      const subject = \`Partner with Zorus 2.1 - Elevate \${brandName || 'Your'} Engineering Team 🚀\`;
+      const htmlBody = getBrandEmailHtml(brandName);
 
       const token = localStorage.getItem('gigni_token');
       const btn = event.target;
@@ -826,6 +876,8 @@
         if(data.success) {
           showToast('Collaboration Email Sent Successfully!');
           document.getElementById('brand-email').value = '';
+          if(brandNameInput) brandNameInput.value = '';
+          updateBrandPreview();
         } else {
           showToast('Failed to send: ' + data.error);
         }
