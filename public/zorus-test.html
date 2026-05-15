@@ -115,8 +115,28 @@
       {q: "What keyword is used to start a function definition?", options: ["func", "def", "lambda"], ans: 1},
       {q: "Which type of learning uses labeled data?", options: ["Supervised", "Unsupervised", "Reinforcement"], ans: 0},
       {q: "What does API stand for?", options: ["Agent Programming Interface", "Application Programming Interface", "Advanced Personal Identity"], ans: 1},
-      {q: "Which extension is used for Python source files?", options: [".py", ".pyc", ".ipynb"], ans: 0}
-    ]; // Reduced for brevity in demo, keep full logic
+      {q: "Which extension is used for Python source files?", options: [".py", ".pyc", ".ipynb"], ans: 0},
+      {q: "Which library is commonly used for data manipulation and analysis in Python?", options: ["SciPy", "Pandas", "Keras"], ans: 1},
+      {q: "What is the primary purpose of a neural network's activation function?", options: ["Initialize weights", "Introduce non-linearity", "Calculate loss"], ans: 1},
+      {q: "Which Python library is widely used for building deep learning models?", options: ["TensorFlow", "Matplotlib", "BeautifulSoup"], ans: 0},
+      {q: "What does NLP stand for in Artificial Intelligence?", options: ["Natural Learning Process", "Neural Linguistic Programming", "Natural Language Processing"], ans: 2},
+      {q: "In Python, which built-in function is used to get the length of a list?", options: ["size()", "len()", "length()"], ans: 1},
+      {q: "Which machine learning algorithm is used for classification tasks?", options: ["Linear Regression", "Logistic Regression", "K-Means"], ans: 1},
+      {q: "What is 'overfitting' in machine learning?", options: ["Model performs well on training data but poorly on unseen data", "Model performs poorly on both training and unseen data", "Model requires too much computational power"], ans: 0},
+      {q: "Which keyword is used to handle exceptions in Python?", options: ["catch", "except", "error"], ans: 1},
+      {q: "What is the role of a 'tokenizer' in NLP?", options: ["Convert text to numerical values", "Split text into smaller units like words or subwords", "Train a language model"], ans: 1},
+      {q: "Which Python data structure is unordered and contains only unique elements?", options: ["List", "Dictionary", "Set"], ans: 2},
+      {q: "What does CNN stand for in deep learning?", options: ["Convolutional Neural Network", "Central Neural Node", "Computer Native Network"], ans: 0},
+      {q: "Which method is used to add an element to the end of a list in Python?", options: ["add()", "insert()", "append()"], ans: 2},
+      {q: "In Reinforcement Learning, what does an agent try to maximize?", options: ["Error rate", "Cumulative reward", "Dataset size"], ans: 1},
+      {q: "Which library is primarily used for creating static, animated, and interactive visualizations in Python?", options: ["Seaborn", "Matplotlib", "Plotly"], ans: 1},
+      {q: "What is a 'Generative Adversarial Network' (GAN)?", options: ["A model that predicts numerical values", "Two neural networks contesting with each other to generate new data", "A technique to clean missing values in datasets"], ans: 1},
+      {q: "What does the 'self' keyword represent in Python class methods?", options: ["The parent class", "The instance of the class itself", "A global variable"], ans: 1},
+      {q: "Which algorithm is commonly used for clustering unlabelled data?", options: ["Decision Trees", "K-Means", "Random Forest"], ans: 1},
+      {q: "What is the output of '2 ** 3' in Python?", options: ["6", "8", "9"], ans: 1},
+      {q: "Which of the following is a cloud-based platform specifically designed for developing AI and ML models with free GPU access?", options: ["Google Colab", "PyCharm", "VS Code"], ans: 0},
+      {q: "What technique involves fine-tuning a pre-trained model on a new, related task?", options: ["Zero-shot learning", "Transfer learning", "Ensemble learning"], ans: 1}
+    ];
 
     const container = document.getElementById('questions-container');
     questions.forEach((q, i) => {
