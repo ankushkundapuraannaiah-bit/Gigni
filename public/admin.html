@@ -103,59 +103,12 @@
       border-radius: 12px; padding: 12px 16px; color: #fff; font-family: 'Outfit',sans-serif; outline: none;
     }
 
-    /* BULK EMAIL REDESIGN */
-    .email-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 32px; align-items: start; }
-    @media (max-width: 1100px) { .email-grid { grid-template-columns: 1fr; } }
-    
-    .editor-card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 20px; padding: 24px; }
-    .preview-card { position: sticky; top: 100px; background: #fff; border-radius: 20px; overflow: hidden; height: 600px; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-    .preview-header { background: #f3f4f6; padding: 12px 20px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
-    .preview-header span { color: #6b7280; font-size: 12px; font-weight: 700; text-transform: uppercase; }
-    
-    .email-tags { 
-      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; 
-      min-height: 80px; max-height: 200px; overflow-y: auto; padding: 12px; 
-      background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid var(--border); 
-    }
-    .email-tag { 
-      background: linear-gradient(45deg, var(--primary), var(--accent)); 
-      padding: 6px 14px; border-radius: 100px; font-size: 12px; 
-      display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(59, 91, 219, 0.3);
-      animation: fadeIn 0.3s ease;
-    }
-    @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-    .email-tag button { background: none; border: none; color: #fff; cursor: pointer; font-size: 14px; display: flex; align-items: center; }
-
-    .dispatch-center {
-      margin-top: 32px; padding: 32px; border-radius: 24px;
-      background: linear-gradient(135deg, rgba(59, 91, 219, 0.1), rgba(139, 92, 246, 0.1));
-      border: 1px solid rgba(59, 91, 219, 0.2);
-      display: none;
-    }
-    .progress-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px; }
-    .stat-box { background: rgba(0,0,0,0.2); padding: 16px; border-radius: 16px; text-align: center; border: 1px solid var(--border); }
-    .stat-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
-    .stat-value { font-size: 24px; font-weight: 800; font-family: 'Bebas Neue', sans-serif; color: #fff; }
-
-    .countdown-ring {
-      position: relative; width: 120px; height: 120px; margin: 0 auto 20px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .countdown-ring svg { transform: rotate(-90deg); width: 120px; height: 120px; }
-    .countdown-ring circle {
-      fill: none; stroke-width: 8; stroke-linecap: round;
-      cx: 60; cy: 60; r: 52;
-    }
-    .ring-bg { stroke: rgba(255,255,255,0.05); }
-    .ring-progress {
-      stroke: var(--orange); stroke-dasharray: 327; stroke-dashoffset: 0;
-      transition: stroke-dashoffset 1s linear;
-    }
-    .countdown-text { position: absolute; font-size: 32px; font-weight: 800; font-family: 'Bebas Neue', sans-serif; color: var(--orange); }
-
-    .control-btns { display: flex; gap: 12px; margin-top: 24px; }
-    .btn-stop { background: #ef4444; } .btn-stop:hover { background: #dc2626; }
-    .btn-pause { background: #f59e0b; } .btn-pause:hover { background: #d97706; }
+    /* BULK EMAIL */
+    .email-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    @media (max-width: 1000px) { .email-grid { grid-template-columns: 1fr; } }
+    .email-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; min-height: 50px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid var(--border); }
+    .email-tag { background: rgba(59, 91, 219, 0.2); border: 1px solid rgba(59, 91, 219, 0.4); padding: 4px 12px; border-radius: 100px; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+    .email-tag button { background: none; border: none; color: #fff; cursor: pointer; opacity: 0.5; }
 
     #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1a1a1a; border: 1px solid var(--primary); padding: 14px 28px; border-radius: 50px; color: #fff; z-index: 10000; transition: 0.4s; opacity: 0; }
   </style>
@@ -167,7 +120,7 @@
 
   <nav>
     <a href="index.html" class="logo">GIGNI ADMIN</a>
-    <a href="index.html" onclick="localStorage.removeItem('gigni_user'); localStorage.removeItem('gigni_token');" class="logout-btn">Log Out</a>
+    <a href="index.html" onclick="localStorage.removeItem('gigni_user')" class="logout-btn">Log Out</a>
   </nav>
 
   <div class="main-container">
@@ -222,154 +175,62 @@
       </div>
     </div>
 
-    <!-- BRAND COLLABORATION SECTION -->
-    <div class="section" style="padding-top:0;">
-      <div class="header-info">
-        <h1>Brand Collaboration</h1>
-        <p>Send a unique, personalized collaboration pitch for Zorus 2.1 to prospective companies.</p>
-      </div>
-      <div class="card">
-        <div class="email-grid">
-          <!-- EDITOR -->
-          <div class="editor-card">
-            <div class="fg" style="margin-bottom: 16px;">
-              <label>Company / Brand Name</label>
-              <input type="text" id="brand-name" placeholder="e.g. Google, Microsoft" oninput="updateBrandPreview()">
-            </div>
-            <div class="fg" style="margin-bottom: 16px;">
-              <label>Company Email</label>
-              <input type="email" id="brand-email" placeholder="e.g. hr@company.com">
-            </div>
-            <button class="btn-act" onclick="sendBrandEmail(event)" style="width:100%; padding:15px; font-size:16px; font-weight:800; background:linear-gradient(45deg, var(--accent), var(--primary)); text-transform:uppercase; letter-spacing:1px; margin-top:16px;">Send Collaboration Pitch</button>
-          </div>
-
-          <!-- PREVIEW -->
-          <div class="preview-card" style="height: auto; min-height: 400px;">
-            <div class="preview-header">
-              <span>Live Preview</span>
-              <div style="display:flex; gap:4px;">
-                <div style="width:8px; height:8px; border-radius:50%; background:#ef4444;"></div>
-                <div style="width:8px; height:8px; border-radius:50%; background:#f59e0b;"></div>
-                <div style="width:8px; height:8px; border-radius:50%; background:#10b981;"></div>
-              </div>
-            </div>
-            <iframe id="brand-email-preview" style="flex:1; border:none; background:#fff; min-height: 400px;"></iframe>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- BULK EMAIL SECTION -->
     <div class="section" style="padding-top:0;">
       <div class="header-info">
         <h1>Bulk Agentic Communications</h1>
-        <p>Distribute mass updates with precision. Automated 20s safety interval active.</p>
+        <p>Distribute mass updates with automated delivery intervals (20s).</p>
       </div>
-      
       <div class="card">
         <div class="email-grid">
-          <!-- EDITOR -->
-          <div class="editor-card">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-              <h3 style="font-family:'Bebas Neue'; letter-spacing:1px;">Deployment Config</h3>
-              <button class="btn-act" onclick="addAllMembers()" style="margin:0; background:rgba(255,255,255,0.05); border:1px solid var(--border);">Add All Members</button>
-            </div>
-
+          <div>
             <div class="fg">
-              <label>Subject Line</label>
-              <input type="text" id="bulk-subject" placeholder="e.g. System Update: Zorus 2.1 Online ⚡">
+              <label>Subject</label>
+              <input type="text" id="bulk-subject" placeholder="e.g. Critical AI Update 🚀">
             </div>
-
             <div class="fg">
-              <label>Recipients <span id="email-count" style="color:var(--primary); font-weight:800; margin-left:8px;">0</span></label>
-              <div class="email-tags" id="email-tags">
-                <p style="color:var(--text-dim); font-size:13px; margin:auto;">No recipients selected.</p>
-              </div>
+              <label>Recipients <span id="email-count" style="opacity:0.4;">— 0</span></label>
+              <div class="email-tags" id="email-tags"></div>
               <div style="display:flex; gap:12px;">
-                <input type="email" id="new-email-input" placeholder="manually add email address" style="flex:1;">
+                <input type="email" id="new-email-input" placeholder="Enter email address" style="flex:1;">
                 <button class="btn-act" onclick="addEmail()" style="margin:0; padding:12px 24px;">+ Add</button>
               </div>
             </div>
-
             <div class="fg">
               <label>Template Preset</label>
               <select id="template-preset" onchange="applyTemplatePreset()">
-                <option value="custom">-- Custom Build --</option>
+                <option value="custom">Custom Build</option>
                 <option value="announcement">Global Announcement</option>
                 <option value="internship">Zorus Opportunity</option>
               </select>
             </div>
-
-            <div class="fg" style="margin-top:32px;">
-              <label>Template Engine (HTML)</label>
-              <textarea id="bulk-body" style="height:350px; font-family:monospace; font-size:13px; line-height:1.5;" placeholder="<html>...</html>"></textarea>
-            </div>
-
-            <button class="btn-act" id="send-bulk-btn" onclick="startBulkSend()" style="width:100%; padding:20px; font-size:18px; font-weight:800; background:linear-gradient(45deg, var(--orange), #ea580c); margin-top:10px; text-transform:uppercase; letter-spacing:1px;">Initialize Dispatch</button>
+            <button class="btn-act" id="send-bulk-btn" onclick="startBulkSend()" style="width:100%; padding:18px; font-size:16px; background:var(--orange); margin-top:20px;">Deploy Bulk Stream</button>
           </div>
-
-          <!-- PREVIEW -->
-          <div class="preview-card">
-            <div class="preview-header">
-              <span>Live Preview</span>
-              <div style="display:flex; gap:4px;">
-                <div style="width:8px; height:8px; border-radius:50%; background:#ef4444;"></div>
-                <div style="width:8px; height:8px; border-radius:50%; background:#f59e0b;"></div>
-                <div style="width:8px; height:8px; border-radius:50%; background:#10b981;"></div>
-              </div>
+          <div>
+            <div class="fg">
+              <label>Email Body (HTML)</label>
+              <textarea id="bulk-body" style="height:280px;" placeholder="Build your HTML template here..."></textarea>
             </div>
-            <iframe id="email-preview" style="flex:1; border:none; background:#fff;"></iframe>
+            <div style="background:#000; border-radius:12px; padding:12px;">
+              <p style="font-size:10px; color:var(--text-dim); margin-bottom:8px; font-weight:800;">PREVIEW</p>
+              <iframe id="email-preview" style="width:100%; height:200px; border:none; background:#fff; border-radius:8px;"></iframe>
+            </div>
           </div>
         </div>
-
-        <!-- DISPATCH CENTER (Hidden until start) -->
-        <div id="dispatch-center" class="dispatch-center">
-          <div style="text-align:center; margin-bottom:32px;">
-            <h2 style="font-family:'Bebas Neue'; font-size:32px; letter-spacing:2px; color:var(--orange);">Dispatch Station Active</h2>
-            <p style="color:var(--text-dim);">Maintaining 20s interval to optimize delivery reliability.</p>
+        
+        <!-- PROGRESS -->
+        <div id="bulk-progress-wrap" style="display:none; margin-top:40px; padding-top:40px; border-top:1px solid var(--border);">
+          <div style="height:4px; background:rgba(255,255,255,0.05); border-radius:10px; margin-bottom:20px; overflow:hidden;">
+            <div id="prog-bar" style="width:0%; height:100%; background:var(--primary); transition:0.5s;"></div>
           </div>
-
-          <div class="progress-stats">
-            <div class="stat-box">
-              <div class="stat-label">Total Queue</div>
-              <div class="stat-value" id="stat-total">0</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label">Successful</div>
-              <div class="stat-value" id="stat-sent" style="color:#10b981;">0</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-label">Failed</div>
-              <div class="stat-value" id="stat-failed" style="color:#ef4444;">0</div>
-            </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+            <h4 id="prog-label">Streaming...</h4>
+            <span id="prog-count">0 / 0</span>
           </div>
-
-          <div id="countdown-wrap" style="text-align:center; display:none;">
-            <div class="countdown-ring">
-              <svg>
-                <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
-                <circle class="ring-progress" id="ring-progress" cx="60" cy="60" r="52"></circle>
-              </svg>
-              <div class="countdown-text" id="countdown-num">20</div>
-            </div>
-            <p id="countdown-label" style="font-size:14px; font-weight:600; color:var(--text-dim);">Cooling down before next dispatch...</p>
-          </div>
-
-          <div id="active-sending" style="text-align:center;">
-             <div style="display:inline-block; margin-bottom:15px; width:40px; height:40px; border:3px solid rgba(59, 91, 219, 0.1); border-top-color:var(--primary); border-radius:50%; animation: spin 1s linear infinite;"></div>
-             <p id="current-target" style="font-weight:700; font-size:18px;">Sending to: example@email.com</p>
-          </div>
-
-          <div class="control-btns">
-            <button class="btn-act btn-pause" id="btn-pause" onclick="togglePause()" style="flex:1;">Pause Dispatch</button>
-            <button class="btn-act btn-stop" onclick="stopDispatch()" style="flex:1;">Abort Mission</button>
-          </div>
-
-          <div id="prog-feed" style="margin-top:32px; max-height:200px; overflow-y:auto; background:rgba(0,0,0,0.3); border-radius:12px; padding:16px; display:flex; flex-direction:column; gap:8px; font-family:monospace; font-size:12px;"></div>
+          <div id="prog-feed" style="max-height:300px; overflow-y:auto; display:flex; flex-direction:column; gap:12px;"></div>
         </div>
       </div>
     </div>
-    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
 
   </div>
 
@@ -390,28 +251,16 @@
   <script>
     // AUTH & DATA
     document.addEventListener('DOMContentLoaded', () => {
-      let user = {};
-      try { user = JSON.parse(localStorage.getItem('gigni_user') || '{}'); } catch(e) {}
-      const token = localStorage.getItem('gigni_token');
-      if (user.email !== 'ankushka2089@gmail.com' || !token) { window.location.href = 'index.html'; return; }
+      const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+      if (user.email !== 'ankushka2089@gmail.com') { window.location.href = 'index.html'; return; }
       fetchUsers();
       fetchZorusApplications();
-      setTimeout(updateBrandPreview, 500);
     });
 
     async function fetchUsers() {
       const tbody = document.getElementById('users-body');
-      const token = localStorage.getItem('gigni_token');
       try {
-        const res = await fetch('/api/users', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (res.status === 401 || res.status === 403) {
-          localStorage.removeItem('gigni_user');
-          localStorage.removeItem('gigni_token');
-          window.location.href = 'index.html';
-          return;
-        }
+        const res = await fetch('/api/users');
         const data = await res.json();
         if (data.success) {
           tbody.innerHTML = '';
@@ -424,8 +273,8 @@
             const githubLink = u.github && u.github !== '#' ? `<a href="${u.github}" target="_blank" style="color:var(--primary); margin-right:10px; font-weight:600;">GitHub</a>` : `<span style="opacity:0.2; font-size:11px;">GitHub N/A</span>`;
             const linkedinLink = u.linkedin && u.linkedin !== '#' ? `<a href="${u.linkedin}" target="_blank" style="color:var(--primary); font-weight:600;">LinkedIn</a>` : `<span style="opacity:0.2; font-size:11px;">LinkedIn N/A</span>`;
             
-            const safeNameEncoded = encodeURIComponent(u.fname || 'Explorer').replace(/'/g, "%27");
-            const userJsonEncoded = encodeURIComponent(JSON.stringify(u)).replace(/'/g, "%27");
+            const safeName = (u.fname || 'Explorer').replace(/'/g, "\\'");
+            const userJson = JSON.stringify(u).replace(/'/g, "&apos;");
 
             tr.innerHTML = `
               <td>#${u.id}</td>
@@ -437,10 +286,10 @@
               <td>${githubLink} <br> ${linkedinLink}</td>
               <td>
                 <div style="display:flex; flex-wrap:wrap; gap:8px;">
-                  <button class="btn-act" style="background:#4b5563;" onclick="viewProfile(JSON.parse(decodeURIComponent('${userJsonEncoded}')))">View Info</button>
-                  <button class="btn-act" onclick="openModal(${u.id}, 'project', decodeURIComponent('${safeNameEncoded}'))">+ Build</button>
-                  <button class="btn-act btn-cert" onclick="openModal(${u.id}, 'certificate', decodeURIComponent('${safeNameEncoded}'))">+ Creds</button>
-                  <button class="btn-act btn-hack" onclick="openModal(${u.id}, 'hackathon', decodeURIComponent('${safeNameEncoded}'))">+ Hack</button>
+                  <button class="btn-act" style="background:#4b5563;" onclick='viewProfile(${userJson})'>View Info</button>
+                  <button class="btn-act" onclick="openModal(${u.id}, 'project', '${safeName}')">+ Build</button>
+                  <button class="btn-act btn-cert" onclick="openModal(${u.id}, 'certificate', '${safeName}')">+ Creds</button>
+                  <button class="btn-act btn-hack" onclick="openModal(${u.id}, 'hackathon', '${safeName}')">+ Hack</button>
                 </div>
               </td>
             `;
@@ -450,8 +299,7 @@
           tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:60px; color:#f87171;">Sync Failure: ${data.error}</td></tr>`;
         }
       } catch (e) { 
-        console.error("Fetch Users Error:", e);
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:60px; color:#f87171;">Network Error: ${e.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:60px; color:#f87171;">Network Error: Database unreachable.</td></tr>`;
         showToast('Identity Sync Error'); 
       }
     }
@@ -459,7 +307,7 @@
     function viewProfile(user) {
       const content = `
         <div style="text-align:left;">
-          <h2 style="font-family:'Bebas Neue'; font-size:2.5rem; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:10px; color:#fff;">${user.fname || 'Unknown'} ${user.lname || ''}</h2>
+          <h2 style="font-family:'Bebas Neue'; font-size:2.5rem; margin-bottom:20px; border-bottom:1px solid var(--border); padding-bottom:10px; color:#fff;">${user.fname} ${user.lname}</h2>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
             <div><p style="font-size:11px; opacity:0.5; text-transform:uppercase;">Phase</p><p style="color:#fff;">${user.year || 'N/A'}</p></div>
             <div><p style="font-size:11px; opacity:0.5; text-transform:uppercase;">Domain</p><p style="color:#fff;">${user.field || 'N/A'}</p></div>
@@ -479,17 +327,8 @@
 
     async function fetchZorusApplications() {
       const tbody = document.getElementById('zorus-body');
-      const token = localStorage.getItem('gigni_token');
       try {
-        const res = await fetch('/api/zorus-applications', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (res.status === 401 || res.status === 403) {
-          localStorage.removeItem('gigni_user');
-          localStorage.removeItem('gigni_token');
-          window.location.href = 'index.html';
-          return;
-        }
+        const res = await fetch('/api/zorus-applications');
         const data = await res.json();
         if (data.success) {
           tbody.innerHTML = '';
@@ -503,7 +342,7 @@
             const statusColor = a.score === null ? 'var(--text-dim)' : (a.score >= 85 ? '#10b981' : '#f87171');
             tr.innerHTML = `
               <td>#${a.id}</td>
-              <td><strong>${a.fname || 'Unknown'} ${a.lname || ''}</strong><br><small style="color:var(--text-dim)">${a.email}</small></td>
+              <td><strong>${a.fname} ${a.lname}</strong><br><small style="color:var(--text-dim)">${a.email}</small></td>
               <td style="color:${statusColor}; font-weight:700;">${status}</td>
               <td>${new Date(a.applied_at).toLocaleDateString()}</td>
             `;
@@ -513,8 +352,7 @@
           tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:60px; color:#f87171;">Sync Failure: ${data.error}</td></tr>`;
         }
       } catch (e) {
-        console.error("Fetch Zorus Apps Error:", e);
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:60px; color:#f87171;">Network Error: ${e.message}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:60px; color:#f87171;">Network Error: Database unreachable.</td></tr>`;
       }
     }
 
@@ -544,36 +382,23 @@
         }
       };
       try {
-        const token = localStorage.getItem('gigni_token');
-        const res = await fetch('/api/user/add-item', { 
-          method: 'POST', 
-          headers: {
-            'Content-Type':'application/json',
-            'Authorization': `Bearer ${token}`
-          }, 
-          body: JSON.stringify(body) 
-        });
+        const res = await fetch('/api/user/add-item', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
         if((await res.json()).success) { showToast('Build Assigned'); closeModal(); }
       } catch (e) { showToast('Error'); } finally { btn.innerText = originalText; }
     }
 
     // BULK LOGIC
     let bulkEmails = [];
-    let isDispatching = false;
-    let isPaused = false;
-    let currentIdx = 0;
-    let stopRequested = false;
     const bodyInput = document.getElementById('bulk-body');
     const previewFrame = document.getElementById('email-preview');
     
     function updatePreview() {
       const doc = previewFrame.contentDocument;
       if (doc) {
-        doc.open(); doc.write(bodyInput.value || '<div style="padding:40px; text-align:center; color:#9ca3af; font-family:sans-serif;">Email preview will appear here</div>'); doc.close();
+        doc.open(); doc.write(bodyInput.value); doc.close();
       }
     }
     bodyInput.oninput = updatePreview;
-    setTimeout(updatePreview, 500);
 
     function addEmail() {
       const val = document.getElementById('new-email-input').value.trim();
@@ -583,153 +408,44 @@
         renderTags();
       }
     }
-
-    async function addAllMembers() {
-      const token = localStorage.getItem('gigni_token');
-      try {
-        const res = await fetch('/api/users', { headers: { 'Authorization': `Bearer ${token}` } });
-        const data = await res.json();
-        if(data.success) {
-          data.users.forEach(u => {
-            if(u.email && !bulkEmails.includes(u.email)) bulkEmails.push(u.email);
-          });
-          renderTags();
-          showToast(`Added ${data.users.length} members to queue`);
-        }
-      } catch(e) { showToast('Failed to fetch members'); }
-    }
-
     function renderTags() {
       const wrap = document.getElementById('email-tags');
-      if (bulkEmails.length === 0) {
-        wrap.innerHTML = '<p style="color:var(--text-dim); font-size:13px; margin:auto;">No recipients selected.</p>';
-      } else {
-        wrap.innerHTML = bulkEmails.map((e, i) => `<div class="email-tag">${e}<button onclick="bulkEmails.splice(${i},1);renderTags()">✕</button></div>`).join('');
-      }
-      document.getElementById('email-count').innerText = bulkEmails.length;
-    }
-
-    function togglePause() {
-      isPaused = !isPaused;
-      document.getElementById('btn-pause').innerText = isPaused ? 'Resume Dispatch' : 'Pause Dispatch';
-      document.getElementById('btn-pause').classList.toggle('btn-cert', isPaused);
-      if(!isPaused) showToast('Dispatch Resumed');
-    }
-
-    function stopDispatch() {
-      if(confirm('Are you sure you want to abort the current dispatch sequence?')) {
-        stopRequested = true;
-        showToast('Aborting mission...');
-      }
+      wrap.innerHTML = bulkEmails.map((e, i) => `<div class="email-tag">${e}<button onclick="bulkEmails.splice(${i},1);renderTags()">✕</button></div>`).join('');
+      document.getElementById('email-count').innerText = `— ${bulkEmails.length}`;
     }
 
     async function startBulkSend() {
       if (bulkEmails.length === 0) return showToast('No recipients');
-      if (!document.getElementById('bulk-subject').value) return showToast('Subject required');
-      if (!bodyInput.value) return showToast('Template body required');
-      if (isDispatching) return;
-
-      isDispatching = true;
-      stopRequested = false;
-      isPaused = false;
-      currentIdx = 0;
-      let sentCount = 0;
-      let failedCount = 0;
-
-      const station = document.getElementById('dispatch-center');
-      station.style.display = 'block';
-      station.scrollIntoView({ behavior: 'smooth' });
-      
-      document.getElementById('stat-total').innerText = bulkEmails.length;
-      document.getElementById('stat-sent').innerText = '0';
-      document.getElementById('stat-failed').innerText = '0';
-      document.getElementById('prog-feed').innerHTML = '';
-      document.getElementById('send-bulk-btn').disabled = true;
-      document.getElementById('send-bulk-btn').style.opacity = '0.5';
-
-      const subject = document.getElementById('bulk-subject').value;
-      const htmlBody = bodyInput.value;
-      const token = localStorage.getItem('gigni_token');
-
-      for (let i = 0; i < bulkEmails.length; i++) {
-        if (stopRequested) break;
-        
-        while (isPaused && !stopRequested) {
-          await new Promise(r => setTimeout(r, 1000));
-        }
-        if (stopRequested) break;
-
-        const email = bulkEmails[i];
-        document.getElementById('active-sending').style.display = 'block';
-        document.getElementById('countdown-wrap').style.display = 'none';
-        document.getElementById('current-target').innerText = `Sending to: ${email}`;
-
-        try {
-          const res = await fetch('/api/admin/send-single-email', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ email, subject, htmlBody })
-          });
-          const data = await res.json();
-          
-          const feed = document.getElementById('prog-feed');
-          const entry = document.createElement('div');
-          
-          if (data.success) {
-            sentCount++;
-            document.getElementById('stat-sent').innerText = sentCount;
-            entry.innerHTML = `<span style="color:#10b981;">[SUCCESS]</span> Delivered to ${email}`;
-          } else {
-            failedCount++;
-            document.getElementById('stat-failed').innerText = failedCount;
-            entry.innerHTML = `<span style="color:#ef4444;">[FAILED]</span> ${email}: ${data.error}`;
-          }
-          feed.prepend(entry);
-        } catch (err) {
-          failedCount++;
-          document.getElementById('stat-failed').innerText = failedCount;
-          const entry = document.createElement('div');
-          entry.innerHTML = `<span style="color:#ef4444;">[ERROR]</span> ${email}: Connection failed`;
-          document.getElementById('prog-feed').prepend(entry);
-        }
-
-        // 20s Delay if not last email
-        if (i < bulkEmails.length - 1 && !stopRequested) {
-          document.getElementById('active-sending').style.display = 'none';
-          document.getElementById('countdown-wrap').style.display = 'block';
-          
-          const ring = document.getElementById('ring-progress');
-          const num = document.getElementById('countdown-num');
-          const totalTime = 20;
-          
-          for (let s = totalTime; s > 0; s--) {
-            if (stopRequested) break;
-            while (isPaused && !stopRequested) {
-              await new Promise(r => setTimeout(r, 1000));
+      const admin = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+      const res = await fetch('/api/admin/send-bulk-email', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ emails: bulkEmails, subject: document.getElementById('bulk-subject').value, htmlBody: bodyInput.value, adminEmail: admin.email })
+      });
+      document.getElementById('bulk-progress-wrap').style.display = 'block';
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      while(true) {
+        const { value, done } = await reader.read();
+        if(done) break;
+        const msgs = decoder.decode(value).split('\n');
+        msgs.forEach(m => {
+          if(!m) return;
+          try {
+            const msg = JSON.parse(m);
+            if(msg.type === 'sent' || msg.type === 'failed') {
+              const feed = document.getElementById('prog-feed');
+              const div = document.createElement('div');
+              div.innerHTML = `<span style="color:${msg.type==='sent'?'#10b981':'#f87171'}">[${msg.type.toUpperCase()}]</span> ${msg.email}`;
+              feed.prepend(div);
+              const pct = ((msg.index + 1) / msg.total) * 100;
+              document.getElementById('prog-bar').style.width = pct + '%';
+              document.getElementById('prog-count').innerText = `${msg.index+1} / ${msg.total}`;
             }
-            if (stopRequested) break;
-
-            num.innerText = s;
-            const offset = 327 - (327 * (s / totalTime));
-            ring.style.strokeDashoffset = offset;
-            await new Promise(r => setTimeout(r, 1000));
-          }
-        }
+          } catch(e) {}
+        });
       }
-
-      isDispatching = false;
-      document.getElementById('send-bulk-btn').disabled = false;
-      document.getElementById('send-bulk-btn').style.opacity = '1';
-      document.getElementById('active-sending').style.display = 'none';
-      document.getElementById('countdown-wrap').style.display = 'none';
-      
-      const statusText = stopRequested ? 'Dispatch Aborted' : 'Dispatch Mission Complete';
-      showToast(statusText);
-      
-      const finalMsg = document.createElement('div');
-      finalMsg.style.cssText = "padding:12px; border-top:1px solid rgba(255,255,255,0.1); margin-top:8px; font-weight:bold; color:var(--orange); text-align:center;";
-      finalMsg.innerText = `--- ${statusText.toUpperCase()} ---`;
-      document.getElementById('prog-feed').prepend(finalMsg);
+      showToast('Bulk Deployment Complete');
     }
 
     function applyTemplatePreset() {
@@ -738,7 +454,7 @@
       const body = document.getElementById('bulk-body');
 
       if(preset === 'internship') {
-        subject.value = 'Zorus 2.1: A Great Internship Opportunity for You! 🚀';
+        subject.value = 'Phase Shift: Zorus 2.1 Internship Recruitment Active 🚀';
         body.value = `
 <div style="font-family: 'Outfit', Helvetica, Arial, sans-serif; background-color: #030712; color: #f3f4f6; padding: 0; margin: 0; border-radius: 24px; overflow: hidden; max-width: 600px; margin: auto; border: 1px solid rgba(255,255,255,0.08);">
   <div style="background: linear-gradient(135deg, #3b5bdb, #8b5cf6); padding: 50px 40px; text-align: center;">
@@ -748,7 +464,7 @@
   
   <div style="padding: 40px;">
     <p style="font-size: 16px; line-height: 1.8; color: #9ca3af;">Greetings, Explorer.</p>
-    <p style="font-size: 16px; line-height: 1.8; color: #f3f4f6;">We are officially opening applications for <strong>Zorus 2.1</strong> — our most intensive internship program yet. This is not just a course; it's a 3-month deployment into the heart of agentic AI. No money will be charged at any point of time as Gigni believe in providing hands on experience to students. </p>
+    <p style="font-size: 16px; line-height: 1.8; color: #f3f4f6;">We are officially opening applications for <strong>Zorus 2.1</strong> — our most intensive internship program yet. This is not just a course; it's a 3-month deployment into the heart of agentic AI.</p>
     
     <div style="margin: 40px 0; background: rgba(255,255,255,0.03); border-radius: 20px; padding: 30px; border: 1px solid rgba(255,255,255,0.05);">
       <h3 style="color: #f97316; margin-top: 0; text-transform: uppercase; font-size: 14px; letter-spacing: 1px;">The Mission:</h3>
@@ -794,101 +510,6 @@
       const t = document.getElementById('toast');
       t.innerText = msg; t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
       setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(100px)'; }, 3000);
-    }
-
-    function getBrandEmailHtml(brandName) {
-      const displayBrand = brandName ? brandName : 'your esteemed organization';
-      return `
-<div style="font-family: 'Outfit', Helvetica, Arial, sans-serif; background-color: #050505; color: #f3f4f6; padding: 0; margin: 0; border-radius: 16px; overflow: hidden; max-width: 600px; margin: auto; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
-  <div style="background: linear-gradient(135deg, #111827, #000000); padding: 60px 40px; text-align: center; position: relative; overflow: hidden;">
-    <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 60%);"></div>
-    <h1 style="font-size: 42px; color: #fff; margin: 0; font-family: 'Bebas Neue', sans-serif; letter-spacing: 3px; position: relative; z-index: 1;">ZORUS 2.1 <span style="color:#8b5cf6;">x</span> <span style="color: #f97316;">${displayBrand.toUpperCase()}</span></h1>
-    <p style="font-size: 16px; color: rgba(255,255,255,0.6); margin-top: 15px; font-weight: 500; letter-spacing: 2px; position: relative; z-index: 1;">A STRATEGIC TALENT PARTNERSHIP</p>
-  </div>
-  
-  <div style="padding: 40px 40px 50px; background: #0a0a0a;">
-    <p style="font-size: 18px; line-height: 1.6; color: #e5e7eb; margin-top: 0;">Greetings to the team at <strong style="color: #fff;">${displayBrand}</strong>,</p>
-    <p style="font-size: 16px; line-height: 1.8; color: #9ca3af;">We are writing to invite you to an exclusive collaboration with <strong>Zorus 2.1</strong>, Gigni's premier intensive agentic AI internship program.</p>
-    
-    <div style="margin: 40px 0; background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); border-radius: 16px; padding: 30px; border: 1px solid rgba(255,255,255,0.05); position: relative;">
-      <div style="position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: linear-gradient(to bottom, #8b5cf6, #f97316); border-radius: 16px 0 0 16px;"></div>
-      <h3 style="color: #fff; margin-top: 0; font-size: 18px; letter-spacing: 0.5px; margin-bottom: 25px;">Why Partner With Us?</h3>
-      <ul style="padding-left: 0; list-style: none; margin: 0;">
-        <li style="margin-bottom: 20px; display: flex; align-items: flex-start; gap: 15px; color: #d1d5db;">
-          <div style="background: rgba(139,92,246,0.2); color: #8b5cf6; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; margin-top: 2px;">✦</div>
-          <div><strong style="color: #fff; display: block; margin-bottom: 4px;">Hire Pre-Trained Innovators</strong> Recruit top-tier student developers who have already worked on architectures relevant to ${displayBrand}'s technological goals.</div>
-        </li>
-        <li style="margin-bottom: 0; display: flex; align-items: flex-start; gap: 15px; color: #d1d5db;">
-          <div style="background: rgba(249,115,22,0.2); color: #f97316; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; margin-top: 2px;">✦</div>
-          <div><strong style="color: #fff; display: block; margin-bottom: 4px;">Elevate Brand Presence</strong> Establish a powerful presence across thousands of bright minds from prestigious universities globally.</div>
-        </li>
-      </ul>
-    </div>
-
-    <p style="font-size: 16px; line-height: 1.8; color: #9ca3af;">By partnering with Zorus, you are not just offering internships; you are securing access to a pipeline of elite, agentic-ready professionals.</p>
-
-    <div style="text-align: center; margin-top: 45px;">
-      <a href="https://gigniconnect.space" style="background: #fff; color: #000; padding: 18px 45px; border-radius: 100px; text-decoration: none; font-weight: 800; font-size: 16px; display: inline-block; box-shadow: 0 10px 25px -5px rgba(255,255,255,0.2);">Explore the Platform</a>
-    </div>
-
-    <div style="margin-top: 50px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center;">
-      <p style="font-size: 13px; color: #6b7280; line-height: 1.6; margin-bottom: 10px;">
-        To initiate this collaboration, please reach out directly:
-      </p>
-      <a href="mailto:gigniconnect@gmail.com" style="color: #f97316; text-decoration: none; font-weight: 600; font-size: 15px; letter-spacing: 0.5px;">gigniconnect@gmail.com</a>
-    </div>
-  </div>
-</div>`;
-    }
-
-    function updateBrandPreview() {
-      const brandNameInput = document.getElementById('brand-name');
-      const brandName = brandNameInput ? brandNameInput.value.trim() : '';
-      const iframe = document.getElementById('brand-email-preview');
-      if (iframe) {
-        const doc = iframe.contentDocument;
-        if (doc) {
-          doc.open(); 
-          doc.write(getBrandEmailHtml(brandName)); 
-          doc.close();
-        }
-      }
-    }
-
-    async function sendBrandEmail(event) {
-      const email = document.getElementById('brand-email').value.trim();
-      const brandNameInput = document.getElementById('brand-name');
-      const brandName = brandNameInput ? brandNameInput.value.trim() : '';
-      
-      if(!email) return showToast('Please enter a company email');
-      
-      const subject = \`Partner with Zorus 2.1 - Elevate \${brandName || 'Your'} Engineering Team 🚀\`;
-      const htmlBody = getBrandEmailHtml(brandName);
-
-      const token = localStorage.getItem('gigni_token');
-      const btn = event.target;
-      const originalText = btn.innerText;
-      btn.innerText = 'Sending...';
-      try {
-        const res = await fetch('/api/admin/send-single-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({ email, subject, htmlBody })
-        });
-        const data = await res.json();
-        if(data.success) {
-          showToast('Collaboration Email Sent Successfully!');
-          document.getElementById('brand-email').value = '';
-          if(brandNameInput) brandNameInput.value = '';
-          updateBrandPreview();
-        } else {
-          showToast('Failed to send: ' + data.error);
-        }
-      } catch(e) {
-        showToast('Network error while sending');
-      } finally {
-        btn.innerText = originalText;
-      }
     }
 
     // 3D Background

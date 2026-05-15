@@ -185,7 +185,7 @@
   </div>
   <div class="nav-user">
     <div class="user-av" id="nav-av">G</div>
-    <a href="index.html" onclick="localStorage.removeItem('gigni_user'); localStorage.removeItem('gigni_token');" class="logout-btn">Sign out</a>
+    <a href="index.html" onclick="localStorage.removeItem('gigni_user')" class="logout-btn">Sign out</a>
   </div>
 </nav>
 
@@ -394,27 +394,16 @@
     renderAll(user);
 
     if (user.id) {
-      const token = localStorage.getItem('gigni_token');
-      if (!token) { window.location.href = 'index.html'; return; }
       try {
-        const res = await fetch('/api/user/' + user.id, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (res.status === 401 || res.status === 403) {
-          localStorage.removeItem('gigni_user');
-          localStorage.removeItem('gigni_token');
-          window.location.href = 'index.html';
-          return;
-        }
+        const res = await fetch('/api/user/' + user.id);
         const data = await res.json();
         if (data.success) {
           const fresh = data.user;
+          fresh.password = user.password;
           localStorage.setItem('gigni_user', JSON.stringify(fresh));
           renderAll(fresh);
         }
       } catch (e) { console.warn('Sync failed:', e); }
-    } else {
-      window.location.href = 'index.html';
     }
   });
 
@@ -550,13 +539,9 @@
     };
 
     try {
-      const token = localStorage.getItem('gigni_token');
       const res = await fetch('/api/user/update', {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updated)
       });
       const data = await res.json();
