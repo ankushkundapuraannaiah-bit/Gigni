@@ -288,9 +288,13 @@
 
   <script>
     // AUTH & DATA
-    function getAuthHeader() {
-      const token = localStorage.getItem('gigni_token');
-      return token ? { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } : {};
+    function getAuthHeaders() {
+      const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+      const token = user.token || localStorage.getItem('gigni_token');
+      return { 
+        'Authorization': `Bearer ${token || ''}`, 
+        'Content-Type': 'application/json' 
+      };
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -305,6 +309,11 @@
       const tbody = document.getElementById('users-body');
       try {
         const res = await fetch('/api/users', { headers: getAuthHeaders() });
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({ error: res.statusText }));
+          tbody.innerHTML = `<tr><td colspan="5" style="color:var(--orange); text-align:center; padding:20px;">Error ${res.status}: ${errData.error || 'Server rejected request'}</td></tr>`;
+          return;
+        }
         const data = await res.json();
         if (data.success) {
           tbody.innerHTML = '';
@@ -373,6 +382,11 @@
       const tbody = document.getElementById('zorus-body');
       try {
         const res = await fetch('/api/zorus-applications', { headers: getAuthHeaders() });
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({ error: res.statusText }));
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:60px; color:var(--orange);">Error ${res.status}: ${errData.error || 'Server rejected request'}</td></tr>`;
+          return;
+        }
         const data = await res.json();
         if (data.success) {
           tbody.innerHTML = '';
@@ -396,7 +410,8 @@
           tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:60px; color:#f87171;">Sync Failure: ${data.error}</td></tr>`;
         }
       } catch (e) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:60px; color:#f87171;">Network Error: Database unreachable.</td></tr>`;
+        console.error('Fetch error:', e);
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:60px; color:var(--orange);">Network Error: Could not connect to API.</td></tr>`;
       }
     }
 

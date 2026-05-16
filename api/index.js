@@ -8,6 +8,11 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Singleton Database Pool
+const pool = createPool({
+    connectionString: process.env.POSTGRES_URL
+});
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
 // Email Transporter Configuration
@@ -125,8 +130,6 @@ app.get('/api/init', authenticateToken, async (req, res) => {
         res.status(200).json({ success: true, message: 'Database initialized and admin checked' });
     } catch (err) {
         res.status(500).json({ error: err.message });
-    } finally {
-        if (pool) await pool.end();
     }
 });
 
@@ -145,10 +148,7 @@ app.post('/api/register', async (req, res) => {
         return res.status(400).json({ error: 'Password must be at least 8 characters' });
     }
     
-    let pool;
     try {
-        if (!process.env.POSTGRES_URL) throw new Error('POSTGRES_URL is missing');
-        pool = createPool({ connectionString: process.env.POSTGRES_URL });
         
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -226,8 +226,6 @@ app.post('/api/register', async (req, res) => {
     } catch (err) {
         if (err.code === '23505') return res.status(400).json({ error: "Email already exists" });
         res.status(500).json({ error: err.message });
-    } finally {
-        if (pool) await pool.end();
     }
 });
 
@@ -239,10 +237,7 @@ app.post('/api/login', async (req, res) => {
         return res.status(400).json({ error: 'Email and password are required' });
     }
     
-    let pool;
     try {
-        if (!process.env.POSTGRES_URL) throw new Error('POSTGRES_URL is missing');
-        pool = createPool({ connectionString: process.env.POSTGRES_URL });
         const result = await pool.query(`SELECT * FROM users WHERE email = $1;`, [email]);
         const user = result.rows[0];
         
@@ -276,8 +271,6 @@ app.post('/api/login', async (req, res) => {
         });
     } catch (err) {
         res.status(500).json({ error: err.message });
-    } finally {
-        if (pool) await pool.end();
     }
 });
 
@@ -290,10 +283,7 @@ app.get('/api/user/:id', authenticateToken, async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     
-    let pool;
     try {
-        if (!process.env.POSTGRES_URL) throw new Error('POSTGRES_URL is missing');
-        pool = createPool({ connectionString: process.env.POSTGRES_URL });
         const result = await pool.query(
             `SELECT id, fname, lname, email, college, year, field, interest, intro, linkedin, github, projects, certificates, hackathons FROM users WHERE id = $1;`,
             [id]
@@ -302,8 +292,6 @@ app.get('/api/user/:id', authenticateToken, async (req, res) => {
         res.status(200).json({ success: true, user: result.rows[0] });
     } catch (err) {
         res.status(500).json({ error: err.message });
-    } finally {
-        if (pool) await pool.end();
     }
 });
 
@@ -314,16 +302,11 @@ app.get('/api/users', authenticateToken, async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     
-    let pool;
     try {
-        if (!process.env.POSTGRES_URL) throw new Error('POSTGRES_URL is missing');
-        pool = createPool({ connectionString: process.env.POSTGRES_URL });
         const result = await pool.query(`SELECT id, fname, lname, email, college, year, field, interest, intro, linkedin, github FROM users ORDER BY id DESC;`);
         res.status(200).json({ success: true, users: result.rows });
     } catch (err) {
         res.status(500).json({ error: err.message });
-    } finally {
-        if (pool) await pool.end();
     }
 });
 
@@ -339,17 +322,12 @@ app.post('/api/user/add-item', authenticateToken, async (req, res) => {
         return res.status(400).json({ error: 'Invalid item type' });
     }
     const column = type.endsWith('s') ? type : type + 's';
-    let pool;
     try {
-        if (!process.env.POSTGRES_URL) throw new Error('POSTGRES_URL is missing');
-        pool = createPool({ connectionString: process.env.POSTGRES_URL });
         const query = `UPDATE users SET ${column} = ${column} || $1::jsonb WHERE id = $2;`;
         await pool.query(query, [JSON.stringify([item]), userId]);
         res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
-    } finally {
-        if (pool) await pool.end();
     }
 });
 
@@ -361,10 +339,7 @@ app.post('/api/user/update', authenticateToken, async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     
-    let pool;
     try {
-        if (!process.env.POSTGRES_URL) throw new Error('POSTGRES_URL is missing');
-        pool = createPool({ connectionString: process.env.POSTGRES_URL });
         const query = `
             UPDATE users 
             SET fname = $1, lname = $2, college = $3, year = $4, field = $5, interest = $6, intro = $7, linkedin = $8, github = $9
@@ -375,8 +350,6 @@ app.post('/api/user/update', authenticateToken, async (req, res) => {
         res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
-    } finally {
-        if (pool) await pool.end();
     }
 });
 
@@ -389,10 +362,7 @@ app.post('/api/zorus-apply', authenticateToken, async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     
-    let pool;
     try {
-        if (!process.env.POSTGRES_URL) throw new Error('POSTGRES_URL is missing');
-        pool = createPool({ connectionString: process.env.POSTGRES_URL });
         // Check if already applied
         const check = await pool.query(`SELECT id FROM zorus_applications WHERE user_id = $1;`, [userId]);
         if (check.rows.length > 0) return res.status(400).json({ error: 'Already applied' });
@@ -447,8 +417,6 @@ app.post('/api/zorus-apply', authenticateToken, async (req, res) => {
         res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
-    } finally {
-        if (pool) await pool.end();
     }
 });
 
@@ -458,16 +426,11 @@ app.get('/api/zorus-applications', authenticateToken, async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     
-    let pool;
     try {
-        if (!process.env.POSTGRES_URL) throw new Error('POSTGRES_URL is missing');
-        pool = createPool({ connectionString: process.env.POSTGRES_URL });
         const result = await pool.query(`SELECT * FROM zorus_applications ORDER BY applied_at DESC;`);
         res.status(200).json({ success: true, applications: result.rows });
     } catch (err) {
         res.status(500).json({ error: err.message });
-    } finally {
-        if (pool) await pool.end();
     }
 });
 
@@ -479,16 +442,11 @@ app.post('/api/zorus-submit-score', authenticateToken, async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     
-    let pool;
     try {
-        if (!process.env.POSTGRES_URL) throw new Error('POSTGRES_URL is missing');
-        pool = createPool({ connectionString: process.env.POSTGRES_URL });
         await pool.query(`UPDATE zorus_applications SET score = $1 WHERE user_id = $2;`, [score, userId]);
         res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
-    } finally {
-        if (pool) await pool.end();
     }
 });
 
