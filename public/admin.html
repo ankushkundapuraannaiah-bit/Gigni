@@ -175,44 +175,6 @@
       </div>
     </div>
 
-    <!-- BRAND COLLABORATION SECTION -->
-    <div class="section" style="padding-top:0;">
-      <div class="header-info">
-        <span class="collab-badge">Brand Outreach</span>
-        <h1>Brand Collaboration</h1>
-        <p>Generate and send personalised partnership proposals to brand contacts for Zorus 2.1 recruitment.</p>
-      </div>
-      <div class="card">
-        <div class="collab-grid">
-          <div>
-            <div class="fg">
-              <label>Brand / Company Name</label>
-              <input type="text" id="collab-brand" placeholder="e.g. TechCorp India" oninput="updateCollabPreview()">
-            </div>
-            <div class="fg">
-              <label>Contact Person Name</label>
-              <input type="text" id="collab-contact" placeholder="e.g. Priya Sharma" oninput="updateCollabPreview()">
-            </div>
-            <div class="fg">
-              <label>Recipient Email</label>
-              <input type="email" id="collab-email" placeholder="hr@techcorp.com">
-            </div>
-            <div class="fg">
-              <label>Industry / Domain</label>
-              <input type="text" id="collab-industry" placeholder="e.g. FinTech, EdTech, AI" oninput="updateCollabPreview()">
-            </div>
-            <button class="btn-act" onclick="sendBrandCollab()" id="collab-send-btn" style="width:100%; padding:18px; font-size:16px; background:linear-gradient(135deg,#8b5cf6,#3b5bdb); margin-top:8px;">🚀 Send Collaboration Proposal</button>
-          </div>
-          <div>
-            <p style="font-size:11px; font-weight:800; color:var(--text-dim); text-transform:uppercase; margin-bottom:10px;">Live Preview</p>
-            <div style="background:#000; border-radius:12px; padding:12px;">
-              <iframe id="collab-preview-frame" style="width:100%; height:420px; border:none; background:#fff; border-radius:8px;"></iframe>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- BULK EMAIL SECTION -->
     <div class="section" style="padding-top:0;">
       <div class="header-info">
@@ -288,13 +250,9 @@
 
   <script>
     // AUTH & DATA
-    function getAuthHeaders() {
-      const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
-      const token = user.token || localStorage.getItem('gigni_token');
-      return { 
-        'Authorization': `Bearer ${token || ''}`, 
-        'Content-Type': 'application/json' 
-      };
+    function getAuthHeader() {
+      const token = localStorage.getItem('gigni_token');
+      return token ? { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } : {};
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -302,18 +260,12 @@
       if (user.email !== 'ankushka2089@gmail.com') { window.location.href = 'index.html'; return; }
       fetchUsers();
       fetchZorusApplications();
-      updateCollabPreview();
     });
 
     async function fetchUsers() {
       const tbody = document.getElementById('users-body');
       try {
-        const res = await fetch('/api/users', { headers: getAuthHeaders() });
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({ error: res.statusText }));
-          tbody.innerHTML = `<tr><td colspan="5" style="color:var(--orange); text-align:center; padding:20px;">Error ${res.status}: ${errData.error || 'Server rejected request'}</td></tr>`;
-          return;
-        }
+        const res = await fetch('/api/users', { headers: getAuthHeader() });
         const data = await res.json();
         if (data.success) {
           tbody.innerHTML = '';
@@ -381,12 +333,7 @@
     async function fetchZorusApplications() {
       const tbody = document.getElementById('zorus-body');
       try {
-        const res = await fetch('/api/zorus-applications', { headers: getAuthHeaders() });
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({ error: res.statusText }));
-          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:60px; color:var(--orange);">Error ${res.status}: ${errData.error || 'Server rejected request'}</td></tr>`;
-          return;
-        }
+        const res = await fetch('/api/zorus-applications', { headers: getAuthHeader() });
         const data = await res.json();
         if (data.success) {
           tbody.innerHTML = '';
@@ -410,8 +357,7 @@
           tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:60px; color:#f87171;">Sync Failure: ${data.error}</td></tr>`;
         }
       } catch (e) {
-        console.error('Fetch error:', e);
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:60px; color:var(--orange);">Network Error: Could not connect to API.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:60px; color:#f87171;">Network Error: Database unreachable.</td></tr>`;
       }
     }
 
@@ -441,97 +387,9 @@
         }
       };
       try {
-        const res = await fetch('/api/user/add-item', { 
-          method: 'POST', 
-          headers: getAuthHeaders(), 
-          body: JSON.stringify(body) 
-        });
-        const data = await res.json();
-        if(data.success) { showToast('Build Assigned'); closeModal(); }
-        else { showToast('Error: ' + (data.error || 'Failed')); }
+        const res = await fetch('/api/user/add-item', { method: 'POST', headers: getAuthHeader(), body: JSON.stringify(body) });
+        if((await res.json()).success) { showToast('Build Assigned'); closeModal(); }
       } catch (e) { showToast('Error'); } finally { btn.innerText = originalText; }
-    }
-
-    // BRAND COLLAB
-    function getBrandCollabHTML() {
-      const brand    = document.getElementById('collab-brand').value    || 'Your Company';
-      const contact  = document.getElementById('collab-contact').value  || 'there';
-      const industry = document.getElementById('collab-industry').value || 'your industry';
-      return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#030712;">
-<div style="font-family:'Outfit',Helvetica,Arial,sans-serif;background:#030712;color:#f3f4f6;max-width:620px;margin:auto;border:1px solid rgba(255,255,255,0.08);border-radius:24px;overflow:hidden;">
-  <div style="background:linear-gradient(135deg,#3b5bdb,#8b5cf6);padding:50px 40px;text-align:center;">
-    <p style="font-size:12px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:3px;margin:0 0 10px;">Partnership Proposal</p>
-    <h1 style="font-family:'Bebas Neue',Impact,sans-serif;font-size:52px;color:#fff;margin:0;letter-spacing:2px;">GIGNI × ${brand}</h1>
-    <p style="font-size:16px;color:rgba(255,255,255,0.75);margin-top:12px;">Zorus 2.1 — Agentic Talent Cohort 2026</p>
-  </div>
-  <div style="padding:44px;">
-    <p style="font-size:16px;color:#9ca3af;">Dear ${contact},</p>
-    <p style="font-size:16px;line-height:1.8;color:#f3f4f6;">We hope this message finds you well. We are reaching out on behalf of <strong>Gigni</strong>, a student-focused technology community, to explore a <strong>Brand Collaboration</strong> opportunity with <strong>${brand}</strong> through our flagship programme — <em>Zorus 2.1</em>.</p>
-    <div style="margin:36px 0;background:rgba(255,255,255,0.03);border-radius:20px;padding:30px;border:1px solid rgba(255,255,255,0.06);">
-      <h3 style="color:#f97316;margin-top:0;text-transform:uppercase;font-size:13px;letter-spacing:1px;">Why Partner with Gigni?</h3>
-      <ul style="padding-left:0;list-style:none;">
-        <li style="margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;color:#d1d5db;"><span style="color:#f97316;font-size:18px;">✓</span> <span><strong>Recruit Pre-Vetted Talent</strong> — Access students who have built real AI projects and scored ≥ 85% on our rigorous technical assessment.</span></li>
-        <li style="margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;color:#d1d5db;"><span style="color:#f97316;font-size:18px;">✓</span> <span><strong>Brand Visibility</strong> — Feature ${brand} across our community of 500 + students from IITs, NITs, and top engineering colleges across India.</span></li>
-        <li style="margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;color:#d1d5db;"><span style="color:#f97316;font-size:18px;">✓</span> <span><strong>Industry-Relevant Exposure</strong> — All Zorus 2.1 projects are aligned with ${industry} trends, giving you direct access to domain-ready candidates.</span></li>
-        <li style="margin-bottom:0;display:flex;align-items:flex-start;gap:10px;color:#d1d5db;"><span style="color:#f97316;font-size:18px;">✓</span> <span><strong>Zero Recruitment Cost</strong> — Partner with us at no charge for this cohort and receive first-pick interview rights before public placement.</span></li>
-      </ul>
-    </div>
-    <div style="background:rgba(59,91,219,0.08);border-left:4px solid #3b5bdb;border-radius:0 12px 12px 0;padding:20px 24px;margin-bottom:36px;">
-      <p style="margin:0;font-size:14px;color:#93c5fd;line-height:1.7;"><strong>About Zorus 2.1:</strong> A 3-month intensive internship programme covering Agentic AI, Python Orchestration, and Neural Workflow Design. Cohort opens June 2026. All participants complete a proctored 25-question assessment with a minimum passing bar of 85%.</p>
-    </div>
-    <div style="text-align:center;margin:40px 0;">
-      <a href="https://gigniconnect.space" style="background:linear-gradient(135deg,#3b5bdb,#8b5cf6);color:#fff;padding:18px 52px;border-radius:100px;text-decoration:none;font-weight:800;font-size:17px;display:inline-block;">Explore the Partnership →</a>
-    </div>
-    <p style="font-size:14px;color:#6b7280;text-align:center;line-height:1.6;">We would love to schedule a short call to discuss how Gigni can add value to <strong>${brand}</strong>'s talent strategy.<br>Reach us at <a href="mailto:gigniconnect@gmail.com" style="color:#8b5cf6;">gigniconnect@gmail.com</a></p>
-    <p style="font-size:13px;color:#4b5563;text-align:center;margin-top:40px;">Warm regards,<br><strong style="color:#fff;">Team Gigni</strong><br><span style="font-size:11px;">gigniconnect@gmail.com · gigniconnect.space</span></p>
-  </div>
-</div>
-</body></html>`;
-    }
-
-    function updateCollabPreview() {
-      const frame = document.getElementById('collab-preview-frame');
-      const doc = frame.contentDocument;
-      if (doc) { doc.open(); doc.write(getBrandCollabHTML()); doc.close(); }
-    }
-
-    async function sendBrandCollab() {
-      const email   = document.getElementById('collab-email').value.trim();
-      const brand   = document.getElementById('collab-brand').value.trim();
-      const contact = document.getElementById('collab-contact').value.trim();
-      if (!email)   return showToast('⚠️ Enter a recipient email');
-      if (!brand)   return showToast('⚠️ Enter the brand name');
-      if (!contact) return showToast('⚠️ Enter a contact person name');
-
-      const btn = document.getElementById('collab-send-btn');
-      btn.innerText = 'Sending...';
-      btn.disabled = true;
-
-      try {
-        const res = await fetch('/api/admin/send-brand-collab', {
-          method: 'POST',
-          headers: getAuthHeaders(),
-          body: JSON.stringify({
-            to: email,
-            brand,
-            contact,
-            industry: document.getElementById('collab-industry').value.trim() || 'technology',
-            htmlBody: getBrandCollabHTML()
-          })
-        });
-        const data = await res.json();
-        if (data.success) {
-          showToast('✅ Proposal sent to ' + email);
-          document.getElementById('collab-email').value = '';
-        } else {
-          showToast('❌ Failed: ' + (data.error || 'Unknown error'));
-        }
-      } catch (e) {
-        showToast('❌ Network error');
-      } finally {
-        btn.innerText = '🚀 Send Collaboration Proposal';
-        btn.disabled = false;
-      }
     }
 
     // BULK LOGIC
@@ -563,51 +421,35 @@
 
     async function startBulkSend() {
       if (bulkEmails.length === 0) return showToast('No recipients');
+      const admin = JSON.parse(localStorage.getItem('gigni_user') || '{}');
       const res = await fetch('/api/admin/send-bulk-email', {
         method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ emails: bulkEmails, subject: document.getElementById('bulk-subject').value, htmlBody: bodyInput.value })
+        headers: getAuthHeader(),
+        body: JSON.stringify({ emails: bulkEmails, subject: document.getElementById('bulk-subject').value, htmlBody: bodyInput.value, adminEmail: admin.email })
       });
       document.getElementById('bulk-progress-wrap').style.display = 'block';
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
-      let buffer = '';
-
       while(true) {
         const { value, done } = await reader.read();
         if(done) break;
-        
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop();
-
-        lines.forEach(m => {
+        const msgs = decoder.decode(value).split('\n');
+        msgs.forEach(m => {
           if(!m) return;
           try {
             const msg = JSON.parse(m);
-            const feed = document.getElementById('prog-feed');
-            
             if(msg.type === 'sent' || msg.type === 'failed') {
+              const feed = document.getElementById('prog-feed');
               const div = document.createElement('div');
-              div.style.padding = '10px';
-              div.style.background = 'rgba(255,255,255,0.03)';
-              div.style.borderRadius = '8px';
-              div.innerHTML = `<span style="color:${msg.type==='sent'?'#10b981':'#f87171'}; font-weight:800; margin-right:10px;">[${msg.type.toUpperCase()}]</span> ${msg.email}`;
+              div.innerHTML = `<span style="color:${msg.type==='sent'?'#10b981':'#f87171'}">[${msg.type.toUpperCase()}]</span> ${msg.email}`;
               feed.prepend(div);
-              
               const pct = ((msg.index + 1) / msg.total) * 100;
               document.getElementById('prog-bar').style.width = pct + '%';
               document.getElementById('prog-count').innerText = `${msg.index+1} / ${msg.total}`;
-              document.getElementById('prog-label').innerText = 'Streaming Updates...';
-            } else if (msg.type === 'waiting') {
-              document.getElementById('prog-label').innerText = `Next transmission in ${msg.secondsLeft}s...`;
-              document.getElementById('prog-bar').style.boxShadow = '0 0 15px var(--primary)';
             }
-          } catch(e) { console.error('Parse error:', e, m); }
+          } catch(e) {}
         });
       }
-      document.getElementById('prog-label').innerText = 'Bulk Deployment Complete ✅';
-      document.getElementById('prog-bar').style.boxShadow = 'none';
       showToast('Bulk Deployment Complete');
     }
 
@@ -658,7 +500,7 @@
     async function repairDatabase() {
       if(!confirm('This will attempt to verify and repair the database schema. Proceed?')) return;
       try {
-        const res = await fetch('/api/init', { headers: getAuthHeaders() });
+        const res = await fetch('/api/init');
         const data = await res.json();
         if(data.success) {
           showToast('Schema Repaired. Resyncing...');
