@@ -232,6 +232,65 @@
       </div>
     </div>
 
+    <!-- BRAND COLLABORATION EMAIL SECTION -->
+    <div class="section" style="padding-top:0;">
+      <div class="header-info">
+        <h1>Brand Collaboration Portal</h1>
+        <p>Engage with industry partners and send collaboration opportunities.</p>
+      </div>
+      <div class="card">
+        <div class="email-grid">
+          <div>
+            <div class="fg">
+              <label>Brand Name</label>
+              <input type="text" id="brand-name" placeholder="e.g. TechCorp, CloudScale Inc">
+            </div>
+            <div class="fg">
+              <label>Contact Email</label>
+              <input type="email" id="brand-email" placeholder="partnerships@brand.com">
+            </div>
+            <div class="fg">
+              <label>Partnership Type</label>
+              <select id="collab-type">
+                <option value="internship">Internship Opportunity</option>
+                <option value="mentorship">Mentorship Program</option>
+                <option value="hiring">Direct Hiring</option>
+                <option value="sponsorship">Event Sponsorship</option>
+                <option value="custom">Custom Proposal</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label>Subject Line</label>
+              <input type="text" id="collab-subject" placeholder="e.g. Partnership: Connecting Gigni Community with Your Team">
+            </div>
+            <button class="btn-act" id="send-collab-btn" onclick="startCollabSend()" style="width:100%; padding:18px; font-size:16px; background:#10b981; margin-top:20px;">Send Collaboration Proposal</button>
+          </div>
+          <div>
+            <div class="fg">
+              <label>Email Body (HTML)</label>
+              <textarea id="collab-body" style="height:280px;" placeholder="Build your collaboration proposal here..."></textarea>
+            </div>
+            <div style="background:#000; border-radius:12px; padding:12px;">
+              <p style="font-size:10px; color:var(--text-dim); margin-bottom:8px; font-weight:800;">PREVIEW</p>
+              <iframe id="collab-preview" style="width:100%; height:200px; border:none; background:#fff; border-radius:8px;"></iframe>
+            </div>
+          </div>
+        </div>
+        
+        <!-- PROGRESS -->
+        <div id="collab-progress-wrap" style="display:none; margin-top:40px; padding-top:40px; border-top:1px solid var(--border);">
+          <div style="height:4px; background:rgba(255,255,255,0.05); border-radius:10px; margin-bottom:20px; overflow:hidden;">
+            <div id="collab-prog-bar" style="width:0%; height:100%; background:#10b981; transition:0.5s;"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+            <h4 id="collab-prog-label">Sending...</h4>
+            <span id="collab-prog-status">0%</span>
+          </div>
+          <div id="collab-prog-feed" style="max-height:300px; overflow-y:auto; display:flex; flex-direction:column; gap:12px;"></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- MODAL -->
@@ -257,7 +316,8 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
-      if (user.email !== 'ankushka2089@gmail.com') { window.location.href = 'index.html'; return; }
+      const token = localStorage.getItem('gigni_token');
+      if (!token || user.email !== 'ankushka2089@gmail.com') { window.location.href = 'index.html'; return; }
       fetchUsers();
       fetchZorusApplications();
     });
@@ -266,6 +326,7 @@
       const tbody = document.getElementById('users-body');
       try {
         const res = await fetch('/api/users', { headers: getAuthHeader() });
+        if (res.status === 401) { showToast('Authentication required'); window.location.href = 'index.html'; return; }
         const data = await res.json();
         if (data.success) {
           tbody.innerHTML = '';
@@ -334,6 +395,7 @@
       const tbody = document.getElementById('zorus-body');
       try {
         const res = await fetch('/api/zorus-applications', { headers: getAuthHeader() });
+        if (res.status === 401) { showToast('Authentication required'); window.location.href = 'index.html'; return; }
         const data = await res.json();
         if (data.success) {
           tbody.innerHTML = '';
@@ -509,6 +571,66 @@
           showToast('Repair Failed: ' + data.error);
         }
       } catch(e) { showToast('Network Error during repair'); }
+    }
+
+    // Brand Collaboration Functions
+    const collabBodyInput = document.getElementById('collab-body');
+    const collabPreviewFrame = document.getElementById('collab-preview');
+    
+    function updateCollabPreview() {
+      const doc = collabPreviewFrame.contentDocument;
+      if (doc) {
+        doc.open(); doc.write(collabBodyInput.value); doc.close();
+      }
+    }
+    collabBodyInput.oninput = updateCollabPreview;
+
+    async function startCollabSend() {
+      const brandName = document.getElementById('brand-name').value.trim();
+      const brandEmail = document.getElementById('brand-email').value.trim();
+      const collabType = document.getElementById('collab-type').value;
+      const subject = document.getElementById('collab-subject').value.trim();
+      const body = collabBodyInput.value.trim();
+
+      if(!brandName || !brandEmail || !subject || !body) {
+        return showToast('Please fill in all collaboration fields');
+      }
+
+      const admin = JSON.parse(localStorage.getItem('gigni_user') || '{}');
+      const res = await fetch('/api/admin/send-collaboration-email', {
+        method: 'POST',
+        headers: getAuthHeader(),
+        body: JSON.stringify({ 
+          brandName, 
+          brandEmail, 
+          collabType, 
+          subject, 
+          htmlBody: body, 
+          adminEmail: admin.email 
+        })
+      });
+
+      if (res.status === 401) { showToast('Authentication required'); window.location.href = 'index.html'; return; }
+      if(!res.ok) {
+        showToast('Failed to send collaboration email');
+        return;
+      }
+
+      document.getElementById('collab-progress-wrap').style.display = 'block';
+      const data = await res.json();
+      
+      if(data.success) {
+        showToast('Collaboration Email Sent Successfully ✓');
+        // Reset form
+        document.getElementById('brand-name').value = '';
+        document.getElementById('brand-email').value = '';
+        document.getElementById('collab-subject').value = '';
+        collabBodyInput.value = '';
+        updateCollabPreview();
+        document.getElementById('collab-progress-wrap').style.display = 'none';
+      } else {
+        showToast('Error: ' + (data.error || 'Unknown error'));
+      }
     }
 
     function showToast(msg) {
