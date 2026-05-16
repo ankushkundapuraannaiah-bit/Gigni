@@ -47,8 +47,12 @@ const validatePassword = (password) => {
     return password && password.length >= 8;
 };
 
-// Initialize Database Schema
-app.get('/api/init', async (req, res) => {
+// Initialize Database Schema (Secured)
+app.get('/api/init', authenticateToken, async (req, res) => {
+    // Only admin can initialize/repair database
+    if (req.user.email !== 'ankushka2089@gmail.com') {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
     let client;
     try {
         client = createClient();

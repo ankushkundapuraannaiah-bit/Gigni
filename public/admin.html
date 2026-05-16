@@ -434,9 +434,15 @@
         }
       };
       try {
-        const res = await fetch('/api/user/add-item', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body) });
-        if((await res.json()).success) { showToast('Build Assigned'); closeModal(); }
-      } catch (e) { showToast('Error'); } finally { btn.innerText = originalText; }
+        const res = await fetch('/api/user/add-item', { 
+          method: 'POST', 
+          headers: getAuthHeaders(), 
+          body: JSON.stringify(body) 
+        });
+        const data = await res.json();
+        if(data.success) { showToast('Build Assigned'); closeModal(); }
+        else { showToast('Error: ' + (data.error || 'Failed')); }
+      } catch (e) { showToast('Network Error'); } finally { btn.innerText = originalText; }
     }
 
     // BULK LOGIC
@@ -562,26 +568,43 @@
       document.getElementById('bulk-progress-wrap').style.display = 'block';
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
+      let buffer = '';
+
       while(true) {
         const { value, done } = await reader.read();
         if(done) break;
-        const msgs = decoder.decode(value).split('\n');
-        msgs.forEach(m => {
+        
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop(); // Keep partial line in buffer
+
+        lines.forEach(m => {
           if(!m) return;
           try {
             const msg = JSON.parse(m);
+            const feed = document.getElementById('prog-feed');
+            
             if(msg.type === 'sent' || msg.type === 'failed') {
-              const feed = document.getElementById('prog-feed');
               const div = document.createElement('div');
-              div.innerHTML = `<span style="color:${msg.type==='sent'?'#10b981':'#f87171'}">[${msg.type.toUpperCase()}]</span> ${msg.email}`;
+              div.style.padding = '10px';
+              div.style.background = 'rgba(255,255,255,0.03)';
+              div.style.borderRadius = '8px';
+              div.innerHTML = `<span style="color:${msg.type==='sent'?'#10b981':'#f87171'}; font-weight:800; margin-right:10px;">[${msg.type.toUpperCase()}]</span> ${msg.email}`;
               feed.prepend(div);
+              
               const pct = ((msg.index + 1) / msg.total) * 100;
               document.getElementById('prog-bar').style.width = pct + '%';
               document.getElementById('prog-count').innerText = `${msg.index+1} / ${msg.total}`;
+              document.getElementById('prog-label').innerText = 'Streaming Updates...';
+            } else if (msg.type === 'waiting') {
+              document.getElementById('prog-label').innerText = `Next transmission in ${msg.secondsLeft}s...`;
+              document.getElementById('prog-bar').style.boxShadow = '0 0 15px var(--primary)';
             }
-          } catch(e) {}
+          } catch(e) { console.error('Parse error:', e, m); }
         });
       }
+      document.getElementById('prog-label').innerText = 'Bulk Deployment Complete ✅';
+      document.getElementById('prog-bar').style.boxShadow = 'none';
       showToast('Bulk Deployment Complete');
     }
 
@@ -632,7 +655,7 @@
     async function repairDatabase() {
       if(!confirm('This will attempt to verify and repair the database schema. Proceed?')) return;
       try {
-        const res = await fetch('/api/init');
+        const res = await fetch('/api/init', { headers: getAuthHeaders() });
         const data = await res.json();
         if(data.success) {
           showToast('Schema Repaired. Resyncing...');
