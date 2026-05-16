@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
     secure: false,
     auth: {
         user: process.env.GMAIL_USER,
-        pass: (process.env.GMAIL_APP_PASSWORD || '').replace(/\s/g, '')
+        pass: process.env.GMAIL_APP_PASSWORD
     }
 });
 
@@ -47,12 +47,8 @@ const validatePassword = (password) => {
     return password && password.length >= 8;
 };
 
-// Initialize Database Schema (Secured)
-app.get('/api/init', authenticateToken, async (req, res) => {
-    // Only admin can initialize/repair database
-    if (req.user.email !== 'ankushka2089@gmail.com') {
-        return res.status(403).json({ error: 'Unauthorized' });
-    }
+// Initialize Database Schema
+app.get('/api/init', async (req, res) => {
     let client;
     try {
         client = createClient();
@@ -330,9 +326,8 @@ app.get('/api/users', authenticateToken, async (req, res) => {
 app.post('/api/user/add-item', authenticateToken, async (req, res) => {
     const { userId, type, item } = req.body;
     
-    // Allow admin to assign items to any user; others can only update their own
-    const isAdmin = req.user.email === 'ankushka2089@gmail.com';
-    if (!isAdmin && req.user.id != userId) {
+    // Verify user is updating their own profile
+    if (req.user.id != userId) {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     
@@ -357,9 +352,8 @@ app.post('/api/user/add-item', authenticateToken, async (req, res) => {
 app.post('/api/user/update', authenticateToken, async (req, res) => {
     const { userId, fname, lname, college, year, field, interest, intro, linkedin, github } = req.body;
     
-    // Allow admin to assign items to any user; others can only update their own
-    const isAdmin = req.user.email === 'ankushka2089@gmail.com';
-    if (!isAdmin && req.user.id != userId) {
+    // Verify user is updating their own profile
+    if (req.user.id != userId) {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     
@@ -543,38 +537,6 @@ app.post('/api/admin/send-bulk-email', authenticateToken, async (req, res) => {
     res.end();
 });
 
-// Brand Collaboration Email
-app.post('/api/admin/send-brand-collab', authenticateToken, async (req, res) => {
-    // Only admin can send brand collab emails
-    if (req.user.email !== 'ankushka2089@gmail.com') {
-        return res.status(403).json({ error: 'Unauthorized' });
-    }
-
-    const { to, brand, contact, industry, htmlBody } = req.body;
-    if (!to || !brand || !contact || !htmlBody) {
-        return res.status(400).json({ error: 'Missing required fields: to, brand, contact, htmlBody' });
-    }
-
-    try {
-        await transporter.sendMail({
-            from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
-            to,
-            subject: `Partnership Proposal: Gigni × ${brand} — Zorus 2.1 Talent Collaboration`,
-            html: htmlBody
-        });
-        res.json({ success: true, message: `Proposal sent to ${to}` });
-    } catch (err) {
-        console.error('Brand collab email error:', err);
-        res.status(500).json({ error: err.message });
-    }
-});
-
-
-
-const path = require('path');
-
-// Serve static files from the public directory
-app.use(express.static(path.join(__dirname, '..', 'public')));
 
 module.exports = app;
 
