@@ -60,7 +60,60 @@
 
     @media (max-width: 900px) {
       .footer-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+      nav { padding: 15px 30px; }
+      .nav-links { display: none; }
+      .menu-toggle { display: block !important; }
     }
+
+    /* MENU TOGGLE BUTTON */
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      z-index: 2001;
+      padding: 10px;
+    }
+    .hamburger {
+      display: block;
+      width: 28px;
+      height: 2px;
+      background: #fff;
+      position: relative;
+      transition: 0.3s;
+    }
+    .hamburger::before, .hamburger::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      transition: 0.3s;
+    }
+    .hamburger::before { top: -8px; left: 0; }
+    .hamburger::after { bottom: -8px; left: 0; }
+
+    .menu-toggle.active .hamburger { background: transparent; }
+    .menu-toggle.active .hamburger::before { transform: rotate(45deg); top: 0; }
+    .menu-toggle.active .hamburger::after { transform: rotate(-45deg); bottom: 0; }
+
+    /* MOBILE NAV OVERLAY */
+    .mobile-nav {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(3, 7, 18, 0.98);
+      backdrop-filter: blur(20px);
+      z-index: 2000;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 30px;
+      opacity: 0; pointer-events: none; transition: 0.4s;
+    }
+    .mobile-nav.active { opacity: 1; pointer-events: auto; }
+    .mobile-nav a {
+      font-size: 2rem; font-weight: 700; color: #fff; text-decoration: none;
+      text-transform: uppercase; letter-spacing: 2px; transition: 0.3s;
+    }
+    .mobile-nav a:hover { color: var(--accent); transform: scale(1.1); }
+
   </style>
 <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
@@ -73,7 +126,18 @@
     <a href="about.html">About</a>
     <a href="zorus.html">Zorus 2.1</a>
   </div>
+  <button class="menu-toggle" id="menu-toggle" onclick="toggleMobileMenu()">
+    <span class="hamburger"></span>
+  </button>
 </nav>
+
+<div class="mobile-nav" id="mobile-nav">
+  <a href="index.html" onclick="toggleMobileMenu()">Home</a>
+  <a href="about.html" onclick="toggleMobileMenu()">About</a>
+  <a href="hosting.html" onclick="toggleMobileMenu()">Hosting</a>
+  <a href="zorus.html" onclick="toggleMobileMenu()">Zorus 2.1</a>
+</div>
+
 
 <section class="hero">
   <h1>ZORUS 2.1 ECOSYSTEM</h1>
@@ -137,6 +201,16 @@
   </div>
 </footer>
 
+<script>
+  function toggleMobileMenu() {
+    const toggle = document.getElementById('menu-toggle');
+    const menu = document.getElementById('mobile-nav');
+    toggle.classList.toggle('active');
+    menu.classList.toggle('active');
+    document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : 'auto';
+  }
+</script>
 </body>
+
 </html>
 
