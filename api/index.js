@@ -1,13 +1,18 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { createClient } = require('@vercel/postgres');
+const { createPool } = require('@vercel/postgres');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Singleton Database Pool
+const pool = createPool({
+    connectionString: process.env.POSTGRES_URL
+});
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
 // Email Transporter Configuration
@@ -47,15 +52,19 @@ const validatePassword = (password) => {
     return password && password.length >= 8;
 };
 
-// Initialize Database Schema
-app.get('/api/init', async (req, res) => {
-    let client;
+// Initialize Database Schema (Secured)
+app.get('/api/init', authenticateToken, async (req, res) => {
+    // Only admin can initialize/repair database
+    if (req.user.email !== 'ankushka2089@gmail.com') {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    let pool;
     try {
-        client = createClient();
-        await client.connect();
+        if (!process.env.POSTGRES_URL) throw new Error('POSTGRES_URL is not defined in environment');
+        pool = createPool({ connectionString: process.env.POSTGRES_URL });
         
         // Users Table
-        await client.query(`CREATE TABLE IF NOT EXISTS users (
+        await pool.query(`CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
             fname VARCHAR(255),
             lname VARCHAR(255),
@@ -74,7 +83,7 @@ app.get('/api/init', async (req, res) => {
         );`);
 
         // Zorus Applications Table
-        await client.query(`CREATE TABLE IF NOT EXISTS zorus_applications (
+        await pool.query(`CREATE TABLE IF NOT EXISTS zorus_applications (
             id SERIAL PRIMARY KEY,
             user_id INTEGER,
             email VARCHAR(255),
@@ -99,20 +108,20 @@ app.get('/api/init', async (req, res) => {
 
         for (const col of userCols) {
             try {
-                await client.query(`ALTER TABLE users ADD COLUMN ${col.name} ${col.type};`);
+                await pool.query(`ALTER TABLE users ADD COLUMN ${col.name} ${col.type};`);
             } catch (e) { if (e.code !== '42701') console.error(`Error adding ${col.name}:`, e.message); }
         }
 
         try {
-            await client.query(`ALTER TABLE zorus_applications ADD COLUMN score INTEGER;`);
+            await pool.query(`ALTER TABLE zorus_applications ADD COLUMN score INTEGER;`);
         } catch (e) { if (e.code !== '42701') console.error(`Error adding score to zorus_applications:`, e.message); }
 
 
         // Ensure Admin User Exists
-        const adminCheck = await client.query(`SELECT id FROM users WHERE email = $1;`, ['ankushka2089@gmail.com']);
+        const adminCheck = await pool.query(`SELECT id FROM users WHERE email = $1;`, ['ankushka2089@gmail.com']);
         if (adminCheck.rows.length === 0) {
             const hashedPassword = await bcrypt.hash('AdminPassword@2026', 10);
-            await client.query(`
+            await pool.query(`
                 INSERT INTO users (fname, lname, email, password, college)
                 VALUES ($1, $2, $3, $4, $5);
             `, ['Ankush', 'Admin', 'ankushka2089@gmail.com', hashedPassword, 'Gigni Headquarters']);
@@ -121,8 +130,6 @@ app.get('/api/init', async (req, res) => {
         res.status(200).json({ success: true, message: 'Database initialized and admin checked' });
     } catch (err) {
         res.status(500).json({ error: err.message });
-    } finally {
-        if (client) await client.end();
     }
 });
 
@@ -141,10 +148,7 @@ app.post('/api/register', async (req, res) => {
         return res.status(400).json({ error: 'Password must be at least 8 characters' });
     }
     
-    let client;
     try {
-        client = createClient();
-        await client.connect();
         
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -155,7 +159,7 @@ app.post('/api/register', async (req, res) => {
             RETURNING id;
         `;
         const values = [fname, lname, email, hashedPassword, college, year, field, interest, intro, linkedin, github];
-        const result = await client.query(query, values);
+        const result = await pool.query(query, values);
         
         // Send Welcome Email
         try {
@@ -222,8 +226,6 @@ app.post('/api/register', async (req, res) => {
     } catch (err) {
         if (err.code === '23505') return res.status(400).json({ error: "Email already exists" });
         res.status(500).json({ error: err.message });
-    } finally {
-        if (client) await client.end();
     }
 });
 
@@ -235,11 +237,8 @@ app.post('/api/login', async (req, res) => {
         return res.status(400).json({ error: 'Email and password are required' });
     }
     
-    let client;
     try {
-        client = createClient();
-        await client.connect();
-        const result = await client.query(`SELECT * FROM users WHERE email = $1;`, [email]);
+        const result = await pool.query(`SELECT * FROM users WHERE email = $1;`, [email]);
         const user = result.rows[0];
         
         if (!user) {
@@ -272,8 +271,6 @@ app.post('/api/login', async (req, res) => {
         });
     } catch (err) {
         res.status(500).json({ error: err.message });
-    } finally {
-        if (client) await client.end();
     }
 });
 
@@ -286,11 +283,8 @@ app.get('/api/user/:id', authenticateToken, async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     
-    let client;
     try {
-        client = createClient();
-        await client.connect();
-        const result = await client.query(
+        const result = await pool.query(
             `SELECT id, fname, lname, email, college, year, field, interest, intro, linkedin, github, projects, certificates, hackathons FROM users WHERE id = $1;`,
             [id]
         );
@@ -298,8 +292,6 @@ app.get('/api/user/:id', authenticateToken, async (req, res) => {
         res.status(200).json({ success: true, user: result.rows[0] });
     } catch (err) {
         res.status(500).json({ error: err.message });
-    } finally {
-        if (client) await client.end();
     }
 });
 
@@ -310,16 +302,11 @@ app.get('/api/users', authenticateToken, async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     
-    let client;
     try {
-        client = createClient();
-        await client.connect();
-        const result = await client.query(`SELECT id, fname, lname, email, college, year, field, interest, intro, linkedin, github FROM users ORDER BY id DESC;`);
+        const result = await pool.query(`SELECT id, fname, lname, email, college, year, field, interest, intro, linkedin, github FROM users ORDER BY id DESC;`);
         res.status(200).json({ success: true, users: result.rows });
     } catch (err) {
         res.status(500).json({ error: err.message });
-    } finally {
-        if (client) await client.end();
     }
 });
 
@@ -335,17 +322,12 @@ app.post('/api/user/add-item', authenticateToken, async (req, res) => {
         return res.status(400).json({ error: 'Invalid item type' });
     }
     const column = type.endsWith('s') ? type : type + 's';
-    let client;
     try {
-        client = createClient();
-        await client.connect();
         const query = `UPDATE users SET ${column} = ${column} || $1::jsonb WHERE id = $2;`;
-        await client.query(query, [JSON.stringify([item]), userId]);
+        await pool.query(query, [JSON.stringify([item]), userId]);
         res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
-    } finally {
-        if (client) await client.end();
     }
 });
 
@@ -357,22 +339,17 @@ app.post('/api/user/update', authenticateToken, async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     
-    let client;
     try {
-        client = createClient();
-        await client.connect();
         const query = `
             UPDATE users 
             SET fname = $1, lname = $2, college = $3, year = $4, field = $5, interest = $6, intro = $7, linkedin = $8, github = $9
             WHERE id = $10;
         `;
         const values = [fname, lname, college, year, field, interest, intro, linkedin, github, userId];
-        await client.query(query, values);
+        await pool.query(query, values);
         res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
-    } finally {
-        if (client) await client.end();
     }
 });
 
@@ -385,15 +362,12 @@ app.post('/api/zorus-apply', authenticateToken, async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     
-    let client;
     try {
-        client = createClient();
-        await client.connect();
         // Check if already applied
-        const check = await client.query(`SELECT id FROM zorus_applications WHERE user_id = $1;`, [userId]);
+        const check = await pool.query(`SELECT id FROM zorus_applications WHERE user_id = $1;`, [userId]);
         if (check.rows.length > 0) return res.status(400).json({ error: 'Already applied' });
         
-        await client.query(`INSERT INTO zorus_applications (user_id, email, fname, lname) VALUES ($1, $2, $3, $4);`, [userId, email, fname, lname]);
+        await pool.query(`INSERT INTO zorus_applications (user_id, email, fname, lname) VALUES ($1, $2, $3, $4);`, [userId, email, fname, lname]);
         
         // Send Zorus Test Invitation Email
         try {
@@ -443,8 +417,6 @@ app.post('/api/zorus-apply', authenticateToken, async (req, res) => {
         res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
-    } finally {
-        if (client) await client.end();
     }
 });
 
@@ -454,16 +426,11 @@ app.get('/api/zorus-applications', authenticateToken, async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     
-    let client;
     try {
-        client = createClient();
-        await client.connect();
-        const result = await client.query(`SELECT * FROM zorus_applications ORDER BY applied_at DESC;`);
+        const result = await pool.query(`SELECT * FROM zorus_applications ORDER BY applied_at DESC;`);
         res.status(200).json({ success: true, applications: result.rows });
     } catch (err) {
         res.status(500).json({ error: err.message });
-    } finally {
-        if (client) await client.end();
     }
 });
 
@@ -475,16 +442,11 @@ app.post('/api/zorus-submit-score', authenticateToken, async (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     
-    let client;
     try {
-        client = createClient();
-        await client.connect();
-        await client.query(`UPDATE zorus_applications SET score = $1 WHERE user_id = $2;`, [score, userId]);
+        await pool.query(`UPDATE zorus_applications SET score = $1 WHERE user_id = $2;`, [score, userId]);
         res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: err.message });
-    } finally {
-        if (client) await client.end();
     }
 });
 
@@ -537,6 +499,32 @@ app.post('/api/admin/send-bulk-email', authenticateToken, async (req, res) => {
     res.end();
 });
 
+
+// Brand Collaboration Email
+app.post('/api/admin/send-brand-collab', authenticateToken, async (req, res) => {
+    // Only admin can send brand collab emails
+    if (req.user.email !== 'ankushka2089@gmail.com') {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    const { to, brand, contact, industry, htmlBody } = req.body;
+    if (!to || !brand || !contact || !htmlBody) {
+        return res.status(400).json({ error: 'Missing required fields: to, brand, contact, htmlBody' });
+    }
+
+    try {
+        await transporter.sendMail({
+            from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
+            to,
+            subject: `Partnership Proposal: Gigni × ${brand} — Zorus 2.1 Talent Collaboration`,
+            html: htmlBody
+        });
+        res.json({ success: true, message: `Proposal sent to ${to}` });
+    } catch (err) {
+        console.error('Brand collab email error:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
 
 module.exports = app;
 
