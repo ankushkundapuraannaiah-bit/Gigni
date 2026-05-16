@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { createClient } = require('@vercel/postgres');
+const { createPool } = require('@vercel/postgres');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -55,7 +55,7 @@ app.get('/api/init', authenticateToken, async (req, res) => {
     }
     let client;
     try {
-        client = createClient();
+        client = createPool({ connectionString: process.env.POSTGRES_URL });
         await client.connect();
         
         // Users Table
@@ -147,7 +147,7 @@ app.post('/api/register', async (req, res) => {
     
     let client;
     try {
-        client = createClient();
+        client = createPool({ connectionString: process.env.POSTGRES_URL });
         await client.connect();
         
         // Hash password
@@ -241,7 +241,7 @@ app.post('/api/login', async (req, res) => {
     
     let client;
     try {
-        client = createClient();
+        client = createPool({ connectionString: process.env.POSTGRES_URL });
         await client.connect();
         const result = await client.query(`SELECT * FROM users WHERE email = $1;`, [email]);
         const user = result.rows[0];
@@ -292,7 +292,7 @@ app.get('/api/user/:id', authenticateToken, async (req, res) => {
     
     let client;
     try {
-        client = createClient();
+        client = createPool({ connectionString: process.env.POSTGRES_URL });
         await client.connect();
         const result = await client.query(
             `SELECT id, fname, lname, email, college, year, field, interest, intro, linkedin, github, projects, certificates, hackathons FROM users WHERE id = $1;`,
@@ -316,7 +316,7 @@ app.get('/api/users', authenticateToken, async (req, res) => {
     
     let client;
     try {
-        client = createClient();
+        client = createPool({ connectionString: process.env.POSTGRES_URL });
         await client.connect();
         const result = await client.query(`SELECT id, fname, lname, email, college, year, field, interest, intro, linkedin, github FROM users ORDER BY id DESC;`);
         res.status(200).json({ success: true, users: result.rows });
@@ -341,7 +341,7 @@ app.post('/api/user/add-item', authenticateToken, async (req, res) => {
     const column = type.endsWith('s') ? type : type + 's';
     let client;
     try {
-        client = createClient();
+        client = createPool({ connectionString: process.env.POSTGRES_URL });
         await client.connect();
         const query = `UPDATE users SET ${column} = ${column} || $1::jsonb WHERE id = $2;`;
         await client.query(query, [JSON.stringify([item]), userId]);
@@ -363,7 +363,7 @@ app.post('/api/user/update', authenticateToken, async (req, res) => {
     
     let client;
     try {
-        client = createClient();
+        client = createPool({ connectionString: process.env.POSTGRES_URL });
         await client.connect();
         const query = `
             UPDATE users 
@@ -391,7 +391,7 @@ app.post('/api/zorus-apply', authenticateToken, async (req, res) => {
     
     let client;
     try {
-        client = createClient();
+        client = createPool({ connectionString: process.env.POSTGRES_URL });
         await client.connect();
         // Check if already applied
         const check = await client.query(`SELECT id FROM zorus_applications WHERE user_id = $1;`, [userId]);
@@ -460,7 +460,7 @@ app.get('/api/zorus-applications', authenticateToken, async (req, res) => {
     
     let client;
     try {
-        client = createClient();
+        client = createPool({ connectionString: process.env.POSTGRES_URL });
         await client.connect();
         const result = await client.query(`SELECT * FROM zorus_applications ORDER BY applied_at DESC;`);
         res.status(200).json({ success: true, applications: result.rows });
@@ -481,7 +481,7 @@ app.post('/api/zorus-submit-score', authenticateToken, async (req, res) => {
     
     let client;
     try {
-        client = createClient();
+        client = createPool({ connectionString: process.env.POSTGRES_URL });
         await client.connect();
         await client.query(`UPDATE zorus_applications SET score = $1 WHERE user_id = $2;`, [score, userId]);
         res.status(200).json({ success: true });
