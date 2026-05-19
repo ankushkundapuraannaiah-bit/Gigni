@@ -167,10 +167,11 @@
               <th>Member</th>
               <th>Status / Score</th>
               <th>Applied At</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody id="zorus-body">
-            <tr><td colspan="4" style="text-align:center; padding:60px; color:var(--text-dim);">Loading applications...</td></tr>
+            <tr><td colspan="5" style="text-align:center; padding:60px; color:var(--text-dim);">Loading applications...</td></tr>
           </tbody>
         </table>
       </div>
@@ -392,23 +393,27 @@
         if (data.success) {
           tbody.innerHTML = '';
           if (data.applications.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:60px; color:var(--text-dim);">No applications received yet.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:60px; color:var(--text-dim);">No applications received yet.</td></tr>';
             return;
           }
           data.applications.forEach(a => {
             const tr = document.createElement('tr');
             const status = a.score === null ? 'Pending' : (a.score >= 85 ? `Pass (${a.score}%)` : `Fail (${a.score}%)`);
             const statusColor = a.score === null ? 'var(--text-dim)' : (a.score >= 85 ? '#10b981' : '#f87171');
+            const safeFname = (a.fname || 'Applicant').replace(/'/g, "\\'");
             tr.innerHTML = `
               <td>#${a.id}</td>
               <td><strong>${a.fname} ${a.lname}</strong><br><small style="color:var(--text-dim)">${a.email}</small></td>
               <td style="color:${statusColor}; font-weight:700;">${status}</td>
               <td>${new Date(a.applied_at).toLocaleDateString()}</td>
+              <td>
+                <button class="btn-act" onclick="generateZorusId('${a.id}', '${safeFname}')">Generate ID</button>
+              </td>
             `;
             tbody.appendChild(tr);
           });
         } else {
-          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:60px; color:#f87171;">Sync Failure: ${data.error}</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:60px; color:#f87171;">Sync Failure: ${data.error}</td></tr>`;
         }
       } catch (e) {
         console.error('Fetch error:', e);
@@ -426,6 +431,15 @@
       if(e && e.target !== e.currentTarget) return; 
       document.getElementById('item-ovl').classList.remove('open'); 
       document.getElementById('profile-ovl').classList.remove('open');
+    }
+
+    function generateZorusId(appId, name) {
+      const prefix = 'ZOR2.1';
+      const randomChars = Math.random().toString(36).substring(2, 6).toUpperCase();
+      const generatedId = `${prefix}-${appId}-${randomChars}`;
+      
+      prompt(`Generated ID for ${name}:`, generatedId);
+      showToast(`ID ${generatedId} ready for ${name}`);
     }
 
     async function submitItem() {

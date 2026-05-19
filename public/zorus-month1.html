@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zorus 2.1 — Month 1: AI Avatar Clone</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+  <style>
+    :root {
+      --primary: #3b5bdb;
+      --orange: #f97316;
+      --bg: #030712;
+      --card-bg: rgba(17, 24, 39, 0.6);
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #f3f4f6;
+      --text-dim: #9ca3af;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.3; pointer-events: none; }
+    .main-container { position: relative; z-index: 10; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: 20px 40px; background: rgba(3, 7, 18, 0.8);
+      backdrop-filter: blur(20px);
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { 
+      font-family: 'Bebas Neue', sans-serif; font-size: 2rem; 
+      letter-spacing: 0.05em; color: #fff; text-decoration: none;
+    }
+    .back-btn { 
+      color: var(--text-dim); text-decoration: none; font-size: 14px; 
+      font-weight: 600; transition: 0.3s; 
+    }
+    .back-btn:hover { color: #fff; }
+
+    /* HERO */
+    .hero {
+      padding: 120px 40px 40px;
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .badge-pill {
+      background: rgba(59, 91, 219, 0.15); border: 1px solid rgba(59, 91, 219, 0.3);
+      border-radius: 50px; padding: 8px 20px; font-size: 12px; font-weight: 700; color: #93c5fd;
+      text-transform: uppercase; margin-bottom: 24px; letter-spacing: 1px; display: inline-block;
+    }
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 6vw, 4.5rem);
+      line-height: 1.1; margin-bottom: 24px; letter-spacing: 1px;
+    }
+    .hero h1 span { color: var(--primary); }
+
+    /* VIDEO SECTION */
+    .video-container {
+      max-width: 1000px;
+      margin: 0 auto 60px;
+      padding: 0 40px;
+    }
+    .video-wrapper {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      height: 0;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    .video-wrapper iframe {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    }
+
+    /* COURSE CONTENT */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto 100px;
+      padding: 0 40px;
+    }
+    @media (max-width: 900px) {
+      .content-grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px;
+    }
+
+    .card h2 { font-size: 28px; font-weight: 800; margin-bottom: 20px; color: #fff; }
+    .card p { color: var(--text-dim); line-height: 1.7; margin-bottom: 24px; font-size: 16px; }
+    
+    .feature-list { list-style: none; padding: 0; margin: 0 0 30px; }
+    .feature-list li {
+      display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;
+      color: #e5e7eb; line-height: 1.6;
+    }
+    .feature-list li span { color: var(--orange); font-size: 20px; font-weight: bold; }
+
+    .tool-tag {
+      display: inline-block; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      padding: 8px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; margin: 0 10px 10px 0;
+      color: #fff;
+    }
+
+    /* ASSIGNMENT SIDEBAR */
+    .assignment-box {
+      background: linear-gradient(145deg, rgba(249, 115, 22, 0.05), rgba(17, 24, 39, 0.8));
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      border-radius: 24px;
+      padding: 32px;
+      position: sticky;
+      top: 100px;
+    }
+    .assignment-box h3 {
+      color: var(--orange); font-size: 20px; font-weight: 800; text-transform: uppercase; margin-bottom: 16px;
+      letter-spacing: 1px;
+    }
+    .task-item {
+      display: flex; gap: 12px; margin-bottom: 20px;
+    }
+    .task-num {
+      background: var(--orange); color: #fff; width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0;
+    }
+    .task-text { color: #d1d5db; font-size: 15px; line-height: 1.5; }
+
+    .btn-act {
+      display: block; width: 100%; text-align: center;
+      background: var(--primary); color: #fff; text-decoration: none; border-radius: 12px;
+      padding: 16px; font-weight: 700; font-size: 16px; margin-top: 30px; transition: 0.3s; border: none; cursor: pointer;
+    }
+    .btn-act:hover { background: #2f4ec4; transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="main-container">
+    <nav>
+      <a href="dashboard.html" class="logo">GIGNI <span style="color:var(--text-dim); font-size:1rem; font-family:'Outfit';">Workspace</span></a>
+      <a href="zorus-course.html" class="back-btn">← Back to Curriculum</a>
+    </nav>
+
+    <div class="hero">
+      <div class="badge-pill">Month 1 Reference</div>
+      <h1>Create a Realistic Talking <span>AI Clone</span> in 5 Mins</h1>
+      <p style="color: var(--text-dim); font-size: 1.2rem; line-height: 1.6;">Welcome to Month 1 of Zorus 2.1. In this module, you'll learn the agentic workflow behind generating a hyper-realistic digital twin of yourself.</p>
+    </div>
+
+    <div class="video-container">
+      <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/HDcKTHm0B9Q" title="Create a Realistic Talking AI Clone" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="card">
+        <h2>Module Overview</h2>
+        <p>In this reference material, we explore the cutting-edge capabilities of AI-driven avatar and voice synthesis. Creating a digital twin allows for exponential scaling of content creation, personalized brand messaging, and dynamic agentic communication.</p>
+        
+        <h3 style="margin: 32px 0 16px; font-size: 20px; font-weight: 700;">Key Learning Outcomes</h3>
+        <ul class="feature-list">
+          <li><span>✓</span> <strong>Digital Twin Synthesis:</strong> Understand the technical requirements for mapping gestures, facial expressions, and micro-movements to a 3D avatar space.</li>
+          <li><span>✓</span> <strong>Voice Cloning Integrity:</strong> Train a neural voice model that accurately mirrors pacing, intonation, and emotional resonance.</li>
+          <li><span>✓</span> <strong>Agentic Integration:</strong> Implement these generative tools into a seamless, automated workflow for personal branding and client deployments.</li>
+        </ul>
+
+        <h3 style="margin: 32px 0 16px; font-size: 20px; font-weight: 700;">Tech Stack & Tools</h3>
+        <div>
+          <span class="tool-tag">HeyGen (Avatar Gen)</span>
+          <span class="tool-tag">ElevenLabs (Voice Synthesis)</span>
+          <span class="tool-tag">Python (Automation)</span>
+        </div>
+      </div>
+
+      <div class="assignment-box">
+        <h3>Month 1 Objective</h3>
+        <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 24px; line-height: 1.6;">Apply the concepts from the reference video to build your own generative identity.</p>
+        
+        <div class="task-item">
+          <div class="task-num">1</div>
+          <div class="task-text">Record a 2-minute baseline video with clear lighting and audio.</div>
+        </div>
+        <div class="task-item">
+          <div class="task-num">2</div>
+          <div class="task-text">Process the footage through HeyGen to calibrate your avatar model.</div>
+        </div>
+        <div class="task-item">
+          <div class="task-num">3</div>
+          <div class="task-text">Clone your voice profile and generate a 30-second introductory script.</div>
+        </div>
+
+        <button class="btn-act" onclick="alert('Submission portal opens June 1, 2026.')">Submit Build</button>
+      </div>
+    </div>
+
+    <footer style="padding:40px; text-align:center; opacity:0.3; font-size:12px; border-top: 1px solid var(--border);">
+      &copy; 2026 GIGNI · ZORUS 2.1 AGENTIC COHORT
+    </footer>
+  </div>
+
+  <script>
+    // 3D Background effect
+    const canvas = document.getElementById('bg-canvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    camera.position.z = 5;
+    const pGeo = new THREE.BufferGeometry();
+    const pPos = new Float32Array(1500 * 3);
+    for(let i=0; i<4500; i++) pPos[i] = (Math.random() - 0.5) * 15;
+    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    const points = new THREE.Points(pGeo, new THREE.PointsMaterial({ size: 0.02, color: 0x3b5bdb, transparent: true, opacity: 0.5 }));
+    scene.add(points);
+    function animate() { requestAnimationFrame(animate); points.rotation.y += 0.0005; points.rotation.x += 0.0002; renderer.render(scene, camera); }
+    animate();
+    window.addEventListener('resize', () => { renderer.setSize(window.innerWidth, window.innerHeight); camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); });
+  </script>
+</body>
+</html>
