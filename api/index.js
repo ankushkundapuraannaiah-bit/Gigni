@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3000;
 
 // ─── DATABASE CONNECTION ─────────────────────────────────────────────────────
 // Neon/Vercel can inject the DB URL under several names — try them all.
-const DB_URL =
+let DB_URL =
     process.env.POSTGRES_URL ||
     process.env.POSTGRES_URL_NON_POOLING ||
     process.env.DATABASE_URL ||
@@ -20,6 +20,12 @@ const DB_URL =
 
 if (!DB_URL) {
     console.error('⛔  No database URL found. Set POSTGRES_URL in your environment / Vercel settings.');
+} else {
+    // Strip channel_binding=require as it causes connection timeouts in the pg driver
+    DB_URL = DB_URL.replace(/channel_binding=[^&]+/g, '')
+                   .replace(/&&+/g, '&')
+                   .replace(/\?&/, '?')
+                   .replace(/\?$/, '');
 }
 
 const pool = new Pool({
