@@ -127,6 +127,10 @@ const transporter = nodemailer.createTransport({
 // ─── MIDDLEWARE ───────────────────────────────────────────────────────────────
 app.use(cors());
 app.use(express.json());
+app.use((req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    next();
+});
 
 // ─── AUTH MIDDLEWARE ──────────────────────────────────────────────────────────
 const authenticateToken = (req, res, next) => {
