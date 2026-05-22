@@ -254,13 +254,14 @@ app.post('/api/register', async (req, res) => {
             RETURNING id;
         `, [fname, lname, email, hashedPassword, college, year, field, interest, intro, linkedin, github]);
 
-        // Send welcome email (non-blocking — failure must NOT break registration)
+        // Send welcome email (must be awaited in Vercel before res.json, but failure must NOT break registration)
         if (process.env.GMAIL_USER && gmailPass) {
-            transporter.sendMail({
-                from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
-                to: email,
-                subject: 'Welcome to the Gigni Community — Your Journey Begins',
-                html: `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#030712;">
+            try {
+                await transporter.sendMail({
+                    from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
+                    to: email,
+                    subject: 'Welcome to the Gigni Community — Your Journey Begins',
+                    html: `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#030712;">
 <div style="font-family:'Outfit',Helvetica,Arial,sans-serif;background:#030712;color:#f3f4f6;max-width:600px;margin:auto;border:1px solid rgba(255,255,255,0.08);border-radius:24px;overflow:hidden;">
   <div style="background:linear-gradient(135deg,#3b5bdb,#8b5cf6);padding:50px 40px;text-align:center;">
     <p style="font-size:12px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:3px;margin:0 0 10px;">Welcome to the Community</p>
@@ -284,11 +285,11 @@ app.post('/api/register', async (req, res) => {
     <p style="font-size:13px;color:#4b5563;text-align:center;margin-top:40px;">Warm regards,<br><strong style="color:#fff;">Team Gigni</strong><br><span style="font-size:11px;">gigniconnect@gmail.com · gigniconnect.space</span></p>
   </div>
 </div></body></html>`
-            }).then(() => {
+                });
                 console.log(`✅  Welcome email sent to ${email}`);
-            }).catch(err => {
+            } catch (err) {
                 console.error(`❌  Welcome email failed for ${email}:`, err.message);
-            });
+            }
         } else {
             console.warn('⚠️  Skipping welcome email — email credentials not configured.');
         }
@@ -431,13 +432,14 @@ app.post('/api/zorus-apply', authenticateToken, async (req, res) => {
             [userId, email, fname, lname]
         );
 
-        // Send Zorus test invitation email (non-blocking — failure must NOT break the application)
+        // Send Zorus test invitation email (must be awaited)
         if (process.env.GMAIL_USER && gmailPass) {
-            transporter.sendMail({
-                from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
-                to: email,
-                subject: 'Zorus 2.1 — Technical Assessment Invitation',
-                html: `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#030712;">
+            try {
+                await transporter.sendMail({
+                    from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
+                    to: email,
+                    subject: 'Zorus 2.1 — Technical Assessment Invitation',
+                    html: `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#030712;">
 <div style="font-family:'Outfit',Helvetica,Arial,sans-serif;background:#030712;color:#f3f4f6;max-width:600px;margin:auto;border:1px solid rgba(255,255,255,0.08);border-radius:24px;overflow:hidden;">
   <div style="background:linear-gradient(135deg,#f97316,#ef4444);padding:50px 40px;text-align:center;">
     <p style="font-size:12px;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:3px;margin:0 0 10px;">Technical Assessment</p>
@@ -464,11 +466,11 @@ app.post('/api/zorus-apply', authenticateToken, async (req, res) => {
     <p style="font-size:13px;color:#4b5563;text-align:center;">Warm regards,<br><strong style="color:#fff;">Team Gigni</strong><br><span style="font-size:11px;">gigniconnect@gmail.com · gigniconnect.space</span></p>
   </div>
 </div></body></html>`
-            }).then(() => {
+                });
                 console.log(`✅  Zorus assessment email sent to ${email}`);
-            }).catch(err => {
+            } catch (err) {
                 console.error(`❌  Zorus email failed for ${email}:`, err.message);
-            });
+            }
         } else {
             console.warn('⚠️  Skipping Zorus email — email credentials not configured.');
         }
