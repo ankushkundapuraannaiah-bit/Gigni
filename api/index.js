@@ -31,7 +31,12 @@ if (!DB_URL) {
 const pool = new Pool({
     connectionString: DB_URL,
     // Neon requires SSL in production; skip cert check for simplicity
-    ssl: DB_URL && DB_URL.includes('neon.tech') ? { rejectUnauthorized: false } : false
+    ssl: DB_URL && DB_URL.includes('neon.tech') ? { rejectUnauthorized: false } : false,
+    // Critical for Vercel serverless: limit pool size and set timeouts
+    // to avoid connection exhaustion across cold starts
+    max: 1,
+    idleTimeoutMillis: 10000,
+    connectionTimeoutMillis: 10000
 });
 
 const JWT_SECRET = process.env.JWT_SECRET || 'gigni-secret-key-change-in-production';
@@ -114,15 +119,35 @@ async function initializeDatabase() {
 initializeDatabase();
 
 // ─── EMAIL TRANSPORTER ────────────────────────────────────────────────────────
+// Gmail App Passwords are shown with spaces ("xxxx xxxx xxxx xxxx") but SMTP
+// requires the raw 16-char string — strip any whitespace defensively.
+const gmailPass = (process.env.GMAIL_APP_PASSWORD || '').replace(/\s+/g, '');
+
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
     port: 587,
-    secure: false,
+    secure: false, // STARTTLS
     auth: {
         user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD
+        pass: gmailPass
+    },
+    tls: {
+        rejectUnauthorized: false // allow self-signed certs in some environments
     }
 });
+
+// Verify email connection on cold start — logs errors without blocking startup
+if (process.env.GMAIL_USER && gmailPass) {
+    transporter.verify((err) => {
+        if (err) {
+            console.error('❌  Email transporter verification failed:', err.message);
+        } else {
+            console.log('✅  Email transporter ready — SMTP connection verified.');
+        }
+    });
+} else {
+    console.warn('⚠️  GMAIL_USER or GMAIL_APP_PASSWORD not set — emails will not be sent.');
+}
 
 // ─── MIDDLEWARE ───────────────────────────────────────────────────────────────
 app.use(cors());
@@ -156,6 +181,42 @@ app.get('/api/health', async (req, res) => {
     } catch (err) {
         res.status(500).json({ ok: false, db: 'disconnected', error: err.message, envSet: !!DB_URL });
     }
+});
+
+// ─── ADMIN: SYSTEM DEBUG ──────────────────────────────────────────────────────
+// Lets admin check DB connectivity, table counts, and email config without logs.
+app.get('/api/debug', authenticateToken, async (req, res) => {
+    if (req.user.email !== 'ankushka2089@gmail.com') {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    const report = {
+        db_url_set: !!DB_URL,
+        email_user_set: !!process.env.GMAIL_USER,
+        email_pass_set: !!gmailPass,
+        jwt_secret_custom: !!process.env.JWT_SECRET,
+        db: 'unknown',
+        user_count: null,
+        zorus_count: null,
+        email_verify: 'not_checked'
+    };
+    try {
+        await pool.query('SELECT 1;');
+        report.db = 'connected';
+        const uc = await pool.query('SELECT COUNT(*) FROM users;');
+        report.user_count = parseInt(uc.rows[0].count);
+        const zc = await pool.query('SELECT COUNT(*) FROM zorus_applications;');
+        report.zorus_count = parseInt(zc.rows[0].count);
+    } catch (e) {
+        report.db = 'error: ' + e.message;
+    }
+    // Non-blocking email verify
+    try {
+        await transporter.verify();
+        report.email_verify = 'ok';
+    } catch (e) {
+        report.email_verify = 'error: ' + e.message;
+    }
+    res.json(report);
 });
 
 // ─── PROTECTED: MANUAL DB REPAIR (admin only) ─────────────────────────────────
@@ -193,23 +254,44 @@ app.post('/api/register', async (req, res) => {
             RETURNING id;
         `, [fname, lname, email, hashedPassword, college, year, field, interest, intro, linkedin, github]);
 
-        // Send welcome email (non-blocking)
-        transporter.sendMail({
-            from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
-            to: email,
-            subject: 'Welcome to Gigni Community - Your Professional Journey Begins',
-            html: `
-            <div style="font-family: 'Inter', sans-serif; background-color: #000; color: #fff; padding: 40px; border-radius: 20px; max-width: 600px; margin: auto; border: 1px solid #333;">
-                <h1 style="color: #3b5bdb; font-size: 32px; margin-bottom: 20px;">Welcome to Gigni Community</h1>
-                <p style="font-size: 18px; color: #ccc;">Dear ${fname},</p>
-                <p style="font-size: 16px; line-height: 1.6; color: #aaa;">
-                    We are pleased to welcome you to the Gigni community. Your professional profile has been successfully created.
-                </p>
-                <div style="text-align: center; margin-top: 30px;">
-                    <a href="https://www.gigniconnect.space/dashboard.html" style="background: #3b5bdb; color: #fff; padding: 15px 30px; text-decoration: none; border-radius: 50px; font-weight: bold; display: inline-block;">Access Your Dashboard</a>
-                </div>
-            </div>`
-        }).catch(err => console.error('Welcome email failed:', err.message));
+        // Send welcome email (non-blocking — failure must NOT break registration)
+        if (process.env.GMAIL_USER && gmailPass) {
+            transporter.sendMail({
+                from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
+                to: email,
+                subject: 'Welcome to the Gigni Community — Your Journey Begins',
+                html: `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#030712;">
+<div style="font-family:'Outfit',Helvetica,Arial,sans-serif;background:#030712;color:#f3f4f6;max-width:600px;margin:auto;border:1px solid rgba(255,255,255,0.08);border-radius:24px;overflow:hidden;">
+  <div style="background:linear-gradient(135deg,#3b5bdb,#8b5cf6);padding:50px 40px;text-align:center;">
+    <p style="font-size:12px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:3px;margin:0 0 10px;">Welcome to the Community</p>
+    <h1 style="font-size:48px;color:#fff;margin:0;letter-spacing:2px;">GIGNI</h1>
+    <p style="font-size:16px;color:rgba(255,255,255,0.75);margin-top:12px;">The Agentic Revolution Starts Here</p>
+  </div>
+  <div style="padding:44px;">
+    <p style="font-size:18px;color:#9ca3af;">Dear ${fname},</p>
+    <p style="font-size:16px;line-height:1.8;color:#f3f4f6;">Welcome to <strong>Gigni</strong> — the student-driven AI community built for the agentic era. Your profile is live and your journey has officially begun.</p>
+    <div style="margin:36px 0;background:rgba(255,255,255,0.03);border-radius:20px;padding:30px;border:1px solid rgba(255,255,255,0.06);">
+      <h3 style="color:#f97316;margin-top:0;text-transform:uppercase;font-size:13px;letter-spacing:1px;">What's Next?</h3>
+      <ul style="padding-left:0;list-style:none;">
+        <li style="margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;color:#d1d5db;"><span style="color:#3b5bdb;font-size:18px;">✓</span> <span>Complete your profile to unlock full community access</span></li>
+        <li style="margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;color:#d1d5db;"><span style="color:#3b5bdb;font-size:18px;">✓</span> <span>Explore the <strong>Zorus 2.1</strong> internship programme — applications open now</span></li>
+        <li style="margin-bottom:0;display:flex;align-items:flex-start;gap:10px;color:#d1d5db;"><span style="color:#3b5bdb;font-size:18px;">✓</span> <span>Connect with builders, get verified credentials, and build your agentic portfolio</span></li>
+      </ul>
+    </div>
+    <div style="text-align:center;margin:40px 0;">
+      <a href="https://www.gigniconnect.space/dashboard.html" style="background:linear-gradient(135deg,#3b5bdb,#8b5cf6);color:#fff;padding:18px 52px;border-radius:100px;text-decoration:none;font-weight:800;font-size:17px;display:inline-block;">Access Your Dashboard →</a>
+    </div>
+    <p style="font-size:13px;color:#4b5563;text-align:center;margin-top:40px;">Warm regards,<br><strong style="color:#fff;">Team Gigni</strong><br><span style="font-size:11px;">gigniconnect@gmail.com · gigniconnect.space</span></p>
+  </div>
+</div></body></html>`
+            }).then(() => {
+                console.log(`✅  Welcome email sent to ${email}`);
+            }).catch(err => {
+                console.error(`❌  Welcome email failed for ${email}:`, err.message);
+            });
+        } else {
+            console.warn('⚠️  Skipping welcome email — email credentials not configured.');
+        }
 
         const token = jwt.sign(
             { id: result.rows[0].id, email },
@@ -349,24 +431,47 @@ app.post('/api/zorus-apply', authenticateToken, async (req, res) => {
             [userId, email, fname, lname]
         );
 
-        // Send test invitation email (non-blocking)
-        transporter.sendMail({
-            from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
-            to: email,
-            subject: 'Zorus 2.1 Internship Program - Technical Assessment Invitation',
-            html: `
-            <div style="font-family: 'Inter', sans-serif; background-color: #000; color: #fff; padding: 40px; border-radius: 20px; max-width: 600px; margin: auto; border: 1px solid #333;">
-                <h1 style="color: #f97316; font-size: 32px; margin-bottom: 20px;">Zorus 2.1 - Technical Assessment</h1>
-                <p style="font-size: 18px; color: #ccc;">Dear ${fname},</p>
-                <p style="font-size: 16px; line-height: 1.6; color: #aaa;">
-                    Thank you for your interest in the <strong>Zorus 2.1 Python Internship Program</strong>.
-                    We invite you to participate in our technical assessment.
-                </p>
-                <div style="text-align: center; margin-top: 30px;">
-                    <a href="https://www.gigniconnect.space/zorus-test.html" style="background: #f97316; color: #fff; padding: 15px 35px; text-decoration: none; border-radius: 50px; font-weight: bold; display: inline-block; font-size: 18px;">Begin Technical Assessment</a>
-                </div>
-            </div>`
-        }).catch(err => console.error('Zorus email failed:', err.message));
+        // Send Zorus test invitation email (non-blocking — failure must NOT break the application)
+        if (process.env.GMAIL_USER && gmailPass) {
+            transporter.sendMail({
+                from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
+                to: email,
+                subject: 'Zorus 2.1 — Technical Assessment Invitation',
+                html: `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#030712;">
+<div style="font-family:'Outfit',Helvetica,Arial,sans-serif;background:#030712;color:#f3f4f6;max-width:600px;margin:auto;border:1px solid rgba(255,255,255,0.08);border-radius:24px;overflow:hidden;">
+  <div style="background:linear-gradient(135deg,#f97316,#ef4444);padding:50px 40px;text-align:center;">
+    <p style="font-size:12px;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:3px;margin:0 0 10px;">Technical Assessment</p>
+    <h1 style="font-size:48px;color:#fff;margin:0;letter-spacing:2px;">ZORUS 2.1</h1>
+    <p style="font-size:16px;color:rgba(255,255,255,0.8);margin-top:12px;">Python Internship Programme · Cohort 2026</p>
+  </div>
+  <div style="padding:44px;">
+    <p style="font-size:18px;color:#9ca3af;">Dear ${fname},</p>
+    <p style="font-size:16px;line-height:1.8;color:#f3f4f6;">Thank you for applying to the <strong>Zorus 2.1 Python Internship Programme</strong>. We are pleased to invite you to complete our technical assessment — a 25-question test covering Python, Agentic AI, and problem-solving.</p>
+    <div style="margin:36px 0;background:rgba(255,255,255,0.03);border-radius:20px;padding:30px;border:1px solid rgba(255,255,255,0.06);">
+      <h3 style="color:#f97316;margin-top:0;text-transform:uppercase;font-size:13px;letter-spacing:1px;">Assessment Details</h3>
+      <ul style="padding-left:0;list-style:none;">
+        <li style="margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;color:#d1d5db;"><span style="color:#f97316;font-size:18px;">✓</span> <span>25 multiple-choice questions on Python &amp; Agentic AI</span></li>
+        <li style="margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;color:#d1d5db;"><span style="color:#f97316;font-size:18px;">✓</span> <span>Minimum passing score: <strong>85%</strong></span></li>
+        <li style="margin-bottom:0;display:flex;align-items:flex-start;gap:10px;color:#d1d5db;"><span style="color:#f97316;font-size:18px;">✓</span> <span>Top scorers will be shortlisted for the 3-month internship</span></li>
+      </ul>
+    </div>
+    <div style="text-align:center;margin:40px 0;">
+      <a href="https://www.gigniconnect.space/zorus-test.html" style="background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;padding:18px 52px;border-radius:100px;text-decoration:none;font-weight:800;font-size:17px;display:inline-block;">Begin Technical Assessment →</a>
+    </div>
+    <div style="background:rgba(59,91,219,0.08);border-left:4px solid #3b5bdb;border-radius:0 12px 12px 0;padding:20px 24px;margin-bottom:36px;">
+      <p style="margin:0;font-size:14px;color:#93c5fd;line-height:1.7;">You are among a select group of applicants invited to this assessment. Good luck, ${fname}! We look forward to seeing your performance.</p>
+    </div>
+    <p style="font-size:13px;color:#4b5563;text-align:center;">Warm regards,<br><strong style="color:#fff;">Team Gigni</strong><br><span style="font-size:11px;">gigniconnect@gmail.com · gigniconnect.space</span></p>
+  </div>
+</div></body></html>`
+            }).then(() => {
+                console.log(`✅  Zorus assessment email sent to ${email}`);
+            }).catch(err => {
+                console.error(`❌  Zorus email failed for ${email}:`, err.message);
+            });
+        } else {
+            console.warn('⚠️  Skipping Zorus email — email credentials not configured.');
+        }
 
         res.status(200).json({ success: true });
     } catch (err) {

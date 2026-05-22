@@ -133,7 +133,11 @@
           <h1>Member Directory</h1>
           <p>Manage community members and assign validated builds/credentials.</p>
         </div>
-        <button class="btn-act" onclick="repairDatabase()" style="background:var(--orange); font-size:11px; padding:6px 12px; margin:0;">Repair Grid Schema</button>
+        <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+          <button class="btn-act" onclick="fetchUsers()" style="background:rgba(255,255,255,0.08); font-size:11px; padding:6px 14px; margin:0;">↻ Refresh</button>
+          <button class="btn-act" onclick="checkSystemStatus()" style="background:#10b981; font-size:11px; padding:6px 14px; margin:0;">System Status</button>
+          <button class="btn-act" onclick="repairDatabase()" style="background:var(--orange); font-size:11px; padding:6px 12px; margin:0;">Repair Grid Schema</button>
+        </div>
       </div>
       <div class="card">
         <table>
@@ -309,8 +313,15 @@
 
     async function fetchUsers() {
       const tbody = document.getElementById('users-body');
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px; color:var(--text-dim);">Scanning identities...</td></tr>';
       try {
         const res = await fetch('/api/users', { headers: getAuthHeaders() });
+        if (res.status === 401 || res.status === 403) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:40px; color:var(--orange);">
+            ⚠️ Session expired or unauthorized. <a href="index.html" style="color:var(--primary); font-weight:700;">Re-Login →</a>
+          </td></tr>`;
+          return;
+        }
         if (!res.ok) {
           const errData = await res.json().catch(() => ({ error: res.statusText }));
           tbody.innerHTML = `<tr><td colspan="5" style="color:var(--orange); text-align:center; padding:20px;">Error ${res.status}: ${errData.error || 'Server rejected request'}</td></tr>`;
@@ -354,7 +365,7 @@
           tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:60px; color:#f87171;">Sync Failure: ${data.error}</td></tr>`;
         }
       } catch (e) { 
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:60px; color:#f87171;">Network Error: Database unreachable.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:60px; color:#f87171;">Network Error: Could not reach API. Check your internet connection.</td></tr>`;
         showToast('Identity Sync Error'); 
       }
     }
@@ -384,6 +395,12 @@
       const tbody = document.getElementById('zorus-body');
       try {
         const res = await fetch('/api/zorus-applications', { headers: getAuthHeaders() });
+        if (res.status === 401 || res.status === 403) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:40px; color:var(--orange);">
+            ⚠️ Session expired or unauthorized. <a href="index.html" style="color:var(--primary); font-weight:700;">Re-Login →</a>
+          </td></tr>`;
+          return;
+        }
         if (!res.ok) {
           const errData = await res.json().catch(() => ({ error: res.statusText }));
           tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:60px; color:var(--orange);">Error ${res.status}: ${errData.error || 'Server rejected request'}</td></tr>`;
@@ -674,6 +691,11 @@
       if(!confirm('This will attempt to verify and repair the database schema. Proceed?')) return;
       try {
         const res = await fetch('/api/init', { headers: getAuthHeaders() });
+        if (res.status === 401 || res.status === 403) {
+          showToast('Session expired. Please re-login.');
+          setTimeout(() => window.location.href = 'index.html', 1500);
+          return;
+        }
         const data = await res.json();
         if(data.success) {
           showToast('Schema Repaired. Resyncing...');
@@ -682,6 +704,30 @@
           showToast('Repair Failed: ' + data.error);
         }
       } catch(e) { showToast('Network Error during repair'); }
+    }
+
+    async function checkSystemStatus() {
+      showToast('Checking system status...');
+      try {
+        const res = await fetch('/api/debug', { headers: getAuthHeaders() });
+        if (res.status === 401 || res.status === 403) {
+          showToast('Session expired. Please re-login.');
+          setTimeout(() => window.location.href = 'index.html', 1500);
+          return;
+        }
+        const d = await res.json();
+        const statusLines = [
+          `🗄 Database: ${d.db}`,
+          `👥 Users: ${d.user_count ?? 'N/A'} | Zorus Apps: ${d.zorus_count ?? 'N/A'}`,
+          `📧 Email User: ${d.email_user_set ? '✅' : '❌ NOT SET'}`,
+          `🔑 Email Pass: ${d.email_pass_set ? '✅' : '❌ NOT SET'}`,
+          `📨 SMTP: ${d.email_verify}`,
+          `🔐 JWT Secret: ${d.jwt_secret_custom ? 'Custom ✅' : 'Default (set JWT_SECRET in Vercel)'}`,
+        ];
+        alert('GIGNI System Status\n\n' + statusLines.join('\n'));
+      } catch(e) {
+        showToast('Status check failed: ' + e.message);
+      }
     }
 
     function showToast(msg) {
