@@ -638,6 +638,17 @@
     </div>
   </div>
 
+  <div class="ovl" id="success-ovl" onclick="closeOvl(event,'success')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <h3 style="font-size:2.2rem; margin-bottom:10px; font-weight: 800;">Identity Created</h3>
+      <p style="color:rgba(255,255,255,0.5); margin-bottom:40px;">Welcome to Gigni. Where would you like to go next?</p>
+      <div style="display:flex; flex-direction:column; gap:15px;">
+        <button onclick="window.location.href='dashboard.html'" class="ui-btn ui-btn-primary" style="width:100%; padding:18px;">Go to Dashboard</button>
+        <button onclick="window.location.href='zorus.html'" class="ui-btn" style="width:100%; padding:18px;">Apply for Zorus 2.1</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     // ─── REACTBITS STYLE LINE WAVES BACKGROUND ──────────────────────────────
     const canvas = document.getElementById('line-waves-canvas');
@@ -788,14 +799,14 @@
         });
         const data = await res.json();
         if(data.success) {
-          alert('Registration successful! Redirecting to dashboard...');
           localStorage.setItem('gigni_user', JSON.stringify(data.user || { 
             id: data.id, fname, lname, email, college, year, field, interest, intro, linkedin, github 
           }));
           if(data.token) {
             localStorage.setItem('gigni_token', data.token);
           }
-          window.location.href = 'dashboard.html';
+          closeOvl(null, 'signup');
+          openOvl('success');
         } else {
           alert(data.error || 'Registration failed.');
         }
