@@ -77,6 +77,21 @@ async function initializeDatabase() {
             applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );`);
 
+        await pool.query(`CREATE TABLE IF NOT EXISTS project_submissions (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
+            user_email VARCHAR(255),
+            user_name VARCHAR(255),
+            project_name VARCHAR(255),
+            code_content TEXT,
+            video_url TEXT,
+            readme_content TEXT,
+            status VARCHAR(50) DEFAULT 'Under Verification',
+            submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            verified_at TIMESTAMP,
+            certificate_data TEXT 
+        );`);
+
         // Run any missing column migrations safely
         const migrations = [
             { table: 'users', name: 'projects',      type: "JSONB DEFAULT '[]'" },
@@ -340,6 +355,86 @@ app.post('/api/login', async (req, res) => {
         });
     } catch (err) {
         console.error('Login error:', err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ─── PROJECT SUBMISSIONS ─────────────────────────────────────────────────────
+app.post('/api/project/submit', authenticateToken, async (req, res) => {
+    const { projectName, codeContent, videoUrl, readmeContent } = req.body;
+    const userId = req.user.id;
+    const userEmail = req.user.email;
+
+    try {
+        const userRes = await pool.query('SELECT fname, lname FROM users WHERE id = $1', [userId]);
+        const userName = `${userRes.rows[0].fname} ${userRes.rows[0].lname}`;
+
+        await pool.query(
+            `INSERT INTO project_submissions (user_id, user_email, user_name, project_name, code_content, video_url, readme_content)
+             VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+            [userId, userEmail, userName, projectName, codeContent, videoUrl, readmeContent]
+        );
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/project/submissions', authenticateToken, async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT * FROM project_submissions WHERE user_id = $1 ORDER BY submitted_at DESC`,
+            [req.user.id]
+        );
+        res.json({ success: true, submissions: result.rows });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ─── ADMIN: SUBMISSIONS & VERIFICATION ───────────────────────────────────────
+app.get('/api/admin/submissions', authenticateToken, async (req, res) => {
+    if (req.user.email !== 'ankushka2089@gmail.com') return res.status(403).json({ error: 'Unauthorized' });
+    try {
+        const result = await pool.query(`SELECT * FROM project_submissions ORDER BY submitted_at DESC`);
+        res.json({ success: true, submissions: result.rows });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/admin/verify-submission', authenticateToken, async (req, res) => {
+    if (req.user.email !== 'ankushka2089@gmail.com') return res.status(403).json({ error: 'Unauthorized' });
+    const { submissionId, certificateBase64 } = req.body;
+
+    try {
+        const result = await pool.query(
+            `UPDATE project_submissions 
+             SET status = 'Verified', verified_at = CURRENT_TIMESTAMP, certificate_data = $1 
+             WHERE id = $2 RETURNING user_email, user_name, project_name`,
+            [certificateBase64, submissionId]
+        );
+
+        const sub = result.rows[0];
+        if (process.env.GMAIL_USER && gmailPass) {
+            await transporter.sendMail({
+                from: `"Gigni Verification" <${process.env.GMAIL_USER}>`,
+                to: sub.user_email,
+                subject: `Credential Issued: ${sub.project_name}`,
+                html: `<!DOCTYPE html><html><body style="background:#030712;color:#f3f4f6;font-family:sans-serif;padding:40px;text-align:center;">
+                    <div style="border:1px solid rgba(255,255,255,0.1);padding:40px;border-radius:24px;">
+                        <h1 style="color:#3b5bdb;">GIGNI VERIFIED</h1>
+                        <p>Congratulations ${sub.user_name},</p>
+                        <p>Your submission for <strong>${sub.project_name}</strong> has passed our manual audit.</p>
+                        <div style="margin:30px 0;">
+                            <a href="https://www.gigniconnect.space/dashboard.html" style="background:#3b5bdb;color:#fff;padding:15px 30px;border-radius:100px;text-decoration:none;font-weight:bold;">View Certificate</a>
+                        </div>
+                    </div>
+                </body></html>`
+            });
+        }
+        res.json({ success: true });
+    } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });

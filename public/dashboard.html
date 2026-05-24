@@ -193,12 +193,10 @@
 <div class="dashboard">
   <div class="sidebar">
     <a id="nav-dash" class="nav-item active" onclick="switchTab('dash', this)"><span class="material-icons">grid_view</span> Dashboard</a>
+    <a id="nav-project" class="nav-item" onclick="switchTab('project', this)"><span class="material-icons">terminal</span> Project</a>
+    <a id="nav-certificate" class="nav-item" onclick="switchTab('certificate', this)"><span class="material-icons">verified_user</span> Certificate</a>
     <a id="nav-profile" class="nav-item" onclick="switchTab('profile', this)"><span class="material-icons">account_circle</span> Profile</a>
-    <a id="nav-proj" class="nav-item" onclick="switchTab('proj', this)"><span class="material-icons">auto_awesome</span> AI Projects</a>
-    <a id="nav-cert" class="nav-item" onclick="switchTab('cert', this)"><span class="material-icons">verified</span> Credentials</a>
     <a id="nav-hack" class="nav-item" onclick="switchTab('hack', this)"><span class="material-icons">bolt</span> Hackathons</a>
-    <a id="nav-zorus" class="nav-item" onclick="switchTab('zorus', this)" style="display:none;"><span class="material-icons">code_off</span> Zorus 2.1</a>
-    <a id="nav-settings" class="nav-item" onclick="switchTab('settings', this)"><span class="material-icons">settings</span> Preferences</a>
   </div>
 
   <div class="content">
@@ -309,31 +307,38 @@
       </div>
     </div>
 
-    <!-- PROJECTS TAB -->
-    <div id="tab-proj" class="tab-content">
+    <!-- PROJECT WORKSPACE TAB -->
+    <div id="tab-project" class="tab-content">
       <div class="header-info">
-        <h1>AI Projects</h1>
-        <p>Your collaborative and individual agentic builds.</p>
+        <h1>Course Repository</h1>
+        <p>Explore source code and push your implementations to main.</p>
       </div>
-      <div id="proj-list" class="grid"></div>
-      <div class="empty-state" id="proj-empty">
-        <div class="ico">🪄</div>
-        <h3>No projects detected</h3>
-        <p>Start your first AI project to see it here.</p>
+      <div class="card" style="padding:0; overflow:hidden;">
+        <div style="background:#161b22; padding:12px 24px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-family:monospace; font-size:14px; color:var(--text-dim);">gigni-courses / <strong>talking-ai-clone</strong></div>
+          <button class="btn-act" style="background:#238636;" onclick="showSubmitForm()">Commit & Push</button>
+        </div>
+        <div id="repo-browser" style="display:grid; grid-template-columns:250px 1fr; height:500px;">
+          <div style="border-right:1px solid var(--border); padding:16px;">
+            <div style="font-size:13px; font-weight:700; color:var(--text-dim); margin-bottom:12px;">FILES</div>
+            <div style="font-family:monospace; font-size:14px; cursor:pointer; color:var(--primary); margin-bottom:8px;">README.md</div>
+            <div style="font-family:monospace; font-size:14px; cursor:pointer; margin-bottom:8px;">calibrate_avatar.py</div>
+            <div style="font-family:monospace; font-size:14px; cursor:pointer; margin-bottom:8px;">voice_clone.py</div>
+          </div>
+          <div style="background:#0d1117; padding:24px; font-family:monospace; overflow-y:auto;">
+            <div id="code-viewer" style="color:#c9d1d9;"># Gigni AI Clone Guide...</div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- CERTIFICATES TAB -->
-    <div id="tab-cert" class="tab-content">
+    <!-- CERTIFICATE TAB -->
+    <div id="tab-certificate" class="tab-content">
       <div class="header-info">
-        <h1>Credentials</h1>
-        <p>Verified certificates and skills acquired through Gigni.</p>
+        <h1>Your Credentials</h1>
+        <p>Industry-verified professional certificates.</p>
       </div>
-      <div class="empty-state">
-        <div class="ico">🛡️</div>
-        <h3>Awaiting Verification</h3>
-        <p>Complete project milestones to earn verified credentials.</p>
-      </div>
+      <div id="certificate-list" class="grid"></div>
     </div>
 
     <!-- HACKATHONS TAB -->
@@ -607,4 +612,3 @@
 </div>
 </body>
 </html>
-
