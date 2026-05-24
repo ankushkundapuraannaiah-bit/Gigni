@@ -493,7 +493,20 @@ app.get('/api/user/:id', authenticateToken, async (req, res) => {
             [id]
         );
         if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
-        res.status(200).json({ success: true, user: result.rows[0] });
+        
+        const user = result.rows[0];
+        
+        // Fetch Zorus 2.1 application status
+        const zorusCheck = await pool.query(`SELECT score FROM zorus_applications WHERE user_id = $1;`, [id]);
+        if (zorusCheck.rows.length > 0) {
+            user.zorus_applied = true;
+            user.zorus_score = zorusCheck.rows[0].score;
+        } else {
+            user.zorus_applied = false;
+            user.zorus_score = null;
+        }
+
+        res.status(200).json({ success: true, user });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
