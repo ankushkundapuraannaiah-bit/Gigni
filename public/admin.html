@@ -111,6 +111,13 @@
     .email-tag button { background: none; border: none; color: #fff; cursor: pointer; opacity: 0.5; }
 
     #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1a1a1a; border: 1px solid var(--primary); padding: 14px 28px; border-radius: 50px; color: #fff; z-index: 10000; transition: 0.4s; opacity: 0; }
+    .status-pill { display: inline-flex; border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 800; border: 1px solid var(--border); }
+    .status-pending { color: #fbbf24; background: rgba(251,191,36,0.08); border-color: rgba(251,191,36,0.25); }
+    .status-verified { color: #34d399; background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.25); }
+    .review-grid { display: grid; gap: 18px; max-height: 70vh; overflow: auto; padding-right: 6px; }
+    .review-block { border: 1px solid var(--border); border-radius: 12px; padding: 16px; background: rgba(255,255,255,0.03); }
+    .review-block pre { white-space: pre-wrap; word-break: break-word; color: #d1d5db; font-size: 13px; line-height: 1.6; margin-top: 10px; }
+    .review-video { width: 100%; aspect-ratio: 16/9; border: 1px solid var(--border); border-radius: 12px; background: #000; margin-top: 10px; }
   </style>
 <script defer src="/_vercel/speed-insights/script.js"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6473053429465010" crossorigin="anonymous"></script>
@@ -312,6 +319,22 @@
     </div>
   </div>
 
+  <div class="ovl" id="submission-review-ovl" onclick="this.classList.remove('open')">
+    <div class="modal" id="submission-review-content" onclick="event.stopPropagation()" style="max-width:900px;"></div>
+  </div>
+
+  <div class="ovl" id="certificate-ovl" onclick="this.classList.remove('open')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <h3 id="cert-modal-title" style="margin-bottom:24px;">Upload Certificate</h3>
+      <div class="fg">
+        <label>Certificate File</label>
+        <input type="file" id="certificate-file" accept=".pdf,.png,.jpg,.jpeg" required>
+      </div>
+      <p style="color:var(--text-dim); line-height:1.6; font-size:14px; margin-bottom:20px;">This verifies the submission, emails the student, and makes the certificate downloadable in their dashboard.</p>
+      <button class="btn-act btn-cert" onclick="verifySubmissionWithCertificate()" id="cert-submit-btn" style="width:100%; padding:15px;">Upload and Verify</button>
+    </div>
+  </div>
+
   <div id="toast"></div>
 
   <script>
@@ -329,6 +352,7 @@
       const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
       if (user.email !== 'ankushka2089@gmail.com') { window.location.href = 'index.html'; return; }
       fetchUsers();
+      fetchProjectSubmissions();
       fetchZorusApplications();
       updateCollabPreview();
     });
@@ -389,6 +413,125 @@
       } catch (e) { 
         tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:60px; color:#f87171;">Network Error: Could not reach API. Check your internet connection.</td></tr>`;
         showToast('Identity Sync Error'); 
+      }
+    }
+
+    let projectSubmissions = [];
+    let activeCertificateSubmissionId = null;
+
+    function escapeHtml(value) {
+      return String(value || '').replace(/[&<>"']/g, ch => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[ch]));
+    }
+
+    async function fetchProjectSubmissions() {
+      const tbody = document.getElementById('project-submissions-body');
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px; color:var(--text-dim);">Loading submissions...</td></tr>';
+      try {
+        const res = await fetch('/api/admin/submissions', { headers: getAuthHeaders() });
+        if (res.status === 401 || res.status === 403) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:40px; color:var(--orange);">Session expired or unauthorized. <a href="index.html" style="color:var(--primary); font-weight:700;">Re-login</a></td></tr>`;
+          return;
+        }
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error || 'Could not load submissions');
+        projectSubmissions = data.submissions || [];
+        if (!projectSubmissions.length) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:60px; color:var(--text-dim);">No project submissions yet.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = projectSubmissions.map(s => {
+          const verified = s.status === 'Verified';
+          return `<tr>
+            <td>#${s.id}</td>
+            <td><strong>${escapeHtml(s.user_name)}</strong><br><small style="color:var(--text-dim)">${escapeHtml(s.user_email)}</small></td>
+            <td>${escapeHtml(s.project_name)}<br><small style="color:var(--text-dim)">Submitted ${new Date(s.submitted_at).toLocaleString()}</small></td>
+            <td><span class="status-pill ${verified ? 'status-verified' : 'status-pending'}">${verified ? 'Verified' : 'Under Verification'}</span></td>
+            <td>
+              <button class="btn-act" onclick="openSubmissionReview(${s.id})">View Work</button>
+              <button class="btn-act btn-cert" onclick="openCertificateUpload(${s.id})">${verified ? 'Replace Certificate' : 'Upload Certificate'}</button>
+            </td>
+          </tr>`;
+        }).join('');
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:60px; color:#f87171;">${escapeHtml(e.message)}</td></tr>`;
+      }
+    }
+
+    function openSubmissionReview(submissionId) {
+      const s = projectSubmissions.find(item => item.id === submissionId);
+      if (!s) return showToast('Submission not found');
+      const videoMarkup = s.video_data
+        ? `<video class="review-video" controls src="${s.video_data}"></video>`
+        : `<a href="${escapeHtml(s.video_url)}" target="_blank" style="color:var(--primary); font-weight:700;">Open submitted video link</a>`;
+      document.getElementById('submission-review-content').innerHTML = `
+        <div class="review-grid">
+          <div>
+            <h2 style="margin-bottom:6px;">${escapeHtml(s.project_name)}</h2>
+            <p style="color:var(--text-dim);">${escapeHtml(s.user_name)} - ${escapeHtml(s.user_email)}</p>
+          </div>
+          <div class="review-block">
+            <strong>Working Project Video ${s.video_file_name ? '- ' + escapeHtml(s.video_file_name) : ''}</strong>
+            ${videoMarkup}
+          </div>
+          <div class="review-block">
+            <strong>Code ${s.code_file_name ? '- ' + escapeHtml(s.code_file_name) : ''}</strong>
+            <pre>${escapeHtml(s.code_content)}</pre>
+          </div>
+          <div class="review-block">
+            <strong>README ${s.readme_file_name ? '- ' + escapeHtml(s.readme_file_name) : ''}</strong>
+            <pre>${escapeHtml(s.readme_content)}</pre>
+          </div>
+          <button class="btn-act" onclick="openCertificateUpload(${s.id})" style="width:100%; padding:15px; background:#10b981;">Upload Certificate and Verify</button>
+        </div>`;
+      document.getElementById('submission-review-ovl').classList.add('open');
+    }
+
+    function openCertificateUpload(submissionId) {
+      activeCertificateSubmissionId = submissionId;
+      const s = projectSubmissions.find(item => item.id === submissionId);
+      document.getElementById('cert-modal-title').innerText = s ? `Certificate for ${s.project_name}` : 'Upload Certificate';
+      document.getElementById('certificate-file').value = '';
+      document.getElementById('certificate-ovl').classList.add('open');
+    }
+
+    function readCertificateFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error('Could not read certificate file'));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function verifySubmissionWithCertificate() {
+      const file = document.getElementById('certificate-file').files[0];
+      if (!activeCertificateSubmissionId || !file) return showToast('Choose a certificate file');
+      const btn = document.getElementById('cert-submit-btn');
+      const old = btn.innerText;
+      try {
+        btn.innerText = 'Uploading...';
+        btn.disabled = true;
+        const res = await fetch('/api/admin/verify-submission', {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify({
+            submissionId: activeCertificateSubmissionId,
+            certificateBase64: await readCertificateFile(file)
+          })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.error || 'Verification failed');
+        showToast('Certificate uploaded and student notified');
+        document.getElementById('certificate-ovl').classList.remove('open');
+        document.getElementById('submission-review-ovl').classList.remove('open');
+        fetchProjectSubmissions();
+      } catch (e) {
+        showToast(e.message);
+      } finally {
+        btn.innerText = old;
+        btn.disabled = false;
       }
     }
 

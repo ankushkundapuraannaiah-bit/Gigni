@@ -84,8 +84,12 @@ async function initializeDatabase() {
             user_name VARCHAR(255),
             project_name VARCHAR(255),
             code_content TEXT,
+            code_file_name VARCHAR(255),
             video_url TEXT,
+            video_file_name VARCHAR(255),
+            video_data TEXT,
             readme_content TEXT,
+            readme_file_name VARCHAR(255),
             status VARCHAR(50) DEFAULT 'Under Verification',
             submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             verified_at TIMESTAMP,
@@ -103,7 +107,11 @@ async function initializeDatabase() {
             { table: 'users', name: 'intro',         type: 'TEXT' },
             { table: 'users', name: 'linkedin',      type: 'VARCHAR(255)' },
             { table: 'users', name: 'github',        type: 'VARCHAR(255)' },
-            { table: 'zorus_applications', name: 'score', type: 'INTEGER' }
+            { table: 'zorus_applications', name: 'score', type: 'INTEGER' },
+            { table: 'project_submissions', name: 'code_file_name', type: 'VARCHAR(255)' },
+            { table: 'project_submissions', name: 'video_file_name', type: 'VARCHAR(255)' },
+            { table: 'project_submissions', name: 'video_data', type: 'TEXT' },
+            { table: 'project_submissions', name: 'readme_file_name', type: 'VARCHAR(255)' }
         ];
         for (const m of migrations) {
             try {
@@ -166,7 +174,7 @@ if (process.env.GMAIL_USER && gmailPass) {
 
 // ─── MIDDLEWARE ───────────────────────────────────────────────────────────────
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '35mb' }));
 app.use((req, res, next) => {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
     next();
@@ -361,18 +369,48 @@ app.post('/api/login', async (req, res) => {
 
 // ─── PROJECT SUBMISSIONS ─────────────────────────────────────────────────────
 app.post('/api/project/submit', authenticateToken, async (req, res) => {
-    const { projectName, codeContent, videoUrl, readmeContent } = req.body;
+    const {
+        projectName,
+        codeContent,
+        codeFileName,
+        videoUrl,
+        videoFileName,
+        videoData,
+        readmeContent,
+        readmeFileName
+    } = req.body;
     const userId = req.user.id;
     const userEmail = req.user.email;
 
+    if (!projectName || !codeContent || !readmeContent || (!videoUrl && !videoData)) {
+        return res.status(400).json({ error: 'Project, code, demo video, and README are required' });
+    }
+
     try {
         const userRes = await pool.query('SELECT fname, lname FROM users WHERE id = $1', [userId]);
-        const userName = `${userRes.rows[0].fname} ${userRes.rows[0].lname}`;
+        if (userRes.rows.length === 0) return res.status(404).json({ error: 'User not found' });
+        const userName = `${userRes.rows[0].fname || ''} ${userRes.rows[0].lname || ''}`.trim() || userEmail;
 
         await pool.query(
-            `INSERT INTO project_submissions (user_id, user_email, user_name, project_name, code_content, video_url, readme_content)
-             VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-            [userId, userEmail, userName, projectName, codeContent, videoUrl, readmeContent]
+            `INSERT INTO project_submissions (
+                user_id, user_email, user_name, project_name,
+                code_content, code_file_name, video_url, video_file_name, video_data,
+                readme_content, readme_file_name
+             )
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+            [
+                userId,
+                userEmail,
+                userName,
+                projectName,
+                codeContent,
+                codeFileName || 'work-code.txt',
+                videoUrl || null,
+                videoFileName || null,
+                videoData || null,
+                readmeContent,
+                readmeFileName || 'README.md'
+            ]
         );
         res.json({ success: true });
     } catch (err) {
@@ -406,6 +444,9 @@ app.get('/api/admin/submissions', authenticateToken, async (req, res) => {
 app.post('/api/admin/verify-submission', authenticateToken, async (req, res) => {
     if (req.user.email !== 'ankushka2089@gmail.com') return res.status(403).json({ error: 'Unauthorized' });
     const { submissionId, certificateBase64 } = req.body;
+    if (!submissionId || !certificateBase64) {
+        return res.status(400).json({ error: 'Submission ID and certificate file are required' });
+    }
 
     try {
         const result = await pool.query(
@@ -416,6 +457,7 @@ app.post('/api/admin/verify-submission', authenticateToken, async (req, res) => 
         );
 
         const sub = result.rows[0];
+        if (!sub) return res.status(404).json({ error: 'Submission not found' });
         if (process.env.GMAIL_USER && gmailPass) {
             await transporter.sendMail({
                 from: `"Gigni Verification" <${process.env.GMAIL_USER}>`,
