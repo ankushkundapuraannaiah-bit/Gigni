@@ -4,267 +4,1157 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About Gigni — The AI Developer Community</title>
-  <meta name="description" content="Discover the vision and mission of Gigni, a student-driven ecosystem connecting AI developers across 50+ countries with project-based learning and opportunities.">
-  <meta name="keywords" content="Gigni, AI developer community, student ecosystem, project-based learning, agentic AI, global collaboration, developer portfolio">
+  <meta name="description" content="Discover the vision, mission, and story behind Gigni — the platform where students build real AI projects, earn verified certificates, and launch their careers.">
+  <meta name="keywords" content="Gigni, about Gigni, AI developer community, student ecosystem, project-based learning, agentic AI, global collaboration, developer portfolio">
   <link rel="canonical" href="https://www.gigniconnect.space/about.html">
-
-  <!-- Open Graph / Facebook -->
+  <link rel="icon" type="image/png" href="favicon.png">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.gigniconnect.space/about.html">
   <meta property="og:title" content="About Gigni — The AI Developer Community">
-  <meta property="og:description" content="Discover the vision and mission of Gigni, a student-driven ecosystem connecting AI developers across 50+ countries with project-based learning and opportunities.">
+  <meta property="og:description" content="Discover the vision, mission, and story behind Gigni.">
   <meta property="og:image" content="https://www.gigniconnect.space/Gemini_Generated_Image_anvpx2anvpx2anvp.png">
-
-  <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content="https://www.gigniconnect.space/about.html">
-  <meta property="twitter:title" content="About Gigni — The AI Developer Community">
-  <meta property="twitter:description" content="Discover the vision and mission of Gigni, a student-driven ecosystem connecting AI developers across 50+ countries with project-based learning and opportunities.">
-  <meta property="twitter:image" content="https://www.gigniconnect.space/Gemini_Generated_Image_anvpx2anvpx2anvp.png">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
   <style>
     :root {
-      --primary: #3b5bdb;
-      --accent: #8b5cf6;
-      --bg: #030712;
-      --card-bg: rgba(17, 24, 39, 0.7);
-      --border: rgba(255, 255, 255, 0.08);
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Outfit', sans-serif; background: var(--bg); color: #fff; overflow-x: hidden; position: relative; }
-
-    /* ReactBits Light Pillar Simulation */
-    .light-pillars {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      z-index: -1; pointer-events: none; overflow: hidden;
-      background: radial-gradient(circle at center, #0a0a1a 0%, #030712 100%);
-    }
-    .pillar {
-      position: absolute; bottom: -20vh; width: 100px; height: 140vh;
-      background: linear-gradient(to top, rgba(139, 92, 246, 0.8), transparent);
-      filter: blur(40px); opacity: 0;
-      animation: rise 8s infinite ease-in-out alternate;
-    }
-    .pillar:nth-child(1) { left: 10%; width: 150px; animation-duration: 12s; animation-delay: 0s; }
-    .pillar:nth-child(2) { left: 30%; width: 80px; animation-duration: 9s; animation-delay: 2s; background: linear-gradient(to top, rgba(59, 91, 219, 0.8), transparent); }
-    .pillar:nth-child(3) { left: 50%; width: 200px; animation-duration: 15s; animation-delay: 1s; }
-    .pillar:nth-child(4) { left: 70%; width: 120px; animation-duration: 11s; animation-delay: 4s; background: linear-gradient(to top, rgba(59, 91, 219, 0.8), transparent); }
-    .pillar:nth-child(5) { left: 90%; width: 90px; animation-duration: 10s; animation-delay: 3s; }
-
-    @keyframes rise {
-      0% { transform: translateY(10%) scaleY(0.8); opacity: 0.1; }
-      50% { opacity: 0.5; }
-      100% { transform: translateY(-10%) scaleY(1.2); opacity: 0.2; }
+      --ink: #12062a;
+      --muted: #6b7280;
+      --purple: #7c3aed;
+      --purple-2: #9333ea;
+      --purple-3: #a855f7;
+      --purple-soft: #f5f0ff;
+      --purple-mid: #ede9fe;
+      --white: #ffffff;
+      --border: rgba(124,58,237,0.15);
+      --line: rgba(124,58,237,0.10);
+      --neon: rgba(168,85,247,0.8);
     }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+      overflow-x: hidden;
+    }
+
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 100vh;
+      z-index: -1;
+      background-image: radial-gradient(circle, rgba(124,58,237,0.12) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.4), transparent 70%);
+      pointer-events: none;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── NAVBAR ── */
     nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-      padding: 20px 52px;
-      display: flex; align-items: center; justify-content: space-between;
-      background: rgba(3, 7, 18, 0.4); backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border);
-    }
-    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 0.05em; color: #fff; text-decoration: none; }
-    .nav-links a { color: rgba(255,255,255,0.8); text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: 0.3s; margin-left: 32px; text-transform: uppercase; letter-spacing: 1px; }
-    .nav-links a:hover { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
-
-    .hero {
-      height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      text-align: center; padding: 0 20px; position: relative; z-index: 10;
-    }
-    .hero h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(5rem, 12vw, 10rem); line-height: 0.9; margin-bottom: 24px; text-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-    .hero h1 span { background: linear-gradient(to right, #fff, var(--accent), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .hero p { font-size: 1.5rem; color: rgba(255,255,255,0.7); max-width: 600px; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
-
-    .content-sec { padding: 100px 52px; max-width: 1200px; margin: 0 auto; position: relative; z-index: 10; }
-    
-    .bento-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;
-    }
-    .bento-card {
-      background: rgba(17, 24, 39, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 30px; padding: 40px; transition: 0.4s;
-    }
-    .bento-card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2); }
-    .bento-card.large { grid-column: span 2; }
-    .bento-card.full { grid-column: span 3; text-align: center; padding: 80px 40px; background: linear-gradient(135deg, rgba(59,91,219,0.2), rgba(139,92,246,0.2)); }
-    
-    .bento-card h3 { font-size: 2rem; font-weight: 800; margin-bottom: 20px; font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; }
-    .bento-card p { font-size: 1.1rem; line-height: 1.6; color: rgba(255,255,255,0.7); }
-    .bento-card.full h3 { font-size: 4rem; }
-    .bento-card.full p { font-size: 1.5rem; max-width: 800px; margin: 0 auto; }
-
-    /* FOOTER */
-    footer { padding: 100px 60px 40px; background: #000; border-top: 1px solid var(--border); position: relative; z-index: 10; }
-    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 80px; max-width: 1200px; margin: 0 auto; text-align: left; }
-    .footer-col h4 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); margin-bottom: 30px; font-weight: 700;}
-    .footer-col p { color: rgba(255,255,255,0.5); line-height: 1.8; max-width: 300px; }
-    .footer-links { list-style: none; }
-    .footer-links li { margin-bottom: 12px; }
-    .footer-links a { color: rgba(255,255,255,0.6); text-decoration: none; transition: 0.3s; font-size: 0.95rem; }
-    .footer-links a:hover { color: #fff; padding-left: 5px; }
-
-    @media (max-width: 900px) {
-      .bento-grid { grid-template-columns: 1fr; }
-      .bento-card.large, .bento-card.full { grid-column: span 1; }
-      .footer-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
-      nav { padding: 15px 30px; }
-      .nav-links { display: none; }
-      .menu-toggle { display: block !important; }
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      width: min(1180px, calc(100% - 32px));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 12px 10px 22px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(22px);
+      box-shadow: 0 12px 40px rgba(124,58,237,0.10), 0 0 0 1px rgba(255,255,255,0.6) inset;
     }
 
-    /* MENU TOGGLE BUTTON */
-    .menu-toggle {
-      display: none;
-      background: none;
-      border: none;
+    .logo {
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 18px rgba(192,38,211,0.35));
+    }
+
+    .nav-links { display: flex; align-items: center; gap: 6px; }
+    .nav-links a, .nav-links button {
+      border: 0;
+      background: transparent;
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: var(--muted);
+      font: inherit;
+      font-weight: 700;
+      text-decoration: none;
       cursor: pointer;
-      z-index: 2001;
-      padding: 10px;
+      font-size: 14px;
+      transition: color 0.2s, background 0.2s;
     }
-    .hamburger {
-      display: block;
-      width: 28px;
-      height: 2px;
-      background: #fff;
+    .nav-links a:hover, .nav-links button:hover {
+      color: var(--purple);
+      background: rgba(124,58,237,0.08);
+    }
+    .nav-links a.active {
+      color: var(--purple);
+      background: rgba(124,58,237,0.08);
+    }
+    .btn-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border: 0;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      color: #fff;
+      font: inherit;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(124,58,237,0.28);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-nav:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(124,58,237,0.4); }
+
+    /* ── HERO ── */
+    .about-hero {
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 140px 24px 80px;
       position: relative;
-      transition: 0.3s;
+      overflow: hidden;
     }
-    .hamburger::before, .hamburger::after {
+
+    .about-hero::after {
+      content: 'ABOUT';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -52%);
+      z-index: 0;
+      color: rgba(124,58,237,0.03);
+      font-size: clamp(8rem, 22vw, 20rem);
+      line-height: 0.75;
+      font-weight: 900;
+      letter-spacing: -0.08em;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .hero-inner { position: relative; z-index: 1; max-width: 900px; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      border: 1.5px solid rgba(124,58,237,0.22);
+      border-radius: 999px;
+      background: rgba(237,233,254,0.6);
+      color: var(--purple);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      backdrop-filter: blur(8px);
+      margin-bottom: 28px;
+    }
+
+    .pulse {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--purple-2);
+      animation: pulse-ring 1.8s ease-out infinite;
+    }
+    @keyframes pulse-ring {
+      0% { box-shadow: 0 0 0 0 rgba(192,38,211,0.5); }
+      70% { box-shadow: 0 0 0 10px rgba(192,38,211,0); }
+      100% { box-shadow: 0 0 0 0 rgba(192,38,211,0); }
+    }
+
+    .about-hero h1 {
+      font-size: clamp(3.5rem, 9vw, 8rem);
+      line-height: 0.88;
+      letter-spacing: -0.06em;
+      font-weight: 900;
+      margin-bottom: 24px;
+    }
+    .about-hero h1 .accent {
+      background: linear-gradient(135deg, var(--purple) 0%, var(--purple-2) 60%, #c026d3 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 32px rgba(192,38,211,0.22));
+    }
+
+    .about-hero p {
+      font-size: clamp(1.1rem, 2vw, 1.3rem);
+      color: var(--muted);
+      line-height: 1.72;
+      max-width: 680px;
+      margin: 0 auto 40px;
+      font-weight: 500;
+    }
+
+    /* ── NEON GLOW DIVIDER ── */
+    .neon-divider {
+      width: 120px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--purple), var(--purple-2), #c026d3);
+      border-radius: 999px;
+      margin: 0 auto;
+      box-shadow: 0 0 20px rgba(168,85,247,0.6);
+    }
+
+    /* ── SECTION BASE ── */
+    .sec { padding: 100px 24px; }
+    .sec-inner { width: min(1200px, 100%); margin: 0 auto; }
+
+    .sec-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 999px;
+      background: var(--purple-soft);
+      color: var(--purple);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 18px;
+    }
+
+    .sec h2 {
+      font-size: clamp(2rem, 5vw, 4.5rem);
+      line-height: 0.93;
+      letter-spacing: -0.045em;
+      font-weight: 900;
+      margin-bottom: 20px;
+    }
+    .sec h2 .accent {
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(124,58,237,0.2), transparent);
+      margin: 0 24px;
+    }
+
+    /* ── STORY SECTION ── */
+    .story-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .story-text h2 { margin-bottom: 24px; }
+    .story-text p {
+      color: var(--muted);
+      line-height: 1.82;
+      font-size: 16px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+    .story-visual {
+      position: relative;
+    }
+    .story-card {
+      border: 1.5px solid var(--border);
+      border-radius: 28px;
+      background: linear-gradient(145deg, rgba(237,233,254,0.5), rgba(255,255,255,0.9));
+      backdrop-filter: blur(12px);
+      padding: 36px;
+      box-shadow: 0 30px 80px rgba(124,58,237,0.13);
+      position: relative;
+      overflow: hidden;
+    }
+    .story-card::before {
       content: '';
       position: absolute;
-      width: 100%;
-      height: 100%;
+      top: -60px; right: -60px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(168,85,247,0.15), transparent);
+      pointer-events: none;
+    }
+    .story-card-stat {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .story-card-stat:last-child { border-bottom: 0; padding-bottom: 0; }
+    .stat-icon {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      box-shadow: 0 8px 20px rgba(124,58,237,0.28);
+    }
+    .stat-val { font-size: 28px; font-weight: 900; letter-spacing: -0.03em; }
+    .stat-lbl { font-size: 13px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* ── MISSION CARDS ── */
+    .mission-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .mission-card {
+      border: 1.5px solid var(--border);
+      border-radius: 24px;
+      background: rgba(255,255,255,0.9);
+      padding: 32px 28px;
+      box-shadow: 0 20px 50px rgba(124,58,237,0.07);
+      transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.28s, border-color 0.28s;
+      position: relative;
+      overflow: hidden;
+    }
+    .mission-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--purple), var(--purple-2));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s;
+    }
+    .mission-card:hover { transform: translateY(-8px); box-shadow: 0 32px 72px rgba(124,58,237,0.16); border-color: rgba(124,58,237,0.35); }
+    .mission-card:hover::after { transform: scaleX(1); }
+    .mission-icon {
+      width: 52px; height: 52px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 24px rgba(124,58,237,0.28);
+    }
+    .mission-card h3 { font-size: 22px; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.02em; }
+    .mission-card p { color: var(--muted); line-height: 1.7; font-size: 15px; }
+
+    /* ── VALUES ── */
+    .values-band {
+      background: linear-gradient(180deg, #f8f4ff 0%, #ffffff 100%);
+    }
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .value-item {
+      display: flex;
+      gap: 20px;
+      padding: 28px;
+      border: 1.5px solid var(--border);
+      border-radius: 22px;
+      background: rgba(255,255,255,0.85);
+      box-shadow: 0 10px 30px rgba(124,58,237,0.07);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .value-item:hover { transform: translateY(-5px); box-shadow: 0 24px 60px rgba(124,58,237,0.13); }
+    .value-num {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900;
+      font-size: 16px;
+      flex-shrink: 0;
+      box-shadow: 0 6px 18px rgba(124,58,237,0.3);
+    }
+    .value-body h3 { font-size: 20px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.02em; }
+    .value-body p { color: var(--muted); line-height: 1.7; font-size: 14px; }
+
+    /* ── HOW IT WORKS ── */
+    .process-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 48px;
+    }
+    .proc-step {
+      padding: 30px 24px;
+      border: 1.5px solid var(--border);
+      border-radius: 22px;
+      background: rgba(255,255,255,0.88);
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+    .proc-step::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--purple), var(--purple-2));
+      border-radius: 0 0 22px 22px;
+      transform: scaleX(0);
+      transition: transform 0.3s;
+    }
+    .proc-step:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(124,58,237,0.14); }
+    .proc-step:hover::after { transform: scaleX(1); }
+    .proc-num {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900;
+      font-size: 20px;
+      margin: 0 auto 18px;
+      box-shadow: 0 8px 22px rgba(124,58,237,0.3);
+    }
+    .proc-step h3 { font-size: 18px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.02em; }
+    .proc-step p { color: var(--muted); font-size: 14px; line-height: 1.65; }
+
+    /* ── ZORUS SPOTLIGHT ── */
+    .zorus-shell {
+      border: 1.5px solid var(--border);
+      border-radius: 30px;
+      background: rgba(255,255,255,0.85);
+      box-shadow: 0 30px 80px rgba(124,58,237,0.12);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .zorus-copy {
+      padding: 52px;
+      background: linear-gradient(145deg, #5b21b6, #7c3aed, #9333ea);
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .zorus-copy::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 240px; height: 240px;
+      border-radius: 50%;
+      background: rgba(168,85,247,0.3);
+      filter: blur(55px);
+      pointer-events: none;
+    }
+    .zorus-copy > * { position: relative; z-index: 1; }
+    .zorus-pill {
+      display: inline-block;
+      padding: 5px 14px;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 20px;
+      background: rgba(255,255,255,0.1);
+    }
+    .zorus-copy h2 { font-size: clamp(2rem, 4vw, 3.5rem); line-height: 0.97; letter-spacing: -0.04em; margin-bottom: 18px; }
+    .zorus-copy p { color: rgba(255,255,255,0.85); line-height: 1.75; font-size: 15px; margin-bottom: 24px; }
+    .zorus-copy ul { list-style: none; display: grid; gap: 13px; margin-bottom: 32px; }
+    .zorus-copy li { display: flex; gap: 12px; align-items: flex-start; font-weight: 600; font-size: 15px; }
+    .zorus-copy li::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #c4b5fd; box-shadow: 0 0 16px rgba(196,181,253,0.8); flex-shrink: 0; margin-top: 7px; }
+    .zorus-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border: 2px solid rgba(255,255,255,0.5);
+      border-radius: 999px;
+      color: #fff;
+      font: inherit;
+      font-weight: 800;
+      font-size: 15px;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+    .zorus-btn:hover { background: rgba(255,255,255,0.15); border-color: #fff; transform: translateY(-2px); }
+    .zorus-info { padding: 52px; display: flex; flex-direction: column; justify-content: center; gap: 24px; }
+    .zorus-stat-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px;
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      background: rgba(245,240,255,0.5);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .zorus-stat-row:hover { transform: translateX(5px); box-shadow: 0 10px 30px rgba(124,58,237,0.1); }
+    .zsr-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .zsr-val { font-size: 22px; font-weight: 900; letter-spacing: -0.02em; }
+    .zsr-lbl { font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* ── TEAM / FOUNDERS ── */
+    .founders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .founder-card {
+      border: 1.5px solid var(--border);
+      border-radius: 24px;
+      background: rgba(255,255,255,0.9);
+      padding: 36px 28px;
+      box-shadow: 0 16px 40px rgba(124,58,237,0.08);
+      text-align: center;
+      transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.28s, border-color 0.28s;
+    }
+    .founder-card:hover { transform: translateY(-8px); box-shadow: 0 32px 72px rgba(124,58,237,0.15); border-color: rgba(124,58,237,0.35); }
+    .founder-avatar {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+      font-weight: 900;
+      color: #fff;
+      margin: 0 auto 20px;
+      box-shadow: 0 10px 30px rgba(124,58,237,0.28), 0 0 0 4px rgba(124,58,237,0.08);
+    }
+    .founder-card h3 { font-size: 20px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.02em; }
+    .founder-role {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: var(--purple-soft);
+      color: var(--purple);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+    .founder-card p { color: var(--muted); font-size: 14px; line-height: 1.7; }
+
+    /* ── COLLEGES / PARTNERS ── */
+    .colleges-band {
+      background: linear-gradient(180deg, #f8f4ff 0%, #ffffff 100%);
+    }
+    .colleges-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 40px;
+    }
+    .college-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 22px;
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 8px 24px rgba(124,58,237,0.07);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    }
+    .college-pill:hover { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(124,58,237,0.14); border-color: rgba(124,58,237,0.3); }
+    .college-pill .cp-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+
+    /* ── CTA BAND ── */
+    .cta-band {
+      background: linear-gradient(145deg, #5b21b6, #7c3aed, #9333ea);
+      color: #fff;
+      padding: 100px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-band::before {
+      content: '';
+      position: absolute;
+      top: -100px; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 400px;
+      border-radius: 50%;
+      background: rgba(168,85,247,0.3);
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    .cta-band > * { position: relative; z-index: 1; }
+    .cta-band h2 { font-size: clamp(2.5rem, 6vw, 5.5rem); line-height: 0.93; letter-spacing: -0.05em; margin-bottom: 20px; }
+    .cta-band p { color: rgba(255,255,255,0.8); font-size: 1.15rem; max-width: 600px; margin: 0 auto 36px; line-height: 1.72; }
+    .cta-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-cta-white {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px;
+      border-radius: 999px;
       background: #fff;
-      transition: 0.3s;
+      color: var(--purple);
+      font: inherit; font-weight: 800; font-size: 15px;
+      border: 0;
+      cursor: pointer;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    .hamburger::before { top: -8px; left: 0; }
-    .hamburger::after { bottom: -8px; left: 0; }
-
-    .menu-toggle.active .hamburger { background: transparent; }
-    .menu-toggle.active .hamburger::before { transform: rotate(45deg); top: 0; }
-    .menu-toggle.active .hamburger::after { transform: rotate(-45deg); bottom: 0; }
-
-    /* MOBILE NAV OVERLAY */
-    .mobile-nav {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(3, 7, 18, 0.98);
-      backdrop-filter: blur(20px);
-      z-index: 2000;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 30px;
-      opacity: 0; pointer-events: none; transition: 0.4s;
+    .btn-cta-white:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 20px 44px rgba(0,0,0,0.24); }
+    .btn-cta-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px;
+      border-radius: 999px;
+      background: transparent;
+      color: #fff;
+      font: inherit; font-weight: 800; font-size: 15px;
+      border: 2px solid rgba(255,255,255,0.5);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
     }
-    .mobile-nav.active { opacity: 1; pointer-events: auto; }
-    .mobile-nav a {
-      font-size: 2rem; font-weight: 700; color: #fff; text-decoration: none;
-      text-transform: uppercase; letter-spacing: 2px; transition: 0.3s;
-    }
-    .mobile-nav a:hover { color: var(--accent); transform: scale(1.1); }
+    .btn-cta-outline:hover { background: rgba(255,255,255,0.12); border-color: #fff; transform: translateY(-2px); }
 
+    /* ── FOOTER ── */
+    footer {
+      padding: 60px 24px 44px;
+      text-align: center;
+      border-top: 1px solid var(--line);
+    }
+    footer .footer-logo {
+      font-size: 28px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+      display: block;
+    }
+    footer p { color: var(--muted); font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+    .footer-links-row {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 16px 0 24px;
+    }
+    .footer-links-row a {
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .footer-links-row a:hover { color: var(--purple); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { top: 10px; border-radius: 22px; }
+      .nav-links { display: none; }
+      .story-grid, .mission-grid, .values-grid, .process-strip, .zorus-shell { grid-template-columns: 1fr; }
+      .proc-step { text-align: left; }
+      .proc-num { margin: 0 0 18px; }
+      .zorus-copy, .zorus-info { padding: 36px; }
+    }
   </style>
-<script defer src="/_vercel/speed-insights/script.js"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6473053429465010" crossorigin="anonymous"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
 
-<div class="light-pillars">
-  <div class="pillar"></div>
-  <div class="pillar"></div>
-  <div class="pillar"></div>
-  <div class="pillar"></div>
-  <div class="pillar"></div>
-</div>
+<canvas id="bg-canvas"></canvas>
 
+<!-- NAVBAR -->
 <nav>
-  <a href="index.html" class="logo">GIGNI</a>
+  <a class="logo" href="index.html">GIGNI</a>
   <div class="nav-links">
     <a href="index.html">Home</a>
-    <a href="hosting.html">Hosting</a>
+    <a href="about.html" class="active">About</a>
+    <a href="zorus.html">Zorus 2.1</a>
+    <a href="zorus-course.html">Curriculum</a>
+    <a href="index.html#available-projects">Projects</a>
+    <a class="btn-nav" href="index.html" onclick="setTimeout(()=>document.querySelector('[onclick*=signup]')&&document.querySelector('[onclick*=signup]').click(),100)">Get Started →</a>
   </div>
-  <button class="menu-toggle" id="menu-toggle" onclick="toggleMobileMenu()">
-    <span class="hamburger"></span>
-  </button>
 </nav>
 
-<div class="mobile-nav" id="mobile-nav">
-  <a href="index.html" onclick="toggleMobileMenu()">Home</a>
-  <a href="about.html" onclick="toggleMobileMenu()">About</a>
-  <a href="hosting.html" onclick="toggleMobileMenu()">Hosting</a>
-  <a href="zorus.html" onclick="toggleMobileMenu()">Zorus 2.1</a>
-</div>
-
-
-<section class="hero">
-  <h1>WE ARE<br><span>GIGNI.</span></h1>
-  <p>Empowering the next generation of AI creators through collaboration and community.</p>
+<!-- HERO -->
+<section class="about-hero">
+  <div class="hero-inner">
+    <div class="eyebrow"><span class="pulse"></span> Our Story</div>
+    <h1>
+      We are<br>
+      <span class="accent">GIGNI.</span>
+    </h1>
+    <p>
+      A platform built on the belief that real skill only comes from building real things.
+      We exist to bridge the gap between learning and doing — turning course content into
+      verified, career-defining project experiences.
+    </p>
+    <div class="neon-divider"></div>
+  </div>
 </section>
 
-<section class="content-sec">
-  <div class="bento-grid">
-    <div class="bento-card large">
-      <h3>The Community Vision</h3>
-      <p>Gigni isn't just a platform; it's a student-driven ecosystem. We believe that the best way to learn AI is to build with it, alongside peers from across the globe. Our network spans 50+ countries, connecting young talent with real-world opportunities.</p>
-    </div>
-    <div class="bento-card">
-      <h3>Student-Driven</h3>
-      <p>Built by students for students, ensuring every tool and opportunity is relevant to your growth and career trajectory.</p>
-    </div>
-    <div class="bento-card">
-      <h3>Agentic Building</h3>
-      <p>Access cutting-edge AI agents to build websites, music, and automations with unprecedented speed.</p>
-    </div>
-    <div class="bento-card large">
-      <h3>Project-Based Careers</h3>
-      <p>Ditch the traditional resume. Build real-world products through our platform and showcase your verified builds to the world's leading tech companies directly.</p>
-    </div>
-    <div class="bento-card full">
-      <h3>Our Mission</h3>
-      <p>To connect every student developer with the AI tools and global network they need to solve real-world problems and launch impactful careers.</p>
+<div class="divider"></div>
+
+<!-- ORIGIN STORY -->
+<section class="sec reveal" id="story">
+  <div class="sec-inner">
+    <div class="story-grid">
+      <div class="story-text">
+        <div class="sec-label">✦ Origin</div>
+        <h2>Born from a <span class="accent">frustration.</span></h2>
+        <p>
+          Gigni was born out of a simple observation: students were consuming more course content than ever before, yet still struggling to demonstrate real-world capability when it mattered most — in job interviews, internship applications, and real projects.
+        </p>
+        <p>
+          The problem wasn't knowledge. It was the absence of verified, tangible proof of building. A certificate saying "you completed this course" is fundamentally different from a certificate that says "you built a working, real-world product using these skills."
+        </p>
+        <p>
+          That distinction is what Gigni was created to solve. We don't just teach — we make you build. And when you build, you earn something real: a verified certificate backed by an actual working project that the world can see.
+        </p>
+        <p>
+          From our very first cohort out of IIT Kanpur to reaching students across India and beyond, Gigni has grown into a thriving ecosystem of builders, makers, and AI engineers who understand that <strong>experience is the new credential.</strong>
+        </p>
+      </div>
+      <div class="story-visual reveal">
+        <div class="story-card">
+          <div class="story-card-stat">
+            <div class="stat-icon">🚀</div>
+            <div>
+              <div class="stat-val">11+</div>
+              <div class="stat-lbl">Live Projects Available</div>
+            </div>
+          </div>
+          <div class="story-card-stat">
+            <div class="stat-icon">🎓</div>
+            <div>
+              <div class="stat-val">100%</div>
+              <div class="stat-lbl">Verified Certificates</div>
+            </div>
+          </div>
+          <div class="story-card-stat">
+            <div class="stat-icon">🤖</div>
+            <div>
+              <div class="stat-val">AI-First</div>
+              <div class="stat-lbl">Curriculum Design</div>
+            </div>
+          </div>
+          <div class="story-card-stat">
+            <div class="stat-icon">🌏</div>
+            <div>
+              <div class="stat-val">IIT-Rooted</div>
+              <div class="stat-lbl">Academic Foundation</div>
+            </div>
+          </div>
+          <div class="story-card-stat">
+            <div class="stat-icon">⚡</div>
+            <div>
+              <div class="stat-val">Real</div>
+              <div class="stat-lbl">Builds Only — No Fake Projects</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
+<div class="divider"></div>
+
+<!-- MISSION -->
+<section class="sec reveal" id="mission">
+  <div class="sec-inner">
+    <div class="sec-label">✦ Mission & Vision</div>
+    <h2>What drives <span class="accent">everything</span> we do.</h2>
+    <p style="color:var(--muted);max-width:620px;line-height:1.75;font-size:16px;margin-bottom:48px;font-weight:500;">
+      Our mission is clear and unwavering: to replace passive learning with active building, and to replace unverifiable resumes with a portfolio of real, verifiable work.
+    </p>
+    <div class="mission-grid">
+      <div class="mission-card reveal">
+        <div class="mission-icon">🎯</div>
+        <h3>Our Mission</h3>
+        <p>To give every student developer access to structured, hands-on AI project experiences and the verified credentials to prove their abilities to the world — regardless of the institution they come from.</p>
+      </div>
+      <div class="mission-card reveal">
+        <div class="mission-icon">🔭</div>
+        <h3>Our Vision</h3>
+        <p>A world where what you've built speaks louder than the name of the college you attended. Where a student from any corner of the country can demonstrate elite-level AI skills through their portfolio of verified builds.</p>
+      </div>
+      <div class="mission-card reveal">
+        <div class="mission-icon">💡</div>
+        <h3>Our Philosophy</h3>
+        <p>Learning by doing is not a strategy — it's the only way. We design every course, project, and experience around the principle that real understanding only crystallizes when you actually ship something that works.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- HOW IT WORKS -->
+<section class="sec reveal" id="how-it-works">
+  <div class="sec-inner">
+    <div class="sec-label">✦ How It Works</div>
+    <h2>Four steps to your <span class="accent">verified build.</span></h2>
+    <p style="color:var(--muted);max-width:600px;line-height:1.75;font-size:16px;margin-bottom:0;font-weight:500;">
+      Gigni's model is intentionally simple. We cut the fluff, keep the signal, and make every step count.
+    </p>
+    <div class="process-strip">
+      <div class="proc-step reveal">
+        <div class="proc-num">1</div>
+        <h3>Pick a Project</h3>
+        <p>Browse our library of AI-first projects — from Talking AI Clones to agentic automation pipelines and full-stack web apps powered by n8n workflows.</p>
+      </div>
+      <div class="proc-step reveal">
+        <div class="proc-num">2</div>
+        <h3>Watch & Build</h3>
+        <p>Use the reference video as your guide. Then go deeper — build your own unique implementation, not just a copy. Apply your creativity and engineering thinking.</p>
+      </div>
+      <div class="proc-step reveal">
+        <div class="proc-num">3</div>
+        <h3>Upload Your Work</h3>
+        <p>Submit your code, a working demo video, and a README file. Every submission is timestamped and tied to your account identity for full traceability.</p>
+      </div>
+      <div class="proc-step reveal">
+        <div class="proc-num">4</div>
+        <h3>Earn Your Certificate</h3>
+        <p>After admin verification of your submission's quality and originality, you receive a verified certificate — delivered to your email and available to download from your dashboard.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- VALUES -->
+<section class="sec values-band reveal" id="values">
+  <div class="sec-inner">
+    <div class="sec-label">✦ Core Values</div>
+    <h2>The principles that <span class="accent">shape us.</span></h2>
+    <div class="values-grid">
+      <div class="value-item reveal">
+        <div class="value-num">01</div>
+        <div class="value-body">
+          <h3>Authenticity Over Automation</h3>
+          <p>Every submission is reviewed by a human. We don't believe in automated pass/fail systems for project evaluation. Real work deserves real review, and real certificates demand genuine verification of your build.</p>
+        </div>
+      </div>
+      <div class="value-item reveal">
+        <div class="value-num">02</div>
+        <div class="value-body">
+          <h3>Depth Over Breadth</h3>
+          <p>We'd rather you deeply master three impactful AI skills than skim through fifteen. Our curriculum is intentionally curated — every project is chosen because it teaches something that the current market genuinely demands.</p>
+        </div>
+      </div>
+      <div class="value-item reveal">
+        <div class="value-num">03</div>
+        <div class="value-body">
+          <h3>Inclusion Without Compromise</h3>
+          <p>A student from a tier-3 college deserves the same quality of opportunity as one from IIT. Gigni is designed to be the equalizer — where your work is judged on merit, not on the logo on your degree.</p>
+        </div>
+      </div>
+      <div class="value-item reveal">
+        <div class="value-num">04</div>
+        <div class="value-body">
+          <h3>AI-First, Always</h3>
+          <p>We're not retrofitting AI into an old curriculum. Gigni was built natively in the era of generative and agentic AI. Every project and skill pathway reflects the actual state of the technology landscape today.</p>
+        </div>
+      </div>
+      <div class="value-item reveal">
+        <div class="value-num">05</div>
+        <div class="value-body">
+          <h3>Community Over Competition</h3>
+          <p>Builders grow faster together. Gigni fosters a culture of collaboration — where sharing your project, getting feedback, and helping others level up is celebrated as much as completing your own submission.</p>
+        </div>
+      </div>
+      <div class="value-item reveal">
+        <div class="value-num">06</div>
+        <div class="value-body">
+          <h3>Speed of Iteration</h3>
+          <p>The AI landscape changes faster than any traditional curriculum can track. We move fast, update our projects frequently, and always ensure that what you're building today is relevant to what employers need tomorrow.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ZORUS SPOTLIGHT -->
+<section class="sec reveal" id="zorus">
+  <div class="sec-inner">
+    <div class="sec-label">✦ Flagship Program</div>
+    <h2 style="margin-bottom:40px;">Meet <span class="accent">Zorus 2.1</span></h2>
+    <div class="zorus-shell">
+      <div class="zorus-copy">
+        <div class="zorus-pill">Zorus 2.1 — Now Open</div>
+        <h2>The most intensive AI developer program we offer.</h2>
+        <p>
+          Zorus 2.1 is Gigni's flagship 3-month cohort. It's not a course you watch — it's an internship you live. Over three months, you'll build three distinct, production-grade AI systems, collaborate with a global cohort, and emerge with a resume-defining portfolio.
+        </p>
+        <ul>
+          <li>Month 1: Build a Realistic Talking AI Clone using HeyGen avatar technology and voice cloning workflows.</li>
+          <li>Month 2: Design and deploy a full N8N Agentic Automation pipeline — multi-node, API-connected, and production-ready.</li>
+          <li>Month 3: Turn your automation into a real frontend web application with live webhook integration and deployment.</li>
+          <li>Earn a verified Zorus 2.1 completion certificate upon admin approval of all three builds.</li>
+        </ul>
+        <a href="zorus.html" class="zorus-btn">Explore Zorus 2.1 →</a>
+      </div>
+      <div class="zorus-info">
+        <div class="zorus-stat-row">
+          <div class="zsr-icon">📅</div>
+          <div>
+            <div class="zsr-val">June 1, 2026</div>
+            <div class="zsr-lbl">Cohort Start Date</div>
+          </div>
+        </div>
+        <div class="zorus-stat-row">
+          <div class="zsr-icon">⏱️</div>
+          <div>
+            <div class="zsr-val">3 Months</div>
+            <div class="zsr-lbl">Intensive Duration</div>
+          </div>
+        </div>
+        <div class="zorus-stat-row">
+          <div class="zsr-icon">🛠️</div>
+          <div>
+            <div class="zsr-val">3 Real Builds</div>
+            <div class="zsr-lbl">Production-Grade Projects</div>
+          </div>
+        </div>
+        <div class="zorus-stat-row">
+          <div class="zsr-icon">🏆</div>
+          <div>
+            <div class="zsr-val">Verified</div>
+            <div class="zsr-lbl">Certificate Upon Completion</div>
+          </div>
+        </div>
+        <div class="zorus-stat-row">
+          <div class="zsr-icon">🤖</div>
+          <div>
+            <div class="zsr-val">AI-First</div>
+            <div class="zsr-lbl">HeyGen · n8n · Web Integration</div>
+          </div>
+        </div>
+        <div class="zorus-stat-row">
+          <div class="zsr-icon">🌐</div>
+          <div>
+            <div class="zsr-val">Global</div>
+            <div class="zsr-lbl">Open to All Students</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- WHAT MAKES US DIFFERENT -->
+<section class="sec colleges-band reveal" id="difference">
+  <div class="sec-inner">
+    <div class="sec-label">✦ Why Gigni</div>
+    <h2>What makes us <span class="accent">different.</span></h2>
+    <p style="color:var(--muted);max-width:660px;line-height:1.75;font-size:16px;margin-bottom:48px;font-weight:500;">
+      There are hundreds of learning platforms. Most give you videos, quizzes, and a certificate for watching. Gigni gives you something fundamentally different.
+    </p>
+    <div class="values-grid">
+      <div class="value-item reveal">
+        <div class="value-num">→</div>
+        <div class="value-body">
+          <h3>Project Submission, Not Quiz Completion</h3>
+          <p>You don't pass by getting 80% on a multiple choice test. You pass by building something real and submitting it for human review. That's the only bar we hold ourselves and you to.</p>
+        </div>
+      </div>
+      <div class="value-item reveal">
+        <div class="value-num">→</div>
+        <div class="value-body">
+          <h3>Admin-Verified, Not Auto-Generated</h3>
+          <p>Every certificate we issue has been reviewed by a human who looked at your actual code, your demo video, and your README. No AI auto-grading. No system shortcuts. Real human verification, every time.</p>
+        </div>
+      </div>
+      <div class="value-item reveal">
+        <div class="value-num">→</div>
+        <div class="value-body">
+          <h3>Industry-Relevant Technology Stack</h3>
+          <p>We use HeyGen, n8n, webhook integration, and agentic workflows — tools that real companies are actively using and hiring for right now. Not theoretical frameworks from five years ago.</p>
+        </div>
+      </div>
+      <div class="value-item reveal">
+        <div class="value-num">→</div>
+        <div class="value-body">
+          <h3>Dashboard-Driven Experience</h3>
+          <p>Your personal dashboard tracks every submission, shows your verification status in real time, and houses all your downloadable certificates — organized, clean, and always accessible.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- COLLEGE ECOSYSTEM -->
+<section class="sec reveal" id="ecosystem">
+  <div class="sec-inner" style="text-align:center;">
+    <div class="sec-label">✦ Our Ecosystem</div>
+    <h2>Trusted by students from <span class="accent">top institutions.</span></h2>
+    <p style="color:var(--muted);max-width:580px;margin:0 auto 40px;line-height:1.75;font-size:16px;font-weight:500;">
+      Gigni's community includes students from some of India's most prestigious technical institutions — united by a shared commitment to building real things.
+    </p>
+    <div class="colleges-row">
+      <div class="college-pill"><div class="cp-icon">🏛️</div> IIT Kanpur</div>
+      <div class="college-pill"><div class="cp-icon">🏛️</div> IIT Bombay</div>
+      <div class="college-pill"><div class="cp-icon">🏛️</div> NIT Karnataka</div>
+      <div class="college-pill"><div class="cp-icon">🏛️</div> NIT Silchar</div>
+      <div class="college-pill"><div class="cp-icon">🎓</div> BITS Pilani</div>
+      <div class="college-pill"><div class="cp-icon">🎓</div> VIT Vellore</div>
+      <div class="college-pill"><div class="cp-icon">🎓</div> Manipal Institute</div>
+      <div class="college-pill"><div class="cp-icon">🌐</div> & Students Worldwide</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TEAM -->
+<section class="sec reveal" id="team">
+  <div class="sec-inner">
+    <div class="sec-label">✦ The Team</div>
+    <h2>Built by <span class="accent">builders.</span></h2>
+    <p style="color:var(--muted);max-width:600px;line-height:1.75;font-size:16px;margin-bottom:0;font-weight:500;">
+      Gigni is built and run by a team that has lived the exact frustration it's solving — student developers who went through the credential gap and decided to fix it.
+    </p>
+    <div class="founders-grid">
+      <div class="founder-card reveal">
+        <div class="founder-avatar">A</div>
+        <h3>Ankush Kundapura</h3>
+        <div class="founder-role">Founder & CEO</div>
+        <p>Architect of the Gigni platform and the Zorus cohort framework. Building the bridge between AI education and verifiable career outcomes for the next generation of developers.</p>
+      </div>
+      <div class="founder-card reveal">
+        <div class="founder-avatar">G</div>
+        <h3>The Gigni Team</h3>
+        <div class="founder-role">Engineers & Educators</div>
+        <p>A growing team of AI developers, curriculum designers, and platform engineers who believe deeply that hands-on project work is the future of technical education and hiring.</p>
+      </div>
+      <div class="founder-card reveal">
+        <div class="founder-avatar">🌏</div>
+        <h3>Our Community</h3>
+        <div class="founder-role">Builders & Students</div>
+        <p>Thousands of students across India and globally who have joined Gigni's mission — submitting real projects, earning verified certificates, and reshaping their career trajectories through verified builds.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CTA -->
+<section class="cta-band reveal">
+  <h2>Ready to build something<br>that <em>actually</em> matters?</h2>
+  <p>Join Gigni today. Pick your first project, build it for real, and earn a certificate that proves you can do the work — not just learn about it.</p>
+  <div class="cta-actions">
+    <a href="index.html#available-projects" class="btn-cta-white">Browse Projects →</a>
+    <a href="zorus.html" class="btn-cta-outline">Explore Zorus 2.1</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
 <footer>
-  <div class="footer-grid">
-    <div class="footer-col">
-      <a href="index.html" class="logo" style="display:block; margin-bottom:20px; font-size: 2.2rem;">GIGNI</a>
-      <p>Revolutionizing student innovation through agentic AI. Connect, build, and lead the future community of developers.</p>
-    </div>
-    <div class="footer-col">
-      <h4>Navigation</h4>
-      <ul class="footer-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="hosting.html">Hosting</a></li>
-        <li><a href="zorus.html">Zorus 2.1</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>Connect</h4>
-      <ul class="footer-links">
-        <li><a href="#">Discord Community</a></li>
-        <li><a href="https://www.linkedin.com/company/gigni/?viewAsMember=true" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
-        <li><a href="#">Twitter / X</a></li>
-        <li><a href="mailto:hello@gigni.ai">Support</a></li>
-      </ul>
-    </div>
+  <span class="footer-logo">GIGNI</span>
+  <div class="footer-links-row">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="zorus.html">Zorus 2.1</a>
+    <a href="zorus-course.html">Curriculum</a>
+    <a href="index.html#available-projects">Projects</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="https://www.linkedin.com/company/gigni/?viewAsMember=true" target="_blank" rel="noopener">LinkedIn</a>
   </div>
-  <div style="text-align:center; margin-top:80px; color:rgba(255,255,255,0.2); font-size:0.9rem; font-family: 'Outfit', sans-serif;">
-    &copy; 2026 GIGNI. Built for the AI Generation.
-  </div>
+  <p>© 2026 GIGNI. Built for the AI Generation. All rights reserved.</p>
 </footer>
 
 <script>
-  function toggleMobileMenu() {
-    const toggle = document.getElementById('menu-toggle');
-    const menu = document.getElementById('mobile-nav');
-    toggle.classList.toggle('active');
-    menu.classList.toggle('active');
-    document.body.style.overflow = menu.classList.contains('active') ? 'hidden' : 'auto';
+  // 3D Canvas Background (white scene with neon purple particles)
+  const canvas = document.getElementById('bg-canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.1, 1000);
+  camera.position.z = 5;
+  const pos = new Float32Array(1400 * 3);
+  for (let i = 0; i < pos.length; i++) pos[i] = (Math.random() - 0.5) * 18;
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const mat = new THREE.PointsMaterial({ color: 0x7c3aed, size: 0.02, transparent: true, opacity: 0.45 });
+  const points = new THREE.Points(geo, mat);
+  scene.add(points);
+  function animate() {
+    requestAnimationFrame(animate);
+    points.rotation.y += 0.0004;
+    points.rotation.x += 0.0002;
+    renderer.render(scene, camera);
   }
+  animate();
+  addEventListener('resize', () => {
+    renderer.setSize(innerWidth, innerHeight);
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
 </body>
-
 </html>
-

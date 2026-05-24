@@ -7,6 +7,7 @@
   <meta name="description" content="Reference page for Month 1 of Zorus 2.1. Learn the step-by-step agentic process to create hyper-realistic talking AI clones and digital twins.">
   <meta name="keywords" content="Zorus Month 1, digital twin reference, HeyGen baseline video, voice cloning ElevenLabs, avatar synthesis walkthrough">
   <link rel="canonical" href="https://www.gigniconnect.space/zorus-month1.html">
+  <link rel="icon" type="image/png" href="favicon.png">
 
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
@@ -21,72 +22,153 @@
   <meta property="twitter:title" content="Zorus 2.1 — Month 1: AI Avatar Clone Reference | Gigni">
   <meta property="twitter:description" content="Reference page for Month 1 of Zorus 2.1. Learn the step-by-step agentic process to create hyper-realistic talking AI clones and digital twins.">
   <meta property="twitter:image" content="https://www.gigniconnect.space/Gemini_Generated_Image_anvpx2anvpx2anvp.png">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+  
   <style>
     :root {
-      --primary: #3b5bdb;
-      --orange: #f97316;
-      --bg: #030712;
-      --card-bg: rgba(17, 24, 39, 0.6);
-      --border: rgba(255, 255, 255, 0.08);
-      --text: #f3f4f6;
-      --text-dim: #9ca3af;
+      --ink: #12062a;
+      --muted: #6b7280;
+      --purple: #7c3aed;
+      --purple-2: #9333ea;
+      --purple-3: #a855f7;
+      --purple-soft: #f5f0ff;
+      --purple-mid: #ede9fe;
+      --white: #ffffff;
+      --border: rgba(124,58,237,0.15);
+      --line: rgba(124,58,237,0.10);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
     body {
       font-family: 'Outfit', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      margin: 0;
+      color: var(--ink);
+      background: #ffffff;
       overflow-x: hidden;
     }
 
-    #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.3; pointer-events: none; }
-    .main-container { position: relative; z-index: 10; }
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+    }
 
-    /* NAV */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 100vh;
+      z-index: -1;
+      background-image: radial-gradient(circle, rgba(124,58,237,0.11) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.4), transparent 70%);
+      pointer-events: none;
+    }
+
+    .main-container {
+      position: relative;
+      z-index: 10;
+    }
+
+    /* ── NAVBAR ── */
     nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-      padding: 20px 40px; background: rgba(3, 7, 18, 0.8);
-      backdrop-filter: blur(20px);
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid var(--border);
+      position: fixed;
+      top: 16px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      width: min(1180px, calc(100% - 32px));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 16px 10px 24px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(22px);
+      box-shadow: 0 12px 40px rgba(124,58,237,0.10), 0 0 0 1px rgba(255,255,255,0.6) inset;
     }
-    .logo { 
-      font-family: 'Bebas Neue', sans-serif; font-size: 2rem; 
-      letter-spacing: 0.05em; color: #fff; text-decoration: none;
-    }
-    .back-btn { 
-      color: var(--text-dim); text-decoration: none; font-size: 14px; 
-      font-weight: 600; transition: 0.3s; 
-    }
-    .back-btn:hover { color: #fff; }
 
-    /* HERO */
+    .logo {
+      font-size: 24px; font-weight: 900; letter-spacing: 0.04em;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      filter: drop-shadow(0 0 18px rgba(192,38,211,0.35));
+      text-decoration: none;
+    }
+    .logo span {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-left: 8px;
+      letter-spacing: normal;
+      background: none;
+      -webkit-text-fill-color: var(--muted);
+    }
+
+    .back-btn {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.5);
+      transition: all 0.2s ease;
+    }
+    .back-btn:hover {
+      color: var(--purple);
+      background: var(--purple-soft);
+      border-color: var(--purple);
+    }
+
+    /* ── HERO ── */
     .hero {
-      padding: 120px 40px 40px;
+      padding: 140px 24px 40px;
       text-align: center;
       max-width: 900px;
       margin: 0 auto;
     }
     .badge-pill {
-      background: rgba(59, 91, 219, 0.15); border: 1px solid rgba(59, 91, 219, 0.3);
-      border-radius: 50px; padding: 8px 20px; font-size: 12px; font-weight: 700; color: #93c5fd;
-      text-transform: uppercase; margin-bottom: 24px; letter-spacing: 1px; display: inline-block;
+      background: var(--purple-soft);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 8px 20px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--purple);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      letter-spacing: 0.05em;
+      display: inline-block;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.06);
     }
     .hero h1 {
-      font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 6vw, 4.5rem);
-      line-height: 1.1; margin-bottom: 24px; letter-spacing: 1px;
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+      color: var(--ink);
     }
-    .hero h1 span { color: var(--primary); }
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--purple), var(--purple-3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-    /* VIDEO SECTION */
+    /* ── VIDEO SECTION ── */
     .video-container {
       max-width: 1000px;
       margin: 0 auto 60px;
-      padding: 0 40px;
+      padding: 0 24px;
     }
     .video-wrapper {
       position: relative;
@@ -95,78 +177,131 @@
       border-radius: 24px;
       overflow: hidden;
       border: 1px solid var(--border);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      box-shadow: 0 20px 50px rgba(124,58,237,0.12);
+      background: #000;
     }
     .video-wrapper iframe {
       position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     }
 
-    /* COURSE CONTENT */
+    /* ── CONTENT GRID ── */
     .content-grid {
       display: grid;
       grid-template-columns: 2fr 1fr;
-      gap: 40px;
+      gap: 32px;
       max-width: 1200px;
       margin: 0 auto 100px;
-      padding: 0 40px;
+      padding: 0 24px;
     }
     @media (max-width: 900px) {
       .content-grid { grid-template-columns: 1fr; }
     }
 
     .card {
-      background: var(--card-bg);
+      background: rgba(255, 255, 255, 0.75);
       backdrop-filter: blur(20px);
       border: 1px solid var(--border);
       border-radius: 24px;
       padding: 40px;
+      box-shadow: 0 10px 30px rgba(124,58,237,0.04);
     }
 
-    .card h2 { font-size: 28px; font-weight: 800; margin-bottom: 20px; color: #fff; }
-    .card p { color: var(--text-dim); line-height: 1.7; margin-bottom: 24px; font-size: 16px; }
+    .card h2 {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .card p {
+      color: var(--muted);
+      line-height: 1.75;
+      margin-bottom: 24px;
+      font-size: 16px;
+      font-weight: 500;
+    }
     
     .feature-list { list-style: none; padding: 0; margin: 0 0 30px; }
     .feature-list li {
-      display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;
-      color: #e5e7eb; line-height: 1.6;
+      display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px;
+      color: var(--ink); line-height: 1.6;
+      font-weight: 500;
     }
-    .feature-list li span { color: var(--orange); font-size: 20px; font-weight: bold; }
+    .feature-list li span {
+      color: var(--purple); font-size: 20px; font-weight: bold; line-height: 1;
+    }
 
     .tool-tag {
-      display: inline-block; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-      padding: 8px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; margin: 0 10px 10px 0;
-      color: #fff;
+      display: inline-block;
+      background: var(--purple-soft);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      margin: 0 10px 10px 0;
+      color: var(--purple);
+      transition: all 0.2s ease;
+    }
+    .tool-tag:hover {
+      background: var(--purple-mid);
     }
 
-    /* ASSIGNMENT SIDEBAR */
+    /* ── ASSIGNMENT SIDEBAR ── */
     .assignment-box {
-      background: linear-gradient(145deg, rgba(249, 115, 22, 0.05), rgba(17, 24, 39, 0.8));
-      border: 1px solid rgba(249, 115, 22, 0.3);
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      box-shadow: 0 12px 40px rgba(124,58,237,0.06), 0 0 0 1px rgba(255,255,255,0.6) inset;
       border-radius: 24px;
       padding: 32px;
       position: sticky;
       top: 100px;
+      align-self: start;
     }
     .assignment-box h3 {
-      color: var(--orange); font-size: 20px; font-weight: 800; text-transform: uppercase; margin-bottom: 16px;
-      letter-spacing: 1px;
+      color: var(--purple);
+      font-size: 20px;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      letter-spacing: 0.05em;
     }
     .task-item {
       display: flex; gap: 12px; margin-bottom: 20px;
     }
     .task-num {
-      background: var(--orange); color: #fff; width: 28px; height: 28px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      color: #fff; width: 28px; height: 28px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(124,58,237,0.2);
     }
-    .task-text { color: #d1d5db; font-size: 15px; line-height: 1.5; }
+    .task-text { color: var(--ink); font-size: 15px; line-height: 1.55; font-weight: 600; }
 
     .btn-act {
       display: block; width: 100%; text-align: center;
-      background: var(--primary); color: #fff; text-decoration: none; border-radius: 12px;
-      padding: 16px; font-weight: 700; font-size: 16px; margin-top: 30px; transition: 0.3s; border: none; cursor: pointer;
+      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      color: #fff; text-decoration: none; border-radius: 12px;
+      padding: 16px; font-weight: 800; font-size: 16px; margin-top: 30px; transition: 0.3s; border: none; cursor: pointer;
+      box-shadow: 0 8px 24px rgba(124,58,237,0.2);
     }
-    .btn-act:hover { background: #2f4ec4; transform: translateY(-2px); }
+    .btn-act:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 32px rgba(124,58,237,0.35);
+    }
+
+    footer {
+      padding: 40px;
+      text-align: center;
+      opacity: 0.5;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      margin-top: 60px;
+    }
   </style>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
 
@@ -174,14 +309,16 @@
 
   <div class="main-container">
     <nav>
-      <a href="dashboard.html" class="logo">GIGNI <span style="color:var(--text-dim); font-size:1rem; font-family:'Outfit';">Workspace</span></a>
+      <a href="dashboard.html" class="logo">GIGNI <span>Workspace</span></a>
       <a href="zorus-course.html" class="back-btn">← Back to Curriculum</a>
     </nav>
 
     <div class="hero">
       <div class="badge-pill">Month 1 Reference</div>
       <h1>Create a Realistic Talking <span>AI Clone</span> in 5 Mins</h1>
-      <p style="color: var(--text-dim); font-size: 1.2rem; line-height: 1.6;">Welcome to Month 1 of Zorus 2.1. In this module, you'll learn the agentic workflow behind generating a hyper-realistic digital twin of yourself.</p>
+      <p style="color: var(--muted); font-size: 1.15rem; line-height: 1.65; max-width: 750px; margin: 0 auto; font-weight: 500;">
+        Welcome to Month 1 of Zorus 2.1. In this module, you'll learn the agentic workflow behind generating a hyper-realistic digital twin of yourself.
+      </p>
     </div>
 
     <div class="video-container">
@@ -195,15 +332,15 @@
         <h2>Module Overview</h2>
         <p>In this reference material, we explore the cutting-edge capabilities of AI-driven avatar and voice synthesis. Creating a digital twin allows for exponential scaling of content creation, personalized brand messaging, and dynamic agentic communication.</p>
         
-        <h3 style="margin: 32px 0 16px; font-size: 20px; font-weight: 700;">Key Learning Outcomes</h3>
+        <h3 style="margin: 32px 0 16px; font-size: 20px; font-weight: 800; color: var(--ink);">Key Learning Outcomes</h3>
         <ul class="feature-list">
           <li><span>✓</span> <strong>Digital Twin Synthesis:</strong> Understand the technical requirements for mapping gestures, facial expressions, and micro-movements to a 3D avatar space.</li>
           <li><span>✓</span> <strong>Voice Cloning Integrity:</strong> Train a neural voice model that accurately mirrors pacing, intonation, and emotional resonance.</li>
           <li><span>✓</span> <strong>Agentic Integration:</strong> Implement these generative tools into a seamless, automated workflow for personal branding and client deployments.</li>
         </ul>
 
-        <h3 style="margin: 32px 0 16px; font-size: 20px; font-weight: 700;">Tech Stack & Tools</h3>
-        <div>
+        <h3 style="margin: 32px 0 16px; font-size: 20px; font-weight: 800; color: var(--ink);">Tech Stack & Tools</h3>
+        <div style="margin-top: 12px;">
           <span class="tool-tag">HeyGen (Avatar Gen)</span>
           <span class="tool-tag">ElevenLabs (Voice Synthesis)</span>
           <span class="tool-tag">Python (Automation)</span>
@@ -212,7 +349,7 @@
 
       <div class="assignment-box">
         <h3>Month 1 Objective</h3>
-        <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 24px; line-height: 1.6;">Apply the concepts from the reference video to build your own generative identity.</p>
+        <p style="color: var(--muted); font-size: 14px; margin-bottom: 24px; line-height: 1.6; font-weight: 500;">Apply the concepts from the reference video to build your own generative identity.</p>
         
         <div class="task-item">
           <div class="task-num">1</div>
@@ -231,8 +368,8 @@
       </div>
     </div>
 
-    <footer style="padding:40px; text-align:center; opacity:0.3; font-size:12px; border-top: 1px solid var(--border);">
-      &copy; 2026 GIGNI · ZORUS 2.1 AGENTIC COHORT
+    <footer>
+      &copy; 2026 GIGNI · ZORUS 2.1 AGENTIC COHORT. All rights reserved.
     </footer>
   </div>
 
@@ -241,6 +378,7 @@
     const canvas = document.getElementById('bg-canvas');
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
     camera.position.z = 5;
@@ -248,7 +386,7 @@
     const pPos = new Float32Array(1500 * 3);
     for(let i=0; i<4500; i++) pPos[i] = (Math.random() - 0.5) * 15;
     pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-    const points = new THREE.Points(pGeo, new THREE.PointsMaterial({ size: 0.02, color: 0x3b5bdb, transparent: true, opacity: 0.5 }));
+    const points = new THREE.Points(pGeo, new THREE.PointsMaterial({ size: 0.02, color: 0x7c3aed, transparent: true, opacity: 0.42 }));
     scene.add(points);
     function animate() { requestAnimationFrame(animate); points.rotation.y += 0.0005; points.rotation.x += 0.0002; renderer.render(scene, camera); }
     animate();
