@@ -96,6 +96,18 @@ async function initializeDatabase() {
             certificate_data TEXT 
         );`);
 
+        await pool.query(`CREATE TABLE IF NOT EXISTS issued_certificates (
+            id SERIAL PRIMARY KEY,
+            certificate_no VARCHAR(255) UNIQUE NOT NULL,
+            recipient_name VARCHAR(255) NOT NULL,
+            recipient_email VARCHAR(255),
+            course_name VARCHAR(255) NOT NULL,
+            date_of_issue VARCHAR(255) NOT NULL,
+            certificate_data TEXT NOT NULL,
+            certificate_file_name VARCHAR(255) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );`);
+
         // Run any missing column migrations safely
         const migrations = [
             { table: 'users', name: 'projects',      type: "JSONB DEFAULT '[]'" },
@@ -719,6 +731,106 @@ app.post('/api/admin/send-brand-collab', authenticateToken, async (req, res) => 
         res.json({ success: true, message: `Proposal sent to ${to}` });
     } catch (err) {
         console.error('Brand collab email error:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ─── ADMIN: ISSUE STAND-ALONE CERTIFICATE ───────────────────────────────────
+app.post('/api/admin/issue-certificate', authenticateToken, async (req, res) => {
+    if (req.user.email !== 'ankushka2089@gmail.com') {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    const {
+        certificate_no,
+        recipient_name,
+        recipient_email,
+        course_name,
+        date_of_issue,
+        certificate_data,
+        certificate_file_name
+    } = req.body;
+
+    if (!certificate_no || !recipient_name || !course_name || !date_of_issue || !certificate_data || !certificate_file_name) {
+        return res.status(400).json({ error: 'Missing required certificate details' });
+    }
+
+    try {
+        const result = await pool.query(
+            `INSERT INTO issued_certificates (
+                certificate_no, recipient_name, recipient_email, course_name,
+                date_of_issue, certificate_data, certificate_file_name
+             )
+             VALUES ($1, $2, $3, $4, $5, $6, $7)
+             RETURNING id, certificate_no, recipient_name, recipient_email, course_name, date_of_issue, certificate_file_name, created_at`,
+            [
+                certificate_no.trim(),
+                recipient_name.trim(),
+                recipient_email ? recipient_email.trim() : null,
+                course_name.trim(),
+                date_of_issue.trim(),
+                certificate_data,
+                certificate_file_name
+            ]
+        );
+        res.json({ success: true, certificate: result.rows[0] });
+    } catch (err) {
+        if (err.code === '23505') {
+            return res.status(400).json({ error: 'Certificate number already exists' });
+        }
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ─── ADMIN: GET ALL ISSUED CERTIFICATES ─────────────────────────────────────
+app.get('/api/admin/issued-certificates', authenticateToken, async (req, res) => {
+    if (req.user.email !== 'ankushka2089@gmail.com') {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    try {
+        const result = await pool.query(
+            `SELECT id, certificate_no, recipient_name, recipient_email, course_name, date_of_issue, certificate_file_name, created_at 
+             FROM issued_certificates ORDER BY created_at DESC`
+        );
+        res.json({ success: true, certificates: result.rows });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ─── ADMIN: DELETE ISSUED CERTIFICATE ───────────────────────────────────────
+app.delete('/api/admin/delete-certificate/:id', authenticateToken, async (req, res) => {
+    if (req.user.email !== 'ankushka2089@gmail.com') {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    const { id } = req.params;
+    try {
+        const result = await pool.query(`DELETE FROM issued_certificates WHERE id = $1 RETURNING id`, [id]);
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Certificate not found' });
+        }
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ─── PUBLIC: VERIFY CERTIFICATE BY NUMBER ───────────────────────────────────
+app.get('/api/certificate/verify/:certificate_no', async (req, res) => {
+    const { certificate_no } = req.params;
+    if (!certificate_no) {
+        return res.status(400).json({ error: 'Certificate number is required' });
+    }
+    try {
+        const result = await pool.query(
+            `SELECT id, certificate_no, recipient_name, recipient_email, course_name, date_of_issue, certificate_data, certificate_file_name, created_at 
+             FROM issued_certificates WHERE UPPER(certificate_no) = UPPER($1)`,
+            [certificate_no.trim()]
+        );
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Certificate not found' });
+        }
+        res.json({ success: true, certificate: result.rows[0] });
+    } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });

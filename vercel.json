@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/verify-certificate",
+      "destination": "/verify-certificate.html"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api/index.js"
     },

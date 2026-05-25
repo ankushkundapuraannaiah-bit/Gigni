@@ -455,6 +455,88 @@
       </div>
     </div>
 
+    <!-- CERTIFICATE MANAGEMENT SECTION -->
+    <div class="section" style="padding-top:0;">
+      <div class="header-info">
+        <h1>Certificate Verification &amp; Issuance</h1>
+        <p>Generate unique certificate numbers, upload files, and manage issued credentials.</p>
+      </div>
+      <div class="card">
+        <div class="collab-grid">
+          <!-- COLUMN 1: Issue Form -->
+          <div>
+            <h3 style="margin-bottom: 20px; color: var(--purple);">Issue New Certificate</h3>
+            <div class="fg">
+              <label>Recipient Full Name</label>
+              <input type="text" id="issue-name" placeholder="e.g. John Doe" required>
+            </div>
+            <div class="fg">
+              <label>Recipient Email (Optional)</label>
+              <input type="email" id="issue-email" placeholder="e.g. john@example.com">
+            </div>
+            <div class="fg">
+              <label>Course / Track Name</label>
+              <select id="issue-course-select" onchange="toggleCustomCourse()">
+                <option value="Talking AI Clone">Talking AI Clone</option>
+                <option value="N8N Agentic Automation">N8N Agentic Automation</option>
+                <option value="Workflow Web App">Workflow Web App</option>
+                <option value="AI Project Builder">AI Project Builder</option>
+                <option value="Practical AI Workflow">Practical AI Workflow</option>
+                <option value="Automation Build Lab">Automation Build Lab</option>
+                <option value="Agent App Project">Agent App Project</option>
+                <option value="No-Code AI Build">No-Code AI Build</option>
+                <option value="Creative AI Tool">Creative AI Tool</option>
+                <option value="AI Product Prototype">AI Product Prototype</option>
+                <option value="Full Project Sprint">Full Project Sprint</option>
+                <option value="custom">-- Custom Course Name --</option>
+              </select>
+              <input type="text" id="issue-course-custom" placeholder="Enter custom course name" style="display:none; margin-top:8px;">
+            </div>
+            <div class="frow2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
+              <div class="fg">
+                <label>Date of Issue</label>
+                <input type="date" id="issue-date">
+              </div>
+              <div class="fg">
+                <label>Certificate No</label>
+                <div style="display:flex; gap:8px;">
+                  <input type="text" id="issue-cert-no" placeholder="GIG-XXXX..." style="flex:1;">
+                  <button class="btn-act" onclick="generateCertificateNo()" style="margin:0; padding:12px; display:flex; align-items:center; justify-content:center;" type="button" title="Generate Number">
+                    <span class="material-icons" style="font-size:16px;">autorenew</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="fg">
+              <label>Certificate File (Image / PDF)</label>
+              <input type="file" id="issue-file" accept=".pdf,.png,.jpg,.jpeg" required>
+            </div>
+            <button class="btn-act btn-cert" onclick="issueCertificate()" id="issue-submit-btn" style="width:100%; padding:16px; font-size:15px; margin-top:12px; border-radius:12px;">Issue Stand-Alone Certificate</button>
+          </div>
+          <!-- COLUMN 2: Issued Log -->
+          <div>
+            <h3 style="margin-bottom: 20px; color: var(--purple);">Issued Registry Log</h3>
+            <div style="max-height: 540px; overflow-y: auto; border: 1px solid var(--border); border-radius: 16px; background: rgba(124,58,237,0.01); padding: 12px;">
+              <table style="min-width: 100%; font-size: 13px; border-collapse: collapse;">
+                <thead>
+                  <tr style="font-size: 10px;">
+                    <th style="padding: 10px 8px; width: 35%; border-bottom: 1px solid var(--border); text-align: left;">Recipient / No</th>
+                    <th style="padding: 10px 8px; width: 40%; border-bottom: 1px solid var(--border); text-align: left;">Course</th>
+                    <th style="padding: 10px 8px; width: 25%; border-bottom: 1px solid var(--border); text-align: left;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="issued-certs-body">
+                  <tr>
+                    <td colspan="3" style="text-align:center; padding:40px; color:var(--muted); font-weight:600;">No certificates issued yet.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- ZORUS SECTION -->
     <div class="section" style="padding-top:0;">
       <div class="header-info">
@@ -630,8 +712,175 @@
       fetchUsers();
       fetchProjectSubmissions();
       fetchZorusApplications();
+      fetchIssuedCertificates();
       updateCollabPreview();
+
+      const issueDateEl = document.getElementById('issue-date');
+      if (issueDateEl) {
+        issueDateEl.value = new Date().toISOString().split('T')[0];
+      }
     });
+
+    // ─── STAND-ALONE CERTIFICATE MANAGEMENT ──────────────────────────────────────
+    function toggleCustomCourse() {
+      const select = document.getElementById('issue-course-select');
+      const custom = document.getElementById('issue-course-custom');
+      if (select.value === 'custom') {
+        custom.style.display = 'block';
+        custom.required = true;
+      } else {
+        custom.style.display = 'none';
+        custom.required = false;
+      }
+    }
+
+    function generateCertificateNo() {
+      const select = document.getElementById('issue-course-select');
+      let courseVal = select.value === 'custom' 
+        ? document.getElementById('issue-course-custom').value 
+        : select.value;
+      
+      // Generate clean abbreviation (e.g. Talking AI Clone -> TA)
+      let abbrev = (courseVal || 'GEN')
+        .split(/[\s-]+/)
+        .map(w => w[0])
+        .join('')
+        .toUpperCase()
+        .replace(/[^A-Z0-9]/g, '')
+        .substring(0, 3);
+      if (!abbrev) abbrev = 'GIG';
+
+      const dateStr = (document.getElementById('issue-date').value || new Date().toISOString().split('T')[0])
+        .replace(/-/g, '');
+      const rand = Math.random().toString(36).substring(2, 6).toUpperCase();
+      
+      const certNo = `GIG-${abbrev}-${dateStr}-${rand}`;
+      document.getElementById('issue-cert-no').value = certNo;
+      showToast('Generated Certificate Code');
+    }
+
+    async function issueCertificate() {
+      const name = document.getElementById('issue-name').value.trim();
+      const email = document.getElementById('issue-email').value.trim();
+      const select = document.getElementById('issue-course-select');
+      const custom = document.getElementById('issue-course-custom');
+      const course = select.value === 'custom' ? custom.value.trim() : select.value;
+      const date = document.getElementById('issue-date').value;
+      const certNo = document.getElementById('issue-cert-no').value.trim();
+      const fileInput = document.getElementById('issue-file');
+      const file = fileInput.files[0];
+
+      if (!name) return showToast('⚠️ Enter recipient name');
+      if (!course) return showToast('⚠️ Enter/select course name');
+      if (!date) return showToast('⚠️ Select date of issue');
+      if (!certNo) return showToast('⚠️ Generate or enter certificate number');
+      if (!file) return showToast('⚠️ Choose certificate file');
+
+      const btn = document.getElementById('issue-submit-btn');
+      const oldText = btn.innerText;
+      btn.innerText = 'Issuing...';
+      btn.disabled = true;
+
+      try {
+        const fileData = await readCertificateFile(file);
+        const payload = {
+          certificate_no: certNo,
+          recipient_name: name,
+          recipient_email: email || null,
+          course_name: course,
+          date_of_issue: date,
+          certificate_data: fileData,
+          certificate_file_name: file.name
+        };
+
+        const res = await fetch('/api/admin/issue-certificate', {
+          method: 'POST',
+          headers: getAuthHeaders(),
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          showToast('✅ Certificate issued successfully');
+          // Reset fields
+          document.getElementById('issue-name').value = '';
+          document.getElementById('issue-email').value = '';
+          document.getElementById('issue-file').value = '';
+          if (custom.style.display !== 'none') custom.value = '';
+          document.getElementById('issue-cert-no').value = '';
+          // Refresh list
+          fetchIssuedCertificates();
+        } else {
+          showToast('❌ Failed: ' + (data.error || 'Server error'));
+        }
+      } catch (err) {
+        showToast('❌ Error: ' + err.message);
+      } finally {
+        btn.innerText = oldText;
+        btn.disabled = false;
+      }
+    }
+
+    async function fetchIssuedCertificates() {
+      const tbody = document.getElementById('issued-certs-body');
+      if (!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:var(--muted); font-weight:600;">Syncing log...</td></tr>';
+
+      try {
+        const res = await fetch('/api/admin/issued-certificates', { headers: getAuthHeaders() });
+        if (!res.ok) throw new Error('Failed to fetch certificates log');
+        const data = await res.json();
+        if (data.success) {
+          tbody.innerHTML = '';
+          const certs = data.certificates || [];
+          if (certs.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:var(--muted); font-weight:600;">No certificates issued yet.</td></tr>';
+            return;
+          }
+          certs.forEach(c => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td style="padding: 10px 8px; vertical-align: top; border-bottom: 1px solid var(--border);">
+                <div style="font-weight: 800; font-size: 14px;">${escapeHtml(c.recipient_name)}</div>
+                <div style="font-family: monospace; font-size: 11px; color: var(--purple); margin-top: 2px;">${c.certificate_no}</div>
+              </td>
+              <td style="padding: 10px 8px; vertical-align: top; border-bottom: 1px solid var(--border);">
+                <div style="font-weight: 600; font-size: 13px;">${escapeHtml(c.course_name)}</div>
+                <div style="font-size: 11px; color: var(--muted); margin-top: 2px;">Issued: ${c.date_of_issue}</div>
+              </td>
+              <td style="padding: 10px 8px; vertical-align: middle; border-bottom: 1px solid var(--border);">
+                <div style="display: flex; gap: 4px;">
+                  <a href="/verify-certificate.html?code=${c.certificate_no}" target="_blank" class="btn-act btn-cert" style="padding: 6px 10px; margin: 0; font-size: 10px; text-decoration: none; display: inline-block; box-shadow: none;">Verify</a>
+                  <button class="btn-act" onclick="deleteCertificate(${c.id})" style="padding: 6px 10px; margin: 0; font-size: 10px; background: #ef4444; box-shadow: none;">Delete</button>
+                </div>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:#ef4444; font-weight:600;">Failed to sync registry log</td></tr>';
+      }
+    }
+
+    async function deleteCertificate(id) {
+      if (!confirm('Are you sure you want to revoke/delete this issued certificate? It will no longer be verifiable.')) return;
+      try {
+        const res = await fetch(`/api/admin/delete-certificate/${id}`, {
+          method: 'DELETE',
+          headers: getAuthHeaders()
+        });
+        const data = await res.json();
+        if (data.success) {
+          showToast('Certificate revoked');
+          fetchIssuedCertificates();
+        } else {
+          showToast('Failed to revoke: ' + (data.error || 'Unknown error'));
+        }
+      } catch (err) {
+        showToast('Error: ' + err.message);
+      }
+    }
 
     async function fetchUsers() {
       const tbody = document.getElementById('users-body');
