@@ -153,6 +153,28 @@ async function initializeDatabase() {
 // Run immediately on cold start
 initializeDatabase();
 
+// ─── LAZY TABLE GUARD ────────────────────────────────────────────────────────
+// The production DB may already be initialised from an older deployment that
+// didn't include issued_certificates.  This helper creates the table on demand
+// so certificate endpoints are self-healing without manual /api/init calls.
+let _certTableReady = false;
+async function ensureIssuedCertificatesTable() {
+    if (_certTableReady) return;
+    await pool.query(`CREATE TABLE IF NOT EXISTS issued_certificates (
+        id SERIAL PRIMARY KEY,
+        certificate_no VARCHAR(255) UNIQUE NOT NULL,
+        recipient_name VARCHAR(255) NOT NULL,
+        recipient_email VARCHAR(255),
+        course_name VARCHAR(255) NOT NULL,
+        date_of_issue VARCHAR(255) NOT NULL,
+        certificate_data TEXT NOT NULL,
+        certificate_file_name VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );`);
+    _certTableReady = true;
+}
+
+
 // ─── EMAIL TRANSPORTER ────────────────────────────────────────────────────────
 // Gmail App Passwords are shown with spaces ("xxxx xxxx xxxx xxxx") but SMTP
 // requires the raw 16-char string — strip any whitespace defensively.
@@ -755,6 +777,7 @@ app.post('/api/admin/issue-certificate', authenticateToken, async (req, res) => 
     }
 
     try {
+        await ensureIssuedCertificatesTable();
         const result = await pool.query(
             `INSERT INTO issued_certificates (
                 certificate_no, recipient_name, recipient_email, course_name,
@@ -787,6 +810,7 @@ app.get('/api/admin/issued-certificates', authenticateToken, async (req, res) =>
         return res.status(403).json({ error: 'Unauthorized' });
     }
     try {
+        await ensureIssuedCertificatesTable();
         const result = await pool.query(
             `SELECT id, certificate_no, recipient_name, recipient_email, course_name, date_of_issue, certificate_file_name, created_at 
              FROM issued_certificates ORDER BY created_at DESC`
@@ -804,6 +828,7 @@ app.delete('/api/admin/delete-certificate/:id', authenticateToken, async (req, r
     }
     const { id } = req.params;
     try {
+        await ensureIssuedCertificatesTable();
         const result = await pool.query(`DELETE FROM issued_certificates WHERE id = $1 RETURNING id`, [id]);
         if (result.rows.length === 0) {
             return res.status(404).json({ error: 'Certificate not found' });
@@ -821,6 +846,7 @@ app.get('/api/certificate/verify/:certificate_no', async (req, res) => {
         return res.status(400).json({ error: 'Certificate number is required' });
     }
     try {
+        await ensureIssuedCertificatesTable();
         const result = await pool.query(
             `SELECT id, certificate_no, recipient_name, recipient_email, course_name, date_of_issue, certificate_data, certificate_file_name, created_at 
              FROM issued_certificates WHERE UPPER(certificate_no) = UPPER($1)`,
