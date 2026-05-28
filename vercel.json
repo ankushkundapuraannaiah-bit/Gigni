@@ -9,6 +9,26 @@
       "destination": "/compiler.html"
     },
     {
+      "source": "/python-compiler",
+      "destination": "/python-compiler.html"
+    },
+    {
+      "source": "/javascript-compiler",
+      "destination": "/javascript-compiler.html"
+    },
+    {
+      "source": "/c-compiler",
+      "destination": "/c-compiler.html"
+    },
+    {
+      "source": "/cpp-compiler",
+      "destination": "/cpp-compiler.html"
+    },
+    {
+      "source": "/java-compiler",
+      "destination": "/java-compiler.html"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api/index.js"
     },
