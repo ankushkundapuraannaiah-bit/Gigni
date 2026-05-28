@@ -861,6 +861,89 @@ app.get('/api/certificate/verify/:certificate_no', async (req, res) => {
     }
 });
 
+// ─── COMPILER PROXY ENDPOINT ──────────────────────────────────────────────────
+app.post('/api/execute', async (req, res) => {
+    const { language, source_code, stdin } = req.body;
+
+    if (!language || !source_code) {
+        return res.status(400).json({ error: 'Language and source_code are required.' });
+    }
+
+    let languageId;
+    switch (language.toLowerCase()) {
+        case 'c':
+            languageId = 50; // GCC 9.2.0
+            break;
+        case 'cpp':
+        case 'c++':
+            languageId = 54; // GCC 9.2.0
+            break;
+        case 'java':
+            languageId = 62; // OpenJDK 13.0.1
+            break;
+        case 'python':
+        case 'python3':
+            languageId = 71; // Python 3.8.1
+            break;
+        case 'javascript':
+        case 'js':
+            languageId = 63; // Node.js 12.14.0
+            break;
+        default:
+            return res.status(400).json({ error: `Language '${language}' is not supported by backend execution proxy.` });
+    }
+
+    try {
+        const encodedSource = Buffer.from(source_code).toString('base64');
+        const encodedStdin = stdin ? Buffer.from(stdin).toString('base64') : '';
+
+        const payload = {
+            source_code: encodedSource,
+            language_id: languageId,
+            stdin: encodedStdin
+        };
+
+        const response = await fetch('https://ce.judge0.com/submissions?base64_encoded=true&wait=true', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const errText = await response.text();
+            throw new Error(`Judge0 API returned HTTP ${response.status}: ${errText}`);
+        }
+
+        const data = await response.json();
+        const decode = (str) => str ? Buffer.from(str, 'base64').toString('utf-8') : '';
+
+        const stdout = decode(data.stdout);
+        const stderr = decode(data.stderr);
+        const compile_output = decode(data.compile_output);
+        const message = decode(data.message);
+
+        res.json({
+            success: true,
+            status: data.status,
+            stdout,
+            stderr,
+            compile_output,
+            message,
+            time: data.time,
+            memory: data.memory
+        });
+
+    } catch (err) {
+        console.error('Compiler proxy error:', err.message);
+        res.status(500).json({
+            error: 'Failed to run code using cloud sandbox compiler.',
+            details: err.message
+        });
+    }
+});
+
 // ─── EXPORT / START ───────────────────────────────────────────────────────────
 module.exports = app;
 

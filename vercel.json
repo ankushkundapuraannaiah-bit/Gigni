@@ -5,6 +5,10 @@
       "destination": "/verify-certificate.html"
     },
     {
+      "source": "/compiler",
+      "destination": "/compiler.html"
+    },
+    {
       "source": "/api/(.*)",
       "destination": "/api/index.js"
     },
