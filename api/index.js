@@ -862,6 +862,8 @@ app.get('/api/certificate/verify/:certificate_no', async (req, res) => {
 });
 
 // ─── COMPILER PROXY ENDPOINT ──────────────────────────────────────────────────
+// Uses Piston API (emkc.org) as primary executor — free, keyless, reliable.
+// Falls back to a secondary Piston mirror if the primary is unreachable.
 app.post('/api/execute', async (req, res) => {
     const { language, source_code, stdin } = req.body;
 
@@ -869,79 +871,103 @@ app.post('/api/execute', async (req, res) => {
         return res.status(400).json({ error: 'Language and source_code are required.' });
     }
 
-    let languageId;
-    switch (language.toLowerCase()) {
-        case 'c':
-            languageId = 50; // GCC 9.2.0
-            break;
-        case 'cpp':
-        case 'c++':
-            languageId = 54; // GCC 9.2.0
-            break;
-        case 'java':
-            languageId = 62; // OpenJDK 13.0.1
-            break;
-        case 'python':
-        case 'python3':
-            languageId = 71; // Python 3.8.1
-            break;
-        case 'javascript':
-        case 'js':
-            languageId = 63; // Node.js 12.14.0
-            break;
-        default:
-            return res.status(400).json({ error: `Language '${language}' is not supported by backend execution proxy.` });
+    // ── Piston language map ──────────────────────────────────────────────────
+    // For Java the file MUST be named Main.java (class is Main in templates).
+    const PISTON_RUNTIMES = {
+        'c':          { language: 'c',          version: '10.2.0',  filename: 'main.c'    },
+        'cpp':        { language: 'c++',         version: '10.2.0',  filename: 'main.cpp'  },
+        'c++':        { language: 'c++',         version: '10.2.0',  filename: 'main.cpp'  },
+        'java':       { language: 'java',         version: '15.0.2',  filename: 'Main.java' },
+        'python':     { language: 'python',       version: '3.10.0',  filename: 'main.py'   },
+        'python3':    { language: 'python',       version: '3.10.0',  filename: 'main.py'   },
+        'javascript': { language: 'javascript',   version: '18.15.0', filename: 'main.js'   },
+        'js':         { language: 'javascript',   version: '18.15.0', filename: 'main.js'   },
+    };
+
+    const runtime = PISTON_RUNTIMES[language.toLowerCase()];
+    if (!runtime) {
+        return res.status(400).json({ error: `Language '${language}' is not supported by the Gigni compiler.` });
     }
 
-    try {
-        const encodedSource = Buffer.from(source_code).toString('base64');
-        const encodedStdin = stdin ? Buffer.from(stdin).toString('base64') : '';
+    const pistonPayload = {
+        language: runtime.language,
+        version:  runtime.version,
+        files:    [{ name: runtime.filename, content: source_code }],
+        stdin:    stdin || '',
+        args:     []
+    };
 
-        const payload = {
-            source_code: encodedSource,
-            language_id: languageId,
-            stdin: encodedStdin
-        };
+    // Piston endpoints — primary + mirror fallback
+    const PISTON_ENDPOINTS = [
+        'https://emkc.org/api/v2/piston/execute',
+        'https://piston.rodentcat.com/api/v2/piston/execute'
+    ];
 
-        const response = await fetch('https://ce.judge0.com/submissions?base64_encoded=true&wait=true', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
+    let lastError = null;
 
-        if (!response.ok) {
-            const errText = await response.text();
-            throw new Error(`Judge0 API returned HTTP ${response.status}: ${errText}`);
+    for (const endpoint of PISTON_ENDPOINTS) {
+        try {
+            const t0 = Date.now();
+
+            const response = await fetch(endpoint, {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify(pistonPayload),
+                signal:  AbortSignal.timeout(15000)   // 15-second hard timeout
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(`Piston endpoint ${endpoint} returned HTTP ${response.status}: ${errText}`);
+            }
+
+            const data = await response.json();
+            const elapsed = ((Date.now() - t0) / 1000).toFixed(3);
+
+            // ── Parse Piston response ────────────────────────────────────────
+            // `compile` is present only for compiled languages (C, C++, Java).
+            // A non-zero compile.code means compilation failed.
+            const compileOutput = (data.compile && data.compile.code !== 0)
+                ? (data.compile.stderr || data.compile.output || '')
+                : '';
+
+            const stdout  = data.run ? (data.run.stdout || '') : '';
+            const stderr  = data.run ? (data.run.stderr || '') : '';
+            const runCode = data.run ? (data.run.code   || 0)  : 0;
+
+            // Status description mirroring Judge0 style for front-end compatibility
+            const statusDescription = compileOutput
+                ? 'Compilation Error'
+                : runCode !== 0
+                    ? 'Runtime Error'
+                    : 'Accepted';
+
+            console.log(`✅  [compiler] ${runtime.language} ${runtime.version} — ${elapsed}s via ${endpoint}`);
+
+            return res.json({
+                success:         true,
+                status:          { id: compileOutput || runCode !== 0 ? 6 : 3, description: statusDescription },
+                stdout,
+                stderr,
+                compile_output:  compileOutput,
+                message:         '',
+                time:            elapsed,
+                memory:          null
+            });
+
+        } catch (err) {
+            lastError = err;
+            console.warn(`⚠️  [compiler] Piston endpoint ${endpoint} failed: ${err.message}`);
+            // Try next endpoint
         }
-
-        const data = await response.json();
-        const decode = (str) => str ? Buffer.from(str, 'base64').toString('utf-8') : '';
-
-        const stdout = decode(data.stdout);
-        const stderr = decode(data.stderr);
-        const compile_output = decode(data.compile_output);
-        const message = decode(data.message);
-
-        res.json({
-            success: true,
-            status: data.status,
-            stdout,
-            stderr,
-            compile_output,
-            message,
-            time: data.time,
-            memory: data.memory
-        });
-
-    } catch (err) {
-        console.error('Compiler proxy error:', err.message);
-        res.status(500).json({
-            error: 'Failed to run code using cloud sandbox compiler.',
-            details: err.message
-        });
     }
+
+    // All endpoints failed
+    console.error('❌  [compiler] All Piston endpoints failed:', lastError?.message);
+    res.status(500).json({
+        error:   'Failed to run code. The cloud compiler is temporarily unavailable — please try again in a moment.',
+        details: lastError?.message || 'Unknown error'
+    });
 });
 
 // ─── EXPORT / START ───────────────────────────────────────────────────────────

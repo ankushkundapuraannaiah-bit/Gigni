@@ -4,52 +4,116 @@
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
-  <!-- Homepage: Gigni | GigniConnect -->
+  <!-- ── Homepage: Gigni | GigniConnect ──────────────────────────────────── -->
   <url>
     <loc>https://www.gigniconnect.space/</loc>
-    <lastmod>2026-05-24</lastmod>
+    <lastmod>2026-05-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <!-- About Gigni | GigniConnect -->
+  <!-- ── Online Compiler (canonical) ─────────────────────────────────────── -->
+  <url>
+    <loc>https://www.gigniconnect.space/compiler</loc>
+    <lastmod>2026-05-28</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- ── Online Compiler static HTML ─────────────────────────────────────── -->
+  <url>
+    <loc>https://www.gigniconnect.space/compiler.html</loc>
+    <lastmod>2026-05-28</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- ── Online Python Compiler ─────────────────────────────────── -->
+  <url>
+    <loc>https://www.gigniconnect.space/python-compiler</loc>
+    <lastmod>2026-05-28</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- ── Online JavaScript Compiler ──────────────────────────────── -->
+  <url>
+    <loc>https://www.gigniconnect.space/javascript-compiler</loc>
+    <lastmod>2026-05-28</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- ── Online C Compiler ───────────────────────────────────────── -->
+  <url>
+    <loc>https://www.gigniconnect.space/c-compiler</loc>
+    <lastmod>2026-05-28</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- ── Online C++ Compiler ─────────────────────────────────────── -->
+  <url>
+    <loc>https://www.gigniconnect.space/cpp-compiler</loc>
+    <lastmod>2026-05-28</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- ── Online Java Compiler ────────────────────────────────────── -->
+  <url>
+    <loc>https://www.gigniconnect.space/java-compiler</loc>
+    <lastmod>2026-05-28</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- ── Online HTML/CSS/JS Editor deep-link ───────────────────────────────── -->
+  <url>
+    <loc>https://www.gigniconnect.space/compiler?lang=html</loc>
+    <lastmod>2026-05-28</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- ── About ──────────────────────────────────────────────────────────────── -->
   <url>
     <loc>https://www.gigniconnect.space/about.html</loc>
-    <lastmod>2026-05-24</lastmod>
+    <lastmod>2026-05-28</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.85</priority>
   </url>
 
-  <!-- Zorus AI Course -->
+  <!-- ── Zorus AI Course ────────────────────────────────────────────────────── -->
   <url>
     <loc>https://www.gigniconnect.space/zorus.html</loc>
-    <lastmod>2026-05-24</lastmod>
+    <lastmod>2026-05-28</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.85</priority>
   </url>
 
-  <!-- Hosting -->
-  <url>
-    <loc>https://www.gigniconnect.space/hosting.html</loc>
-    <lastmod>2026-05-24</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- Zorus Course Detail -->
+  <!-- ── Zorus Course Detail ────────────────────────────────────────────────── -->
   <url>
     <loc>https://www.gigniconnect.space/zorus-course.html</loc>
-    <lastmod>2026-05-24</lastmod>
+    <lastmod>2026-05-28</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.80</priority>
   </url>
 
-  <!-- Zorus Month 1 -->
+  <!-- ── Zorus Month 1 ─────────────────────────────────────────────────────── -->
   <url>
     <loc>https://www.gigniconnect.space/zorus-month1.html</loc>
-    <lastmod>2026-05-24</lastmod>
+    <lastmod>2026-05-28</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.65</priority>
+  </url>
+
+  <!-- ── Hosting ────────────────────────────────────────────────────────────── -->
+  <url>
+    <loc>https://www.gigniconnect.space/hosting.html</loc>
+    <lastmod>2026-05-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
   </url>
 
 </urlset>
