@@ -350,6 +350,22 @@
       transition: background var(--transition), color var(--transition);
     }
 
+    /* ── COMPILER NAV (Sub-nav for languages) ──────────────────────────────── */
+    .compiler-nav {
+      width: min(1300px, calc(100% - 32px));
+      margin: 0 auto 16px;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .compiler-nav::-webkit-scrollbar { display: none; }
+    .compiler-nav a {
+      flex-shrink: 0;
+      padding: 10px 20px;
+    }
+
     body::before {
       content: '';
       position: fixed;
@@ -677,17 +693,24 @@
       border: 1px solid var(--btn-border);
       border-radius: 999px;
       background: var(--btn-bg);
-      color: var(--btn-color);
+      color: var(--text-secondary);
       font: inherit;
       font-weight: 800;
       font-size: 12px;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
       transition: transform 0.2s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
       white-space: nowrap;
     }
     .btn:hover {
       transform: translateY(-1px);
       box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+    .btn.active-lang {
+      background: var(--lang-badge-bg);
+      color: var(--lang-badge-color);
+      border-color: var(--purple);
     }
     .btn.run-btn {
       border: 0;
@@ -815,6 +838,16 @@
     </div>
   </div>
 
+  <!-- ══════ COMPILER SELECTOR NAV ══════════════════════════════════════════ -->
+  <div class="compiler-nav" id="compiler-switcher">
+    <a href="python-compiler.html" class="btn" id="nav-python"><span>🐍</span> Python</a>
+    <a href="javascript-compiler.html" class="btn" id="nav-javascript"><span>⚡</span> JavaScript</a>
+    <a href="c-compiler.html" class="btn" id="nav-c"><span>🔵</span> C</a>
+    <a href="cpp-compiler.html" class="btn" id="nav-cpp"><span>🔷</span> C++</a>
+    <a href="java-compiler.html" class="btn" id="nav-java"><span>☕</span> Java</a>
+    <a href="compiler.html?lang=html" class="btn" id="nav-html"><span>🌐</span> HTML/CSS</a>
+  </div>
+
   <!-- ══════ SEO LANGUAGE PILLS ══════════════════════════════════════════════ -->
   <div class="seo-strip" aria-label="Supported languages">
     <div class="seo-badge"><span>🐍</span> Python</div>
@@ -836,14 +869,6 @@
           <div class="lang-icon" id="lang-icon">🐍</div>
           <span id="lang-label">Python — WASM Client-side</span>
         </div>
-        <select class="language-select" id="language-select" onchange="changeLanguage()" aria-label="Select programming language">
-          <option value="python">🐍 Python</option>
-          <option value="javascript">⚡ JavaScript</option>
-          <option value="c">🔵 C (GCC)</option>
-          <option value="cpp">🔷 C++ (GCC)</option>
-          <option value="java">☕ Java (OpenJDK)</option>
-          <option value="html">🌐 HTML / CSS / JS</option>
-        </select>
       </div>
 
       <div class="editor-container" id="editor-container"></div>
@@ -1189,8 +1214,9 @@ public class Main {
       const validLanguages = ['python', 'javascript', 'c', 'cpp', 'java', 'html'];
       const initialLang = validLanguages.includes(queryLang) ? queryLang : 'python';
 
-      // Set dropdown selection UI
-      document.getElementById('language-select').value = initialLang;
+      // Set active nav state
+      const navBtn = document.getElementById('nav-' + initialLang);
+      if (navBtn) navBtn.classList.add('active-lang');
 
       // Update header details
       const meta = LANG_META[initialLang];

@@ -874,14 +874,14 @@ app.post('/api/execute', async (req, res) => {
     // ── Piston language map ──────────────────────────────────────────────────
     // For Java the file MUST be named Main.java (class is Main in templates).
     const PISTON_RUNTIMES = {
-        'c':          { language: 'c',          version: '10.2.0',  filename: 'main.c'    },
-        'cpp':        { language: 'c++',         version: '10.2.0',  filename: 'main.cpp'  },
-        'c++':        { language: 'c++',         version: '10.2.0',  filename: 'main.cpp'  },
-        'java':       { language: 'java',         version: '15.0.2',  filename: 'Main.java' },
-        'python':     { language: 'python',       version: '3.10.0',  filename: 'main.py'   },
-        'python3':    { language: 'python',       version: '3.10.0',  filename: 'main.py'   },
-        'javascript': { language: 'javascript',   version: '18.15.0', filename: 'main.js'   },
-        'js':         { language: 'javascript',   version: '18.15.0', filename: 'main.js'   },
+        'c':          { language: 'c',          version: '*',  filename: 'main.c'    },
+        'cpp':        { language: 'c++',         version: '*',  filename: 'main.cpp'  },
+        'c++':        { language: 'c++',         version: '*',  filename: 'main.cpp'  },
+        'java':       { language: 'java',         version: '*',  filename: 'Main.java' },
+        'python':     { language: 'python',       version: '*',  filename: 'main.py'   },
+        'python3':    { language: 'python',       version: '*',  filename: 'main.py'   },
+        'javascript': { language: 'javascript',   version: '*',  filename: 'main.js'   },
+        'js':         { language: 'javascript',   version: '*',  filename: 'main.js'   },
     };
 
     const runtime = PISTON_RUNTIMES[language.toLowerCase()];
