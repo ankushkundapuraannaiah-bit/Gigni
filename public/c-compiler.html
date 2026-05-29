@@ -752,11 +752,11 @@
 
   <!-- ══════ COMPILER SELECTOR NAV (Tabs) ════════════════════════════════════ -->
   <div class="compiler-nav" id="compiler-switcher">
-    <a href="python-compiler.html" class="btn" id="nav-python"><span>🐍</span> Python</a>
-    <a href="javascript-compiler.html" class="btn" id="nav-javascript"><span>⚡</span> JavaScript</a>
-    <a href="c-compiler.html" class="btn" id="nav-c"><span>🔵</span> C</a>
-    <a href="cpp-compiler.html" class="btn" id="nav-cpp"><span>🔷</span> C++</a>
-    <a href="java-compiler.html" class="btn" id="nav-java"><span>☕</span> Java</a>
+    <a href="python-compiler.html" class="btn" id="nav-python" href="/python-compiler"><span>🐍</span> Python</a>
+    <a href="javascript-compiler.html" class="btn" id="nav-javascript" href="/javascript-compiler"><span>⚡</span> JavaScript</a>
+    <a href="c-compiler.html" class="btn" id="nav-c" href="/c-compiler"><span>🔵</span> C</a>
+    <a href="cpp-compiler.html" class="btn" id="nav-cpp" href="/cpp-compiler"><span>🔷</span> C++</a>
+    <a href="java-compiler.html" class="btn" id="nav-java" href="/java-compiler"><span>☕</span> Java</a>
     <a href="compiler.html?lang=html" class="btn" id="nav-html"><span>🌐</span> HTML/CSS</a>
   </div>
 
@@ -930,6 +930,8 @@
     let pyodideInstance = null;
     let isPyodideLoading = false;
     let currentTheme = 'boost';
+
+    window.currentLang = 'c';
 
     // ─── CODE TEMPLATES ────────────────────────────────────────────────────────
     const LANG_META = {

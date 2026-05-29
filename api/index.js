@@ -867,6 +867,8 @@ app.get('/api/certificate/verify/:certificate_no', async (req, res) => {
 app.post('/api/execute', async (req, res) => {
     const { language, source_code, stdin } = req.body;
 
+    console.log(`[compiler] Execution request: lang='${language}', codeLen=${source_code?.length || 0}`);
+
     if (!language || !source_code) {
         return res.status(400).json({ error: 'Language and source_code are required.' });
     }

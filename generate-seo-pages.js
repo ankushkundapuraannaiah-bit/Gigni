@@ -231,6 +231,23 @@ function generatePage(lang, config) {
   const activeNavId = `nav-${lang}`;
   content = content.replace(`id="${activeNavId}" class="btn"`, `id="${activeNavId}" class="btn active-lang"`);
 
+  // 9. Inject window.currentLang for client-side script to know the active language
+  // This is crucial for runCode, clearCode, downloadCode functions.
+  content = content.replace(
+    `let currentTheme = 'boost';`,
+    `let currentTheme = 'boost';\n\n    window.currentLang = '${lang}';`
+  );
+
+  // 10. Update navigation links so they point to the SEO pages instead of query params
+  for (const [targetLang, targetConfig] of Object.entries(LANGUAGES)) {
+    const targetId = `nav-${targetLang}`;
+    const targetPath = `/${targetConfig.filename.replace('.html', '')}`;
+
+    // Find the button/link by ID and ensure it has the correct href
+    const linkRegex = new RegExp(`id="${targetId}"([^>]*)`, 'g');
+    content = content.replace(linkRegex, `id="${targetId}"$1 href="${targetPath}"`);
+  }
+
   // Write new file to public directory
   const destPath = path.join(__dirname, 'public', config.filename);
   fs.writeFileSync(destPath, content, 'utf8');
