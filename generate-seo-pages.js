@@ -221,10 +221,10 @@ function generatePage(lang, config) {
   content = content.replace(/<h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect\(0,0,0,0\);white-space:nowrap;">.*?<\/h1>/s, 
     `<h1 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;">${config.title}</h1>`);
 
-  // 8. Set Active Navigation State and Language Logic
+  // 8. Set Active Language Logic
   content = content.replace(
-    /const initialLang = validLanguages\.includes\(queryLang\) \? queryLang : 'python';/,
-    `const initialLang = validLanguages.includes(queryLang) ? queryLang : '${lang}';`
+    /window\.currentLang = validLanguages\.includes\(queryLang\) \? queryLang : 'python';/,
+    `window.currentLang = validLanguages.includes(queryLang) ? queryLang : '${lang}';`
   );
 
   // Ensure the correct button has the 'active-lang' class statically for SEO pages

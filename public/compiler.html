@@ -350,20 +350,48 @@
       transition: background var(--transition), color var(--transition);
     }
 
-    /* ── COMPILER NAV (Sub-nav for languages) ──────────────────────────────── */
+    /* ── COMPILER NAV (Tabs for languages) ──────────────────────────────── */
     .compiler-nav {
       width: min(1300px, calc(100% - 32px));
-      margin: 0 auto 16px;
+      margin: 20px auto 0;
       display: flex;
-      gap: 8px;
+      gap: 4px;
       overflow-x: auto;
-      padding-bottom: 4px;
+      padding: 0 10px;
       scrollbar-width: none;
+      position: relative;
+      z-index: 2;
     }
     .compiler-nav::-webkit-scrollbar { display: none; }
-    .compiler-nav a {
+    .compiler-nav .btn {
       flex-shrink: 0;
-      padding: 10px 20px;
+      padding: 12px 24px;
+      border-radius: 16px 16px 0 0;
+      border: 1px solid var(--border-color);
+      border-bottom: 0;
+      background: var(--bg-panel);
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: -1px;
+      opacity: 0.7;
+      transition: opacity 0.2s, background 0.2s, color 0.2s;
+      box-shadow: none;
+    }
+    .compiler-nav .btn:hover {
+      opacity: 1;
+      background: var(--bg-body);
+      transform: none;
+    }
+    .compiler-nav .btn.active-lang {
+      opacity: 1;
+      background: var(--bg-panel);
+      color: var(--purple);
+      border-top: 3px solid var(--purple);
+    }
+    body.developer .compiler-nav .btn.active-lang {
+      color: #4ade80;
+      border-top-color: #4ade80;
     }
 
     body::before {
@@ -707,11 +735,6 @@
       transform: translateY(-1px);
       box-shadow: 0 6px 16px rgba(0,0,0,0.1);
     }
-    .btn.active-lang {
-      background: var(--lang-badge-bg);
-      color: var(--lang-badge-color);
-      border-color: var(--purple);
-    }
     .btn.run-btn {
       border: 0;
       color: #fff;
@@ -838,7 +861,7 @@
     </div>
   </div>
 
-  <!-- ══════ COMPILER SELECTOR NAV ══════════════════════════════════════════ -->
+  <!-- ══════ COMPILER SELECTOR NAV (Tabs) ════════════════════════════════════ -->
   <div class="compiler-nav" id="compiler-switcher">
     <a href="python-compiler.html" class="btn" id="nav-python"><span>🐍</span> Python</a>
     <a href="javascript-compiler.html" class="btn" id="nav-javascript"><span>⚡</span> JavaScript</a>
@@ -846,17 +869,6 @@
     <a href="cpp-compiler.html" class="btn" id="nav-cpp"><span>🔷</span> C++</a>
     <a href="java-compiler.html" class="btn" id="nav-java"><span>☕</span> Java</a>
     <a href="compiler.html?lang=html" class="btn" id="nav-html"><span>🌐</span> HTML/CSS</a>
-  </div>
-
-  <!-- ══════ SEO LANGUAGE PILLS ══════════════════════════════════════════════ -->
-  <div class="seo-strip" aria-label="Supported languages">
-    <div class="seo-badge"><span>🐍</span> Python</div>
-    <div class="seo-badge"><span>⚡</span> JavaScript</div>
-    <div class="seo-badge"><span>🔵</span> C</div>
-    <div class="seo-badge"><span>🔷</span> C++</div>
-    <div class="seo-badge"><span>☕</span> Java</div>
-    <div class="seo-badge"><span>🌐</span> HTML/CSS/JS</div>
-    <div class="seo-badge" style="margin-left: auto; opacity: 0.7;">✅ Free • No signup • Instant</div>
   </div>
 
   <!-- ══════ IDE WORKSPACE ════════════════════════════════════════════════════ -->
@@ -920,6 +932,17 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- ══════ SEO LANGUAGE PILLS ══════════════════════════════════════════════ -->
+  <div class="seo-strip" aria-label="Supported languages" style="margin-bottom: 20px;">
+    <div class="seo-badge"><span>🐍</span> Python</div>
+    <div class="seo-badge"><span>⚡</span> JavaScript</div>
+    <div class="seo-badge"><span>🔵</span> C</div>
+    <div class="seo-badge"><span>🔷</span> C++</div>
+    <div class="seo-badge"><span>☕</span> Java</div>
+    <div class="seo-badge"><span>🌐</span> HTML/CSS/JS</div>
+    <div class="seo-badge" style="margin-left: auto; opacity: 0.7;">✅ Free • No signup • Instant</div>
   </div>
 
   <!-- ══════ SEO CONTENT + FAQ SECTION ═══════════════════════════════════════ -->
@@ -1255,9 +1278,8 @@ public class Main {
 
 
     // ─── LANGUAGE CHANGE ──────────────────────────────────────────────────────
-    function changeLanguage() {
-      if (!editor) return;
-      const lang = document.getElementById('language-select').value;
+    function updateEditorLanguage(lang) {
+      if (!editor || !LANG_META[lang]) return;
       const meta = LANG_META[lang];
 
       // Update Monaco model language
@@ -1318,12 +1340,11 @@ public class Main {
     // ─── CONTROL BAR ACTIONS ─────────────────────────────────────────────────
     function clearCode() {
       if (!confirm('Reset code to default template?')) return;
-      const lang = document.getElementById('language-select').value;
-      editor.setValue(CODE_TEMPLATES[lang] || '');
+      editor.setValue(CODE_TEMPLATES[window.currentLang] || '');
     }
 
     function downloadCode() {
-      const lang = document.getElementById('language-select').value;
+      const lang = window.currentLang;
       const ext = LANG_META[lang].ext;
       const blob = new Blob([editor.getValue()], { type: 'text/plain;charset=utf-8' });
       const a = document.createElement('a');
@@ -1374,7 +1395,7 @@ public class Main {
     // ─── MAIN RUN FUNCTION ────────────────────────────────────────────────────
     async function runCode() {
       if (!editor) return;
-      const lang = document.getElementById('language-select').value;
+      const lang = window.currentLang;
       const code = editor.getValue();
       const stdin = document.getElementById('stdin-textarea').value;
 

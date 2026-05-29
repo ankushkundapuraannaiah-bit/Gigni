@@ -238,6 +238,50 @@
       transition: background var(--transition), color var(--transition);
     }
 
+    /* ── COMPILER NAV (Tabs for languages) ──────────────────────────────── */
+    .compiler-nav {
+      width: min(1300px, calc(100% - 32px));
+      margin: 20px auto 0;
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      padding: 0 10px;
+      scrollbar-width: none;
+      position: relative;
+      z-index: 2;
+    }
+    .compiler-nav::-webkit-scrollbar { display: none; }
+    .compiler-nav .btn {
+      flex-shrink: 0;
+      padding: 12px 24px;
+      border-radius: 16px 16px 0 0;
+      border: 1px solid var(--border-color);
+      border-bottom: 0;
+      background: var(--bg-panel);
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: -1px;
+      opacity: 0.7;
+      transition: opacity 0.2s, background 0.2s, color 0.2s;
+      box-shadow: none;
+    }
+    .compiler-nav .btn:hover {
+      opacity: 1;
+      background: var(--bg-body);
+      transform: none;
+    }
+    .compiler-nav .btn.active-lang {
+      opacity: 1;
+      background: var(--bg-panel);
+      color: var(--purple);
+      border-top: 3px solid var(--purple);
+    }
+    body.developer .compiler-nav .btn.active-lang {
+      color: #4ade80;
+      border-top-color: #4ade80;
+    }
+
     body::before {
       content: '';
       position: fixed;
@@ -565,11 +609,13 @@
       border: 1px solid var(--btn-border);
       border-radius: 999px;
       background: var(--btn-bg);
-      color: var(--btn-color);
+      color: var(--text-secondary);
       font: inherit;
       font-weight: 800;
       font-size: 12px;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
       transition: transform 0.2s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
       white-space: nowrap;
     }
@@ -703,15 +749,14 @@
     </div>
   </div>
 
-  <!-- ══════ SEO LANGUAGE PILLS ══════════════════════════════════════════════ -->
-  <div class="seo-strip" aria-label="Supported languages">
-    <div class="seo-badge"><span>🐍</span> Python</div>
-    <div class="seo-badge"><span>⚡</span> JavaScript</div>
-    <div class="seo-badge"><span>🔵</span> C</div>
-    <div class="seo-badge"><span>🔷</span> C++</div>
-    <div class="seo-badge"><span>☕</span> Java</div>
-    <div class="seo-badge"><span>🌐</span> HTML/CSS/JS</div>
-    <div class="seo-badge" style="margin-left: auto; opacity: 0.7;">✅ Free • No signup • Instant</div>
+  <!-- ══════ COMPILER SELECTOR NAV (Tabs) ════════════════════════════════════ -->
+  <div class="compiler-nav" id="compiler-switcher">
+    <a href="python-compiler.html" class="btn" id="nav-python"><span>🐍</span> Python</a>
+    <a href="javascript-compiler.html" class="btn" id="nav-javascript"><span>⚡</span> JavaScript</a>
+    <a href="c-compiler.html" class="btn" id="nav-c"><span>🔵</span> C</a>
+    <a href="cpp-compiler.html" class="btn" id="nav-cpp"><span>🔷</span> C++</a>
+    <a href="java-compiler.html" class="btn" id="nav-java"><span>☕</span> Java</a>
+    <a href="compiler.html?lang=html" class="btn" id="nav-html"><span>🌐</span> HTML/CSS</a>
   </div>
 
   <!-- ══════ IDE WORKSPACE ════════════════════════════════════════════════════ -->
@@ -724,14 +769,6 @@
           <div class="lang-icon" id="lang-icon">🐍</div>
           <span id="lang-label">Python — WASM Client-side</span>
         </div>
-        <select class="language-select" id="language-select" onchange="changeLanguage()" aria-label="Select programming language">
-          <option value="python">🐍 Python</option>
-          <option value="javascript">⚡ JavaScript</option>
-          <option value="c">🔵 C (GCC)</option>
-          <option value="cpp">🔷 C++ (GCC)</option>
-          <option value="java">☕ Java (OpenJDK)</option>
-          <option value="html">🌐 HTML / CSS / JS</option>
-        </select>
       </div>
 
       <div class="editor-container" id="editor-container"></div>
@@ -783,6 +820,17 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- ══════ SEO LANGUAGE PILLS ══════════════════════════════════════════════ -->
+  <div class="seo-strip" aria-label="Supported languages" style="margin-bottom: 20px;">
+    <div class="seo-badge"><span>🐍</span> Python</div>
+    <div class="seo-badge"><span>⚡</span> JavaScript</div>
+    <div class="seo-badge"><span>🔵</span> C</div>
+    <div class="seo-badge"><span>🔷</span> C++</div>
+    <div class="seo-badge"><span>☕</span> Java</div>
+    <div class="seo-badge"><span>🌐</span> HTML/CSS/JS</div>
+    <div class="seo-badge" style="margin-left: auto; opacity: 0.7;">✅ Free • No signup • Instant</div>
   </div>
 
   <!-- ══════ SEO CONTENT + FAQ SECTION ═══════════════════════════════════════ -->
@@ -1075,10 +1123,11 @@ public class Main {
       if (queryLang === 'html5' || queryLang === 'css' || queryLang === 'html/css/js') queryLang = 'html';
 
       const validLanguages = ['python', 'javascript', 'c', 'cpp', 'java', 'html'];
-      const initialLang = validLanguages.includes(queryLang) ? queryLang : 'java';
+      const initialLang = validLanguages.includes(queryLang) ? queryLang : 'python';
 
-      // Set dropdown selection UI
-      document.getElementById('language-select').value = initialLang;
+      // Set active nav state
+      const navBtn = document.getElementById('nav-' + initialLang);
+      if (navBtn) navBtn.classList.add('active-lang');
 
       // Update header details
       const meta = LANG_META[initialLang];
@@ -1117,9 +1166,8 @@ public class Main {
 
 
     // ─── LANGUAGE CHANGE ──────────────────────────────────────────────────────
-    function changeLanguage() {
-      if (!editor) return;
-      const lang = document.getElementById('language-select').value;
+    function updateEditorLanguage(lang) {
+      if (!editor || !LANG_META[lang]) return;
       const meta = LANG_META[lang];
 
       // Update Monaco model language
@@ -1180,12 +1228,11 @@ public class Main {
     // ─── CONTROL BAR ACTIONS ─────────────────────────────────────────────────
     function clearCode() {
       if (!confirm('Reset code to default template?')) return;
-      const lang = document.getElementById('language-select').value;
-      editor.setValue(CODE_TEMPLATES[lang] || '');
+      editor.setValue(CODE_TEMPLATES[window.currentLang] || '');
     }
 
     function downloadCode() {
-      const lang = document.getElementById('language-select').value;
+      const lang = window.currentLang;
       const ext = LANG_META[lang].ext;
       const blob = new Blob([editor.getValue()], { type: 'text/plain;charset=utf-8' });
       const a = document.createElement('a');
@@ -1236,7 +1283,7 @@ public class Main {
     // ─── MAIN RUN FUNCTION ────────────────────────────────────────────────────
     async function runCode() {
       if (!editor) return;
-      const lang = document.getElementById('language-select').value;
+      const lang = window.currentLang;
       const code = editor.getValue();
       const stdin = document.getElementById('stdin-textarea').value;
 
