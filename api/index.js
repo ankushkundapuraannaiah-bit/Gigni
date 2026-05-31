@@ -878,10 +878,10 @@ app.post('/api/execute', async (req, res) => {
         'cpp':        'gcc-13.2.0',
         'c++':        'gcc-13.2.0',
         'java':       'openjdk-jdk-21+35',
-        'python':     'cpython-3.10.13',
-        'python3':    'cpython-3.10.13',
-        'javascript': 'node-18.17.1',
-        'js':         'node-18.17.1'
+        'python':     'cpython-3.10.15',
+        'python3':    'cpython-3.10.15',
+        'javascript': 'nodejs-18.20.4',
+        'js':         'nodejs-18.20.4'
     };
 
     const compilerName = WANDBOX_COMPILERS[language.toLowerCase()];
