@@ -899,8 +899,8 @@ print("Squares:", [x**2 for x in numbers])
         if (!py) throw new Error('Python runtime unavailable.');
 
         let pyOut = '';
-        py.setStdout({ write: c => { pyOut += c; } });
-        py.setStderr({ write: c => { pyOut += c; } });
+        py.setStdout({ write: c => { pyOut += c; return c.length; } });
+        py.setStderr({ write: c => { pyOut += c; return c.length; } });
 
         // Mock sys.stdin with textarea inputs
         await py.runPythonAsync(`
