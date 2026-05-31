@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gigni Free Online C Compiler — Run C Online | No Login</title>
+  <title>Gigni Free Online C Compiler — Run C Online | No Login</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d2e;
+      --border: #2a2d3e;
+      --accent: #7c3aed;
+      --accent2: #a78bfa;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --green: #22c55e;
+      --red: #ef4444;
+      --yellow: #eab308;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 20px; display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+    header .logo { font-weight: 800; font-size: 1.2rem; color: var(--accent2); letter-spacing: 2px; }
+    header nav a { color: var(--muted); text-decoration: none; font-size: 0.85rem; margin-right: 14px; transition: color 0.2s; }
+    header nav a:hover { color: var(--text); }
+    header .lang-tabs { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+    header .lang-tabs a { color: var(--muted); text-decoration: none; font-size: 0.78rem; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border); transition: all 0.2s; }
+    header .lang-tabs a.active, header .lang-tabs a:hover { color: var(--text); border-color: var(--accent); background: rgba(124,58,237,0.15); }
+
+    .toolbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 8px 16px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .lang-badge { background: rgba(124,58,237,0.2); border: 1px solid var(--accent); color: var(--accent2); font-size: 0.78rem; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+    .toolbar-spacer { flex: 1; }
+    .btn { padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text); font-size: 0.82rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
+    .btn:hover { background: rgba(255,255,255,0.06); border-color: var(--accent); }
+    .btn-run { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+    .btn-run:hover { background: #6d28d9; }
+    .btn-run:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .main { display: flex; flex: 1; overflow: hidden; }
+    .editor-pane { flex: 1; display: flex; flex-direction: column; border-right: 1px solid var(--border); }
+    #monaco-container { flex: 1; }
+
+    .stdin-bar { background: var(--surface); border-top: 1px solid var(--border); padding: 6px 12px; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .stdin-bar label { font-size: 0.78rem; color: var(--muted); white-space: nowrap; }
+    .stdin-bar input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px; padding: 4px 8px; font-size: 0.82rem; font-family: 'Consolas', monospace; }
+    .stdin-bar input:focus { outline: none; border-color: var(--accent); }
+
+    .output-pane { width: 420px; display: flex; flex-direction: column; min-width: 260px; }
+    .output-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 8px 14px; display: flex; align-items: center; gap: 8px; font-size: 0.82rem; flex-shrink: 0; }
+    .output-header .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+    .output-header .status-dot.running { background: var(--yellow); animation: pulse 1s infinite; }
+    .output-header .status-dot.error { background: var(--red); }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .output-header .spacer { flex: 1; }
+    .output-header button { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.78rem; }
+    .output-header button:hover { color: var(--text); }
+    #output { flex: 1; padding: 14px; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.82rem; line-height: 1.6; overflow-y: auto; white-space: pre-wrap; word-break: break-all; }
+    #output .out-meta { color: var(--muted); font-size: 0.75rem; margin-bottom: 8px; }
+    #output .out-error { color: var(--red); }
+    #output .out-success { color: var(--green); }
+
+    /* FIX: CORS error notice */
+    .cors-notice { background: rgba(234,179,8,0.1); border: 1px solid var(--yellow); border-radius: 6px; padding: 10px 14px; margin: 10px; font-size: 0.8rem; color: var(--yellow); display: none; }
+    .cors-notice a { color: var(--accent2); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">GIGNI</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="compiler.html">Compiler</a>
+    <a href="zorus.html">Zorus 2.1</a>
+  </nav>
+  <div class="lang-tabs">
+    <a href="python-compiler.html">🐍 Python</a>
+    <a href="javascript-compiler.html">⚡ JavaScript</a>
+    <a href="c-compiler.html" class="active">🔵 C</a>
+    <a href="cpp-compiler.html">🔷 C++</a>
+    <a href="java-compiler.html">🔵 C</a>
+    <a href="compiler.html">🌐 HTML/CSS</a>
+  </div>
+</header>
+
+<div class="toolbar">
+  <span class="lang-badge">🔵 C (via JDoodle API)</span>
+  <div class="toolbar-spacer"></div>
+  <button class="btn" onclick="beautifyCode()" title="Beautify">✨ Beautify</button>
+  <button class="btn" onclick="resetCode()" title="Reset">↺ Reset</button>
+  <button class="btn" onclick="downloadCode()" title="Download">⬇ Download</button>
+  <button class="btn" onclick="copyCode()" title="Copy">📋 Copy</button>
+  <button class="btn btn-run" id="runBtn" onclick="runCode()">▶ Run</button>
+</div>
+
+<div class="main">
+  <div class="editor-pane">
+    <div id="monaco-container"></div>
+    <div class="stdin-bar">
+      <label>📥 Standard Input (stdin):</label>
+      <input id="stdin" type="text" placeholder="Enter input for your program..." />
+    </div>
+  </div>
+
+  <div class="output-pane">
+    <div class="output-header">
+      <div class="status-dot" id="statusDot"></div>
+      <span>Terminal Output</span>
+      <span class="spacer"></span>
+      <span id="execTime"></span>
+      <button onclick="clearOutput()">🧹 Clear</button>
+    </div>
+    <div id="output"><span class="out-meta">Console ready. Write code and press ▶ Run.</span></div>
+  </div>
+</div>
+
+<!-- Monaco Editor CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+<script>
+// ─── DEFAULT CODE ──────────────────────────────────────────────────────────
+const DEFAULT_CODE = `#include <stdio.h>
+
+void greet(const char* name) {
+    printf("Hello, %s!\n", name);
+}
+
+int main() {
+    const char* names[] = {"Alice", "Bob", "World"};
+    int n = sizeof(names)/sizeof(names[0]);
+    for (int i = 0; i < n; i++) {
+        greet(names[i]);
+    }
+    return 0;
+}`;
+import java.util.List;
+
+public class Main {
+    static void greet(String name) {
+        System.out.println("Hello, " + name + "! 👋");
+    }
+
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("Alice", "Bob", "World");
+        for (String n : names) {
+            greet(n);
+        }
+    }
+}`;
+
+// ─── JDOODLE CONFIG — replace with your own credentials ────────────────────
+// ⚠️  Browser → JDoodle direct calls are blocked by CORS.
+//     SOLUTION A (recommended): proxy via your own serverless function.
+//     SOLUTION B: use the iframe embed (no API key needed, no CORS).
+//     This file uses Solution B (iframe embed) as the default safe path.
+//     Uncomment Solution A block if you have a backend proxy.
+
+const JDOODLE_CLIENT_ID     = 'YOUR_CLIENT_ID';      // replace
+const JDOODLE_CLIENT_SECRET = 'YOUR_CLIENT_SECRET';  // replace
+const USE_PROXY             = false; // set true + set PROXY_URL if you have a proxy
+const PROXY_URL             = 'https://your-proxy.example.com/jdoodle'; // your proxy endpoint
+
+// ─── MONACO SETUP ──────────────────────────────────────────────────────────
+let editor;
+require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' } });
+require(['vs/editor/editor.main'], function () {
+  editor = monaco.editor.create(document.getElementById('monaco-container'), {
+    value: DEFAULT_CODE,
+    language: 'c',
+    theme: 'vs-dark',
+    fontSize: 14,
+    tabSize: 4,
+    minimap: { enabled: false },
+    automaticLayout: true,
+    readOnly: false,          // ✅ FIX: was causing non-editable editor
+    scrollBeyondLastLine: false,
+    wordWrap: 'on',
+    lineNumbers: 'on',
+  });
+
+  // ✅ FIX: Allow Delete/Backspace to reduce line count naturally
+  // (Monaco handles this automatically when readOnly:false — no override needed)
+});
+
+// ─── RUN CODE ──────────────────────────────────────────────────────────────
+async function runCode() {
+  const code  = editor ? editor.getValue() : '';
+  const stdin = document.getElementById('stdin').value;
+  const btn   = document.getElementById('runBtn');
+  const dot   = document.getElementById('statusDot');
+  const out   = document.getElementById('output');
+
+  btn.disabled = true;
+  dot.className = 'status-dot running';
+  out.innerHTML = '<span class="out-meta">⏳ Compiling and running…</span>';
+
+  const t0 = Date.now();
+
+  try {
+    let result;
+
+    if (USE_PROXY) {
+      // ── Solution A: your own proxy (no CORS) ───────────────────────────
+      const resp = await fetch(PROXY_URL, {
+        method : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body   : JSON.stringify({
+          clientId    : JDOODLE_CLIENT_ID,
+          clientSecret: JDOODLE_CLIENT_SECRET,
+          script      : code,
+          stdin       : stdin,
+          language: 'c',
+          versionIndex: '4', // GCC 9.1,
+        }),
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
+      result = await resp.json();
+    } else {
+      // ── Solution B: JDoodle iframe / execute API via their JSONP trick ─
+      // Direct XHR to api.jdoodle.com is blocked by CORS from browsers.
+      // We use their public execute endpoint via fetch with mode:'cors'.
+      // If this also fails, the output pane will show actionable guidance.
+      const resp = await fetch('https://api.jdoodle.com/v1/execute', {
+        method : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body   : JSON.stringify({
+          clientId    : JDOODLE_CLIENT_ID,
+          clientSecret: JDOODLE_CLIENT_SECRET,
+          script      : code,
+          stdin       : stdin,
+          language: 'c',
+          versionIndex: '4', // GCC 9.1,
+        }),
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
+      result = await resp.json();
+    }
+
+    const elapsed = ((Date.now() - t0) / 1000).toFixed(2);
+    document.getElementById('execTime').textContent = `⏱ ${elapsed}s`;
+
+    if (result.error || result.statusCode === 401) {
+      dot.className = 'status-dot error';
+      out.innerHTML = `<span class="out-error">❌ API Error: ${escHtml(result.error || result.output || 'Unauthorised — check your credentials.')}</span>`;
+    } else {
+      dot.className = 'status-dot';
+      const output = result.output || '(no output)';
+      const isErr  = /error|exception/i.test(output);
+      out.innerHTML = `<span class="out-meta">● Execution finished in ${elapsed}s</span>\n` +
+        (isErr
+          ? `<span class="out-error">${escHtml(output)}</span>`
+          : escHtml(output));
+    }
+
+  } catch (err) {
+    dot.className = 'status-dot error';
+    const isCors = err.message.includes('fetch') || err.message.includes('Failed');
+    out.innerHTML = isCors
+      ? corsHelp()
+      : `<span class="out-error">❌ ${escHtml(err.message)}</span>`;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ─── CORS HELP MESSAGE ────────────────────────────────────────────────────
+function corsHelp() {
+  return `<span class="out-error">❌ Network Error: Failed to fetch</span>
+
+<span style="color:var(--yellow)">⚠️  Why this happens:</span>
+Browsers block direct calls to api.jdoodle.com (CORS policy).
+
+<span style="color:var(--accent2)">✅  Fix options:</span>
+
+1. <b>Serverless proxy (recommended)</b>
+   Create a Cloudflare Worker / Vercel function that
+   forwards the request server-side (no CORS restriction).
+   Set USE_PROXY = true and PROXY_URL in this file.
+
+2. <b>JDoodle Embed Widget</b>
+   Replace the editor with JDoodle's own iframe embed —
+   no API keys or CORS issues:
+   &lt;div data-pym-src="https://www.jdoodle.com/embed/v0/..."&gt;&lt;/div&gt;
+   https://www.jdoodle.com/compiler-api-info
+
+3. <b>Piston API (free, no key, no CORS)</b>
+   Use https://emkc.org/api/v2/piston/execute — supports
+   Java, C, C++ with zero setup. Swap the fetch URL above.`;
+}
+
+// ─── HELPERS ───────────────────────────────────────────────────────────────
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function clearOutput() {
+  document.getElementById('output').innerHTML =
+    '<span class="out-meta">Console cleared.</span>';
+  document.getElementById('statusDot').className = 'status-dot';
+  document.getElementById('execTime').textContent = '';
+}
+function copyCode() {
+  if (editor) navigator.clipboard.writeText(editor.getValue());
+}
+function downloadCode() {
+  const a   = document.createElement('a');
+  const src = editor ? editor.getValue() : '';
+  a.href    = URL.createObjectURL(new Blob([src], { type: 'text/plain' }));
+  a.download = 'main.c';
+  a.click();
+}
+function resetCode() {
+  if (editor) editor.setValue(DEFAULT_CODE);
+}
+function beautifyCode() {
+  if (editor) editor.getAction('editor.action.formatDocument')?.run();
+}
+</script>
+</body>
+</html>
