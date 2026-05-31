@@ -527,10 +527,10 @@
     }
   </style>
 
+  <!-- Pyodide Python WASM — must load BEFORE Monaco/RequireJS to avoid AMD conflict -->
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.29.4/full/pyodide.js"></script>
   <!-- Monaco Editor -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/loader.min.js"></script>
-  <!-- Pyodide Python WASM -->
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
 </head>
 <body class="boost" id="body-root">
 

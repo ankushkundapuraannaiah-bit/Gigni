@@ -310,39 +310,35 @@
     let currentTheme = 'boost';
     const API_ENDPOINT = '/api/execute';
 
-    const JAVA_TEMPLATE = `// Gigni Online Java Compiler
-// Powered by OpenJDK 21 via Wandbox
-// Note: Use 'class Main' (not 'public class Main') - handled automatically.
+    const JAVA_TEMPLATE = `// Gigni Online Java Compiler — OpenJDK 21 via Wandbox
+// Tip: Enter stdin values in the left panel before running.
+// Use 'class Main' (not 'public class Main') — handled automatically.
 
-import java.util.Scanner;
 import java.util.Arrays;
 
 class Main {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        
-        System.out.print("Enter your name: ");
-        String name = sc.nextLine();
-        System.out.println("Hello, " + name + "! Welcome to Gigni Java Compiler.");
+        System.out.println("Hello from Gigni Java Compiler!");
+        System.out.println("OpenJDK 21 — Powered by Wandbox");
 
-        // Demo: Bubble sort
+        // Fibonacci sequence
+        int n = 10;
+        int[] fib = new int[n];
+        fib[0] = 0; fib[1] = 1;
+        for (int i = 2; i < n; i++) fib[i] = fib[i-1] + fib[i-2];
+        System.out.println("\nFirst " + n + " Fibonacci numbers:");
+        System.out.println(Arrays.toString(fib));
+
+        // Bubble sort demo
         int[] arr = {64, 34, 25, 12, 22, 11, 90};
-        System.out.println("\\nBefore sort: " + Arrays.toString(arr));
-
-        for (int i = 0; i < arr.length - 1; i++) {
-            for (int j = 0; j < arr.length - i - 1; j++) {
-                if (arr[j] > arr[j + 1]) {
-                    int temp = arr[j];
-                    arr[j] = arr[j + 1];
-                    arr[j + 1] = temp;
-                }
-            }
-        }
-        System.out.println("After sort:  " + Arrays.toString(arr));
-        sc.close();
+        for (int i = 0; i < arr.length - 1; i++)
+            for (int j = 0; j < arr.length - i - 1; j++)
+                if (arr[j] > arr[j+1]) { int t=arr[j]; arr[j]=arr[j+1]; arr[j+1]=t; }
+        System.out.println("Sorted array: " + Arrays.toString(arr));
     }
 }
 `;
+
 
     function setTheme(mode) {
       currentTheme = mode;

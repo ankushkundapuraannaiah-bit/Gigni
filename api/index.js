@@ -896,13 +896,20 @@ app.post('/api/execute', async (req, res) => {
         codeToSend = source_code.replace(/\bpublic\s+class\s+Main\b/, 'class Main');
     }
 
+    // Build compiler options — include -lm for C/C++ to support math.h (sqrt, pow, etc.)
+    let compilerOptions = '';
+    const lang = language.toLowerCase();
+    if (lang === 'c') {
+        compilerOptions = 'warning,-lm';
+    } else if (lang === 'cpp' || lang === 'c++') {
+        compilerOptions = 'warning';
+    }
+
     const payload = {
         compiler: compilerName,
         code:     codeToSend,
         stdin:    stdin || '',
-        options:  language.toLowerCase() === 'c' || language.toLowerCase() === 'cpp' || language.toLowerCase() === 'c++' 
-                    ? 'warning' 
-                    : ''
+        options:  compilerOptions
     };
 
     try {
