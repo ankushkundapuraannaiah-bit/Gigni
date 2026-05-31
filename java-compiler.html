@@ -1,212 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Gigni Free Online Java Compiler</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html, body {
-    height: 100%;
-    background: #0f1117;
-    color: #e2e8f0;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    overflow: hidden;
-  }
-
-  /* ── HEADER ── */
-  header {
-    height: 46px;
-    background: #1a1d2e;
-    border-bottom: 1px solid #2a2d3e;
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
-    gap: 14px;
-    flex-shrink: 0;
-  }
-  .logo { font-weight: 800; font-size: 1.1rem; color: #a78bfa; letter-spacing: 2px; }
-  header nav a { color: #64748b; text-decoration: none; font-size: 0.82rem; margin-right: 12px; }
-  header nav a:hover { color: #e2e8f0; }
-  .lang-tabs { margin-left: auto; display: flex; gap: 5px; }
-  .lang-tabs a {
-    color: #64748b; text-decoration: none; font-size: 0.75rem;
-    padding: 3px 9px; border-radius: 20px; border: 1px solid #2a2d3e;
-  }
-  .lang-tabs a.active, .lang-tabs a:hover {
-    color: #e2e8f0; border-color: #7c3aed; background: rgba(124,58,237,0.15);
-  }
-
-  /* ── TOOLBAR ── */
-  .toolbar {
-    height: 42px;
-    background: #1a1d2e;
-    border-bottom: 1px solid #2a2d3e;
-    display: flex;
-    align-items: center;
-    padding: 0 12px;
-    gap: 8px;
-    flex-shrink: 0;
-  }
-  .lang-badge {
-    background: rgba(124,58,237,0.2); border: 1px solid #7c3aed;
-    color: #a78bfa; font-size: 0.75rem; padding: 3px 10px;
-    border-radius: 20px; font-weight: 600;
-  }
-  .spacer { flex: 1; }
-  .btn {
-    padding: 5px 12px; border-radius: 5px; border: 1px solid #2a2d3e;
-    background: transparent; color: #e2e8f0; font-size: 0.8rem;
-    cursor: pointer; white-space: nowrap;
-  }
-  .btn:hover { background: rgba(255,255,255,0.06); border-color: #7c3aed; }
-  .btn-run { background: #7c3aed; border-color: #7c3aed; font-weight: 700; }
-  .btn-run:hover { background: #6d28d9; }
-  .btn-run:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  /* ── LAYOUT ── */
-  .workspace {
-    /* total height = 100vh minus header(46) minus toolbar(42) */
-    height: calc(100vh - 46px - 42px);
-    display: flex;
-  }
-
-  /* ── LEFT: EDITOR PANE ── */
-  .editor-pane {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    border-right: 1px solid #2a2d3e;
-    min-width: 0;
-  }
-
-  /* THE KEY FIX: explicit height so Monaco can render */
-  #monaco-container {
-    flex: 1;
-    min-height: 0;   /* allow flex shrink */
-    width: 100%;
-  }
-
-  .stdin-row {
-    height: 36px;
-    background: #1a1d2e;
-    border-top: 1px solid #2a2d3e;
-    display: flex;
-    align-items: center;
-    padding: 0 10px;
-    gap: 8px;
-    flex-shrink: 0;
-  }
-  .stdin-row label { font-size: 0.75rem; color: #64748b; white-space: nowrap; }
-  .stdin-row input {
-    flex: 1; background: #0f1117; border: 1px solid #2a2d3e;
-    color: #e2e8f0; border-radius: 4px; padding: 3px 7px;
-    font-size: 0.8rem; font-family: monospace;
-  }
-  .stdin-row input:focus { outline: none; border-color: #7c3aed; }
-
-  /* ── RIGHT: OUTPUT PANE ── */
-  .output-pane {
-    width: 400px;
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0;
-  }
-  .out-header {
-    height: 36px;
-    background: #1a1d2e;
-    border-bottom: 1px solid #2a2d3e;
-    display: flex;
-    align-items: center;
-    padding: 0 12px;
-    gap: 8px;
-    font-size: 0.8rem;
-    flex-shrink: 0;
-  }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; flex-shrink: 0; }
-  .dot.running { background: #eab308; animation: blink 0.8s infinite; }
-  .dot.err { background: #ef4444; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
-  .out-header .sp { flex:1; }
-  .out-header #exec-time { font-size: 0.72rem; color: #64748b; }
-  .out-header button { background: none; border: none; color: #64748b; cursor: pointer; font-size: 0.78rem; }
-  .out-header button:hover { color: #e2e8f0; }
-
-  #output {
-    flex: 1;
-    overflow-y: auto;
-    padding: 12px 14px;
-    font-family: 'Consolas', 'Courier New', monospace;
-    font-size: 0.8rem;
-    line-height: 1.65;
-    white-space: pre-wrap;
-    word-break: break-all;
-  }
-  .meta  { color: #475569; }
-  .ok    { color: #22c55e; }
-  .fail  { color: #ef4444; }
-  .warn  { color: #eab308; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gigni Free Online Java Compiler — Run Java Online | No Login</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; background: #12141f; color: #cdd6f4; font-family: 'Segoe UI', system-ui, sans-serif; }
+    .topbar { height: 48px; background: #1e2030; border-bottom: 1px solid #313244; display: flex; align-items: center; padding: 0 20px; gap: 0; flex-shrink: 0; }
+    .site-logo { font-weight: 900; font-size: 1rem; color: #cba6f7; letter-spacing: 3px; margin-right: 24px; text-decoration: none; }
+    .topnav a { color: #6c7086; text-decoration: none; font-size: 0.82rem; margin-right: 20px; transition: color .15s; }
+    .topnav a:hover { color: #cdd6f4; }
+    .langtabs { height: 42px; background: #181926; border-bottom: 1px solid #313244; display: flex; align-items: center; padding: 0 12px; gap: 4px; flex-shrink: 0; }
+    .langtabs a { display: flex; align-items: center; gap: 5px; padding: 5px 14px; border-radius: 20px; text-decoration: none; font-size: 0.8rem; color: #6c7086; border: 1px solid transparent; transition: all .15s; white-space: nowrap; }
+    .langtabs a:hover { color: #cdd6f4; background: rgba(203,166,247,0.08); }
+    .langtabs a.active { color: #cdd6f4; background: #7c3aed; border-color: #7c3aed; font-weight: 600; }
+    .toolbar { height: 44px; background: #1e2030; border-bottom: 1px solid #313244; display: flex; align-items: center; padding: 0 14px; gap: 8px; flex-shrink: 0; }
+    .lang-pill { background: rgba(124,58,237,0.18); border: 1px solid #7c3aed; color: #cba6f7; font-size: 0.75rem; padding: 3px 12px; border-radius: 20px; font-weight: 600; }
+    .tbspacer { flex: 1; }
+    .tbtn { padding: 5px 13px; border-radius: 5px; border: 1px solid #313244; background: transparent; color: #cdd6f4; font-size: 0.78rem; cursor: pointer; display: flex; align-items: center; gap: 5px; white-space: nowrap; transition: all .15s; }
+    .tbtn:hover { background: rgba(255,255,255,0.06); border-color: #7c3aed; }
+    .tbtn.run { background: #7c3aed; border-color: #7c3aed; font-weight: 700; color: #fff; }
+    .tbtn.run:hover { background: #6d28d9; }
+    .tbtn.run:disabled { opacity: .5; cursor: not-allowed; }
+    .workspace { height: calc(100vh - 134px); display: flex; }
+    .left { flex: 1; display: flex; flex-direction: column; border-right: 1px solid #313244; min-width: 0; }
+    #editor { flex: 1; min-height: 0; width: 100%; }
+    .stdin-bar { height: 38px; background: #1e2030; border-top: 1px solid #313244; display: flex; align-items: center; padding: 0 12px; gap: 8px; flex-shrink: 0; }
+    .stdin-bar label { font-size: 0.75rem; color: #6c7086; white-space: nowrap; }
+    .stdin-bar input { flex: 1; background: #12141f; border: 1px solid #313244; color: #cdd6f4; border-radius: 4px; padding: 4px 8px; font-size: 0.8rem; font-family: 'Consolas', monospace; }
+    .stdin-bar input:focus { outline: none; border-color: #7c3aed; }
+    .right { width: 420px; display: flex; flex-direction: column; flex-shrink: 0; }
+    .out-head { height: 38px; background: #1e2030; border-bottom: 1px solid #313244; display: flex; align-items: center; padding: 0 14px; gap: 8px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: .05em; flex-shrink: 0; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #a6e3a1; flex-shrink: 0; }
+    .dot.spin { background: #f9e2af; animation: pulse .7s infinite; }
+    .dot.bad  { background: #f38ba8; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.2} }
+    .out-head .sp { flex: 1; }
+    #exec-time { font-size: 0.72rem; color: #6c7086; text-transform: none; }
+    .clrbtn { background: none; border: none; color: #6c7086; cursor: pointer; font-size: 0.78rem; text-transform: none; letter-spacing: 0; }
+    .clrbtn:hover { color: #cdd6f4; }
+    #output { flex: 1; overflow-y: auto; padding: 14px 16px; font-family: 'Consolas', 'Courier New', monospace; font-size: 0.82rem; line-height: 1.65; white-space: pre-wrap; word-break: break-all; }
+    .ometa { color: #45475a; } .oerr { color: #f38ba8; }
+    .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 100; align-items: center; justify-content: center; }
+    .modal-bg.open { display: flex; }
+    .modal { background: #1e2030; border: 1px solid #313244; border-radius: 10px; padding: 24px; width: 320px; position: relative; }
+    .modal h3 { font-size: 0.95rem; margin-bottom: 16px; color: #cba6f7; }
+    .modal label { font-size: 0.8rem; color: #6c7086; display: block; margin-bottom: 4px; margin-top: 12px; }
+    .modal select { width: 100%; background: #12141f; border: 1px solid #313244; color: #cdd6f4; border-radius: 5px; padding: 5px 8px; font-size: 0.82rem; }
+    .modal-close { position: absolute; top: 12px; right: 12px; background: none; border: none; color: #6c7086; cursor: pointer; font-size: 1rem; }
+  </style>
 </head>
 <body>
-
-<header>
-  <span class="logo">GIGNI</span>
-  <nav>
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="compiler.html">Compiler</a>
-    <a href="zorus.html">Zorus 2.1</a>
+<div class="topbar">
+  <a class="site-logo" href="index.html">GIGNI</a>
+  <nav class="topnav">
+    <a href="index.html">Home</a><a href="about.html">About</a>
+    <a href="compiler.html">Compiler</a><a href="zorus.html">Zorus 2.1</a>
   </nav>
-  <div class="lang-tabs">
-    <a href="python-compiler.html">🐍 Python</a>
-    <a href="javascript-compiler.html">⚡ JavaScript</a>
-    <a href="c-compiler.html">🔵 C</a>
-    <a href="cpp-compiler.html">🔷 C++</a>
-    <a href="java-compiler.html" class="active">☕ Java</a>
-    <a href="compiler.html">🌐 HTML/CSS</a>
-  </div>
-</header>
-
-<div class="toolbar">
-  <span class="lang-badge">☕ Java (via Piston API)</span>
-  <span class="spacer"></span>
-  <button class="btn" onclick="beautify()">✨ Beautify</button>
-  <button class="btn" onclick="resetCode()">↺ Reset</button>
-  <button class="btn" onclick="download()">⬇ Download</button>
-  <button class="btn" onclick="copyCode()">📋 Copy</button>
-  <button class="btn btn-run" id="runBtn" onclick="run()">▶ Run</button>
 </div>
-
+<div class="langtabs">
+  <a href="python-compiler.html">🐍 Python</a>
+  <a href="javascript-compiler.html">⚡ JavaScript</a>
+  <a href="c-compiler.html">🔵 C</a>
+  <a href="cpp-compiler.html">🔷 C++</a>
+  <a href="java-compiler.html" class="active">☕ Java</a>
+  <a href="compiler.html">🌐 HTML/CSS</a>
+</div>
+<div class="toolbar">
+  <span class="lang-pill">☕ Java (via Piston API)</span>
+  <span class="tbspacer"></span>
+  <button class="tbtn" onclick="beautify()">✨ Beautify</button>
+  <button class="tbtn" onclick="openSettings()">⚙️ Settings</button>
+  <button class="tbtn" onclick="resetCode()">↺ Reset</button>
+  <button class="tbtn" onclick="dlCode()">⬇ Download</button>
+  <button class="tbtn" onclick="cpCode()">📋 Copy</button>
+  <button class="tbtn run" id="runBtn" onclick="runCode()">▶ Run</button>
+</div>
 <div class="workspace">
-
-  <div class="editor-pane">
-    <div id="monaco-container"></div>
-    <div class="stdin-row">
-      <label>📥 Stdin:</label>
-      <input id="stdin" type="text" placeholder="Enter input for your program…"/>
+  <div class="left">
+    <div id="editor"></div>
+    <div class="stdin-bar">
+      <label>📥 Standard Input (stdin)</label>
+      <input id="stdin" type="text" placeholder="Type input here (one value per line)…" />
     </div>
   </div>
-
-  <div class="output-pane">
-    <div class="out-header">
+  <div class="right">
+    <div class="out-head">
       <div class="dot" id="dot"></div>
       <span>Terminal Output</span>
       <span class="sp"></span>
       <span id="exec-time"></span>
-      <button onclick="clearOut()">🧹 Clear</button>
+      <button class="clrbtn" onclick="clearOut()">🧹 Clear</button>
     </div>
-    <div id="output"><span class="meta">Console ready. Write code and press ▶ Run.</span></div>
+    <div id="output"><span class="ometa">Console ready. Write code and press ▶ Run.</span></div>
   </div>
-
 </div>
-
-<!-- Monaco -->
+<div class="modal-bg" id="settingsModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeSettings()">✕</button>
+    <h3>Editor Settings</h3>
+    <label>Editor Theme</label>
+    <select onchange="setTheme(this.value)">
+      <option value="vs">Light (vs)</option><option value="vs-dark" selected>Dark (vs-dark)</option><option value="hc-black">High Contrast</option>
+    </select>
+    <label>Font Size</label>
+    <select onchange="setFontSize(+this.value)">
+      <option>12</option><option>14</option><option selected>16</option><option>18</option><option>20</option>
+    </select>
+    <label>Tab Size</label>
+    <select onchange="setTabSize(+this.value)">
+      <option>2</option><option selected>4</option><option>8</option>
+    </select>
+  </div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
 <script>
-// ── DEFAULT CODE ──────────────────────────────────────────────────────────
-const DEFAULT = `import java.util.Arrays;
+const DEFAULT = `// Gigni Java Compiler
+// Ctrl+A selects all | Delete/Backspace removes | Ctrl+Enter runs
+
+import java.util.Arrays;
 import java.util.List;
 
 public class Main {
@@ -222,110 +135,54 @@ public class Main {
     }
 }`;
 
-// ── MONACO INIT ──────────────────────────────────────────────────────────
-let editor = null;
-
-require.config({
-  paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' }
-});
-
-require(['vs/editor/editor.main'], function () {
-  editor = monaco.editor.create(document.getElementById('monaco-container'), {
-    value: DEFAULT,
-    language: 'java',
-    theme: 'vs-dark',
-    fontSize: 14,
-    tabSize: 4,
-    readOnly: false,            // ✅ editable
-    minimap: { enabled: false },
-    automaticLayout: true,      // ✅ resizes with container
-    scrollBeyondLastLine: false,
-    wordWrap: 'off',
-    lineNumbers: 'on',
-    contextmenu: true,
-    // Ctrl+A / Delete work out of the box with readOnly:false
+let editor;
+require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' } });
+require(['vs/editor/editor.main'], () => {
+  editor = monaco.editor.create(document.getElementById('editor'), {
+    value: DEFAULT, language: 'java', theme: 'vs-dark', fontSize: 16, tabSize: 4,
+    readOnly: false, automaticLayout: true, minimap: { enabled: false },
+    scrollBeyondLastLine: false, wordWrap: 'off', lineNumbers: 'on', contextmenu: true,
   });
+  editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, runCode);
 });
 
-// ── RUN via Piston API (free, no key, no CORS) ──────────────────────────
-async function run() {
-  const code  = editor ? editor.getValue() : '';
+async function runCode() {
+  const code = editor?.getValue() ?? '';
   const stdin = document.getElementById('stdin').value;
-  const btn   = document.getElementById('runBtn');
-  const dot   = document.getElementById('dot');
-  const out   = document.getElementById('output');
-
-  btn.disabled = true;
-  dot.className = 'dot running';
-  out.innerHTML = '<span class="meta">⏳ Compiling…</span>';
+  const btn = document.getElementById('runBtn');
+  const dot = document.getElementById('dot');
+  const out = document.getElementById('output');
+  btn.disabled = true; dot.className = 'dot spin';
+  out.innerHTML = '<span class="ometa">⏳ Compiling…</span>';
   document.getElementById('exec-time').textContent = '';
-
   const t0 = Date.now();
-
   try {
-    const resp = await fetch('https://emkc.org/api/v2/piston/execute', {
-      method : 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body   : JSON.stringify({
-        language: 'java',
-        version : '*',
-        files   : [{ name: 'Main.java', content: code }],
-        stdin   : stdin,
-      }),
+    const res = await fetch('https://emkc.org/api/v2/piston/execute', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ language: 'java', version: '*', files: [{ name: 'Main.java', content: code }], stdin }),
     });
-
-    if (!resp.ok) throw new Error(`Piston returned HTTP ${resp.status}`);
-
-    const data = await resp.json();
-    const ms   = Date.now() - t0;
-    document.getElementById('exec-time').textContent = `⏱ ${(ms/1000).toFixed(2)}s`;
-
-    const stdout = data.run?.stdout || '';
-    const stderr = data.run?.stderr || '';
-    const compile_err = data.compile?.stderr || '';
-
-    if (compile_err) {
-      dot.className = 'dot err';
-      out.innerHTML = `<span class="fail">Compilation error:\n${esc(compile_err)}</span>`;
-    } else if (stderr) {
-      dot.className = 'dot err';
-      out.innerHTML =
-        (stdout ? esc(stdout) + '\n' : '') +
-        `<span class="fail">${esc(stderr)}</span>`;
-    } else {
-      dot.className = 'dot';
-      out.innerHTML = stdout
-        ? `<span class="meta">● Done (${(ms/1000).toFixed(2)}s)</span>\n${esc(stdout)}`
-        : `<span class="meta">● Done — no output.</span>`;
-    }
-
-  } catch (e) {
-    dot.className = 'dot err';
-    out.innerHTML = `<span class="fail">❌ ${esc(e.message)}\n\nMake sure you are online. Piston API (emkc.org) is free and requires no API key.</span>`;
-  } finally {
-    btn.disabled = false;
-  }
+    if (!res.ok) throw new Error(`Server returned ${res.status}`);
+    const d = await res.json();
+    const ms = Date.now() - t0;
+    document.getElementById('exec-time').textContent = `TIME: ${(ms/1000).toFixed(2)}S`;
+    const cerr = d.compile?.stderr || '', stdout = d.run?.stdout || '', stderr = d.run?.stderr || '';
+    if (cerr) { dot.className='dot bad'; out.innerHTML=`<span class="oerr">Compilation error:\n${esc(cerr)}</span>`; }
+    else if (stderr) { dot.className='dot bad'; out.innerHTML=(stdout?esc(stdout)+'\n':'')+`<span class="oerr">${esc(stderr)}</span>`; }
+    else { dot.className='dot'; out.innerHTML=stdout?`<span class="ometa">● Finished in ${(ms/1000).toFixed(2)}s</span>\n${esc(stdout)}`:`<span class="ometa">● Done — no output.</span>`; }
+  } catch(e) { dot.className='dot bad'; out.innerHTML=`<span class="oerr">❌ ${esc(e.message)}</span>`; }
+  finally { btn.disabled=false; }
 }
-
-// ── HELPERS ──────────────────────────────────────────────────────────────
-function esc(s) {
-  return String(s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-function clearOut() {
-  document.getElementById('output').innerHTML = '<span class="meta">Cleared.</span>';
-  document.getElementById('dot').className = 'dot';
-  document.getElementById('exec-time').textContent = '';
-}
-function copyCode()  { if (editor) navigator.clipboard.writeText(editor.getValue()); }
-function resetCode() { if (editor) editor.setValue(DEFAULT); }
-function beautify()  { editor?.getAction('editor.action.formatDocument')?.run(); }
-function download()  {
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([editor?.getValue()||''], {type:'text/plain'}));
-  a.download = 'Main.java';
-  a.click();
-}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function clearOut(){document.getElementById('output').innerHTML='<span class="ometa">Cleared.</span>';document.getElementById('dot').className='dot';document.getElementById('exec-time').textContent='';}
+function cpCode(){if(editor)navigator.clipboard.writeText(editor.getValue());}
+function resetCode(){if(editor)editor.setValue(DEFAULT);}
+function beautify(){editor?.getAction('editor.action.formatDocument')?.run();}
+function dlCode(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([editor?.getValue()||''],{type:'text/plain'}));a.download='Main.java';a.click();}
+function openSettings(){document.getElementById('settingsModal').classList.add('open');}
+function closeSettings(){document.getElementById('settingsModal').classList.remove('open');}
+function setTheme(t){monaco.editor.setTheme(t);}
+function setFontSize(n){editor?.updateOptions({fontSize:n});}
+function setTabSize(n){editor?.updateOptions({tabSize:n});}
 </script>
 </body>
 </html>
