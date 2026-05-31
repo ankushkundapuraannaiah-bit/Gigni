@@ -862,8 +862,7 @@ app.get('/api/certificate/verify/:certificate_no', async (req, res) => {
 });
 
 // ─── COMPILER PROXY ENDPOINT ──────────────────────────────────────────────────
-// Uses Piston API (emkc.org) as primary executor — free, keyless, reliable.
-// Falls back to a secondary Piston mirror if the primary is unreachable.
+// Uses Wandbox API (wandbox.org) for compilation - free, keyless, and highly stable.
 app.post('/api/execute', async (req, res) => {
     const { language, source_code, stdin } = req.body;
 
@@ -873,103 +872,92 @@ app.post('/api/execute', async (req, res) => {
         return res.status(400).json({ error: 'Language and source_code are required.' });
     }
 
-    // ── Piston language map ──────────────────────────────────────────────────
-    // For Java the file MUST be named Main.java (class is Main in templates).
-    const PISTON_RUNTIMES = {
-        'c':          { language: 'c',          version: '*',  filename: 'main.c'    },
-        'cpp':        { language: 'c++',         version: '*',  filename: 'main.cpp'  },
-        'c++':        { language: 'c++',         version: '*',  filename: 'main.cpp'  },
-        'java':       { language: 'java',         version: '*',  filename: 'Main.java' },
-        'python':     { language: 'python',       version: '*',  filename: 'main.py'   },
-        'python3':    { language: 'python',       version: '*',  filename: 'main.py'   },
-        'javascript': { language: 'javascript',   version: '*',  filename: 'main.js'   },
-        'js':         { language: 'javascript',   version: '*',  filename: 'main.js'   },
+    // ── Wandbox compiler map ─────────────────────────────────────────────────
+    const WANDBOX_COMPILERS = {
+        'c':          'gcc-13.2.0-c',
+        'cpp':        'gcc-13.2.0',
+        'c++':        'gcc-13.2.0',
+        'java':       'openjdk-jdk-21+35',
+        'python':     'cpython-3.10.13',
+        'python3':    'cpython-3.10.13',
+        'javascript': 'node-18.17.1',
+        'js':         'node-18.17.1'
     };
 
-    const runtime = PISTON_RUNTIMES[language.toLowerCase()];
-    if (!runtime) {
+    const compilerName = WANDBOX_COMPILERS[language.toLowerCase()];
+    if (!compilerName) {
         return res.status(400).json({ error: `Language '${language}' is not supported by the Gigni compiler.` });
     }
 
-    const pistonPayload = {
-        language: runtime.language,
-        version:  runtime.version,
-        files:    [{ name: runtime.filename, content: source_code }],
-        stdin:    stdin || '',
-        args:     []
-    };
-
-    // Piston endpoints — primary + mirror fallback
-    const PISTON_ENDPOINTS = [
-        'https://emkc.org/api/v2/piston/execute',
-        'https://piston.rodentcat.com/api/v2/piston/execute'
-    ];
-
-    let lastError = null;
-
-    for (const endpoint of PISTON_ENDPOINTS) {
-        try {
-            const t0 = Date.now();
-
-            const response = await fetch(endpoint, {
-                method:  'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body:    JSON.stringify(pistonPayload),
-                signal:  AbortSignal.timeout(15000)   // 15-second hard timeout
-            });
-
-            if (!response.ok) {
-                const errText = await response.text();
-                throw new Error(`Piston endpoint ${endpoint} returned HTTP ${response.status}: ${errText}`);
-            }
-
-            const data = await response.json();
-            const elapsed = ((Date.now() - t0) / 1000).toFixed(3);
-
-            // ── Parse Piston response ────────────────────────────────────────
-            // `compile` is present only for compiled languages (C, C++, Java).
-            // A non-zero compile.code means compilation failed.
-            const compileOutput = (data.compile && data.compile.code !== 0)
-                ? (data.compile.stderr || data.compile.output || '')
-                : '';
-
-            const stdout  = data.run ? (data.run.stdout || '') : '';
-            const stderr  = data.run ? (data.run.stderr || '') : '';
-            const runCode = data.run ? (data.run.code   || 0)  : 0;
-
-            // Status description mirroring Judge0 style for front-end compatibility
-            const statusDescription = compileOutput
-                ? 'Compilation Error'
-                : runCode !== 0
-                    ? 'Runtime Error'
-                    : 'Accepted';
-
-            console.log(`✅  [compiler] ${runtime.language} ${runtime.version} — ${elapsed}s via ${endpoint}`);
-
-            return res.json({
-                success:         true,
-                status:          { id: compileOutput || runCode !== 0 ? 6 : 3, description: statusDescription },
-                stdout,
-                stderr,
-                compile_output:  compileOutput,
-                message:         '',
-                time:            elapsed,
-                memory:          null
-            });
-
-        } catch (err) {
-            lastError = err;
-            console.warn(`⚠️  [compiler] Piston endpoint ${endpoint} failed: ${err.message}`);
-            // Try next endpoint
-        }
+    // Clean up Java Main class (Wandbox compiles prog.java, so 'public class Main' fails)
+    let codeToSend = source_code;
+    if (language.toLowerCase() === 'java') {
+        codeToSend = source_code.replace(/\bpublic\s+class\s+Main\b/, 'class Main');
     }
 
-    // All endpoints failed
-    console.error('❌  [compiler] All Piston endpoints failed:', lastError?.message);
-    res.status(500).json({
-        error:   'Failed to run code. The cloud compiler is temporarily unavailable — please try again in a moment.',
-        details: lastError?.message || 'Unknown error'
-    });
+    const payload = {
+        compiler: compilerName,
+        code:     codeToSend,
+        stdin:    stdin || '',
+        options:  language.toLowerCase() === 'c' || language.toLowerCase() === 'cpp' || language.toLowerCase() === 'c++' 
+                    ? 'warning' 
+                    : ''
+    };
+
+    try {
+        const t0 = Date.now();
+
+        const response = await fetch('https://wandbox.org/api/compile.json', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify(payload),
+            signal:  AbortSignal.timeout(20000) // 20-second timeout
+        });
+
+        if (!response.ok) {
+            const errText = await response.text();
+            throw new Error(`Wandbox returned HTTP ${response.status}: ${errText}`);
+        }
+
+        const data = await response.json();
+        const elapsed = ((Date.now() - t0) / 1000).toFixed(3);
+
+        // ── Parse Wandbox response ───────────────────────────────────────────
+        // In Wandbox, status !== "0" means compilation or execution failed.
+        // If compilation fails, program_message/program_output is empty and compiler_error has details.
+        const isCompileError = data.status !== '0' && !data.program_message && data.compiler_error;
+        const compileOutput = isCompileError ? (data.compiler_error || data.compiler_output || '') : '';
+        
+        const stdout = data.program_output || '';
+        const stderr = isCompileError ? '' : (data.program_error || '');
+        const runCode = (data.status !== '0' && !isCompileError) ? parseInt(data.status || '1') : 0;
+
+        const statusDescription = isCompileError
+            ? 'Compilation Error'
+            : runCode !== 0
+                ? 'Runtime Error'
+                : 'Accepted';
+
+        console.log(`✅  [compiler] ${language} via Wandbox (${compilerName}) — ${elapsed}s`);
+
+        return res.json({
+            success:         true,
+            status:          { id: isCompileError || runCode !== 0 ? 6 : 3, description: statusDescription },
+            stdout,
+            stderr,
+            compile_output:  compileOutput,
+            message:         '',
+            time:            elapsed,
+            memory:          null
+        });
+
+    } catch (err) {
+        console.error('❌  [compiler] Wandbox execution failed:', err.message);
+        res.status(500).json({
+            error:   'Failed to run code. The cloud compiler is temporarily unavailable — please try again in a moment.',
+            details: err.message || 'Unknown error'
+        });
+    }
 });
 
 // ─── EXPORT / START ───────────────────────────────────────────────────────────
