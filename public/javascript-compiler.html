@@ -24,6 +24,8 @@
 
   <!-- ═══ FONTS ════════════════════════════════════════════════════════════════ -->
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Monaco Editor CSS -->
+  <link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/editor/editor.main.min.css">
 
   <!-- ═══ STYLES ════════════════════════════════════════════════════════════════ -->
   <style>
@@ -491,6 +493,10 @@
     .mobile-nav a { font-size: 1.5rem; font-weight: 800; color: var(--text-primary); transition: 0.2s; }
     .mobile-nav a:hover { color: var(--accent); transform: scale(1.05); }
 
+    @media (max-width: 680px) {
+      .menu-toggle { display: block; }
+      .nav-links { display: none; }
+      nav { border-radius: 24px; padding: 8px 16px; }
       .workspace { height: calc(100vh - 175px); min-height: 480px; }
     }
 
@@ -745,6 +751,14 @@ main();
       document.getElementById('setting-autocomplete').value = localStorage.getItem('gigni_editor_autocomplete') || 'true';
     }
 
+    window.MonacoEnvironment = {
+      getWorkerUrl: function(moduleId, label) {
+        return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
+          self.MonacoEnvironment = { baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/' };
+          importScripts('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/base/worker/workerMain.min.js');
+        `)}`;
+      }
+    };
     require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs' } });
     require(['vs/editor/editor.main'], () => {
       const storedTheme = localStorage.getItem('gigni_editor_theme') || (currentTheme === 'developer' ? 'vs-dark' : 'vs');
