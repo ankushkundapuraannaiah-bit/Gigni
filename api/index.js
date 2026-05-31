@@ -5,6 +5,7 @@ const { Pool } = require('pg');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const https = require('https');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -907,19 +908,47 @@ app.post('/api/execute', async (req, res) => {
     try {
         const t0 = Date.now();
 
-        const response = await fetch('https://wandbox.org/api/compile.json', {
-            method:  'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body:    JSON.stringify(payload),
-            signal:  AbortSignal.timeout(20000) // 20-second timeout
+        // Use native https for bulletproof compatibility on Vercel
+        const data = await new Promise((resolve, reject) => {
+            const dataStr = JSON.stringify(payload);
+            const reqOptions = {
+                hostname: 'wandbox.org',
+                port: 443,
+                path: '/api/compile.json',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Content-Length': Buffer.byteLength(dataStr)
+                },
+                timeout: 20000
+            };
+
+            const req = https.request(reqOptions, (wandboxRes) => {
+                let resBody = '';
+                wandboxRes.on('data', (chunk) => resBody += chunk);
+                wandboxRes.on('end', () => {
+                    if (wandboxRes.statusCode < 200 || wandboxRes.statusCode >= 300) {
+                        reject(new Error(`Wandbox HTTP error ${wandboxRes.statusCode}: ${resBody}`));
+                    } else {
+                        try {
+                            resolve(JSON.parse(resBody));
+                        } catch (e) {
+                            reject(new Error(`Failed to parse Wandbox response: ${e.message}`));
+                        }
+                    }
+                });
+            });
+
+            req.on('error', (err) => reject(err));
+            req.on('timeout', () => {
+                req.destroy();
+                reject(new Error('Connection timed out'));
+            });
+
+            req.write(dataStr);
+            req.end();
         });
 
-        if (!response.ok) {
-            const errText = await response.text();
-            throw new Error(`Wandbox returned HTTP ${response.status}: ${errText}`);
-        }
-
-        const data = await response.json();
         const elapsed = ((Date.now() - t0) / 1000).toFixed(3);
 
         // ── Parse Wandbox response ───────────────────────────────────────────
