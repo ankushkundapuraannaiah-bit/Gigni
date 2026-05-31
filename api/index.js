@@ -898,11 +898,14 @@ app.post('/api/execute', async (req, res) => {
 
     // Build compiler options — include -lm for C/C++ to support math.h (sqrt, pow, etc.)
     let compilerOptions = '';
+    let compilerOptionRaw = '';
     const lang = language.toLowerCase();
     if (lang === 'c') {
-        compilerOptions = 'warning,-lm';
+        compilerOptions = 'warning';
+        compilerOptionRaw = '-lm';
     } else if (lang === 'cpp' || lang === 'c++') {
         compilerOptions = 'warning';
+        compilerOptionRaw = '-lm';
     }
 
     const payload = {
@@ -911,6 +914,10 @@ app.post('/api/execute', async (req, res) => {
         stdin:    stdin || '',
         options:  compilerOptions
     };
+
+    if (compilerOptionRaw) {
+        payload['compiler-option-raw'] = compilerOptionRaw;
+    }
 
     try {
         const t0 = Date.now();

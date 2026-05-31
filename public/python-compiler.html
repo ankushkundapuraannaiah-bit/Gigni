@@ -680,18 +680,22 @@
     let currentTheme = 'boost';
     window.currentLang = 'python';
 
-    const PYTHON_TEMPLATE = `# Gigni Online Python Compiler
-# Run Python instantly — powered by Pyodide WASM
+    const PYTHON_TEMPLATE = `# Gigni Online Python Compiler — Pyodide WASM Runtime
+# Tip: Enter stdin values in the left panel before running.
 
 def greet(name):
-    print(f"Hello, {name}! Welcome to Gigni Compiler.")
+    print(f"Hello, {name}! Welcome to Gigni Python Compiler.")
 
-name = input("Enter your name: ")
+# Demonstrate stdin reading with a graceful fallback
+import sys
+stdin_data = sys.stdin.read().strip()
+name = stdin_data if stdin_data else "Developer"
+
 greet(name)
 
-# Try some math
+# List comprehension demo
 numbers = [1, 2, 3, 4, 5]
-print("Sum:", sum(numbers))
+print("\nNumbers:", numbers)
 print("Squares:", [x**2 for x in numbers])
 `;
 
