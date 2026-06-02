@@ -873,20 +873,21 @@ app.post('/api/execute', async (req, res) => {
         return res.status(400).json({ error: 'Language and source_code are required.' });
     }
 
-    // ── Wandbox compiler map ─────────────────────────────────────────────────
+    // Try stable versions first, then head compilers if Wandbox rotates versions.
     const WANDBOX_COMPILERS = {
-        'c':          'gcc-13.2.0-c',
-        'cpp':        'gcc-13.2.0',
-        'c++':        'gcc-13.2.0',
-        'java':       'openjdk-jdk-21+35',
-        'python':     'cpython-3.10.15',
-        'python3':    'cpython-3.10.15',
-        'javascript': 'nodejs-18.20.4',
-        'js':         'nodejs-18.20.4'
+        'c':          ['gcc-13.2.0-c', 'gcc-12.2.0-c', 'clang-16.0.0-c', 'gcc-head-c', 'clang-head-c'],
+        'cpp':        ['gcc-13.2.0', 'gcc-12.2.0', 'clang-16.0.0', 'gcc-head', 'clang-head'],
+        'c++':        ['gcc-13.2.0', 'gcc-12.2.0', 'clang-16.0.0', 'gcc-head', 'clang-head'],
+        'java':       ['openjdk-jdk-21+35', 'openjdk-jdk-17+35', 'openjdk-head'],
+        'python':     ['cpython-3.10.15'],
+        'python3':    ['cpython-3.10.15'],
+        'javascript': ['nodejs-18.20.4'],
+        'js':         ['nodejs-18.20.4']
     };
 
-    const compilerName = WANDBOX_COMPILERS[language.toLowerCase()];
-    if (!compilerName) {
+    const lang = language.toLowerCase();
+    const compilerCandidates = WANDBOX_COMPILERS[lang];
+    if (!compilerCandidates) {
         return res.status(400).json({ error: `Language '${language}' is not supported by the Gigni compiler.` });
     }
 
@@ -899,7 +900,6 @@ app.post('/api/execute', async (req, res) => {
     // Build compiler options — include -lm for C/C++ to support math.h (sqrt, pow, etc.)
     let compilerOptions = '';
     let compilerOptionRaw = '';
-    const lang = language.toLowerCase();
     if (lang === 'c') {
         compilerOptions = 'warning';
         compilerOptionRaw = '-lm';
@@ -908,22 +908,21 @@ app.post('/api/execute', async (req, res) => {
         compilerOptionRaw = '-lm';
     }
 
-    const payload = {
-        compiler: compilerName,
-        code:     codeToSend,
-        stdin:    stdin || '',
-        options:  compilerOptions
-    };
-
-    if (compilerOptionRaw) {
-        payload['compiler-option-raw'] = compilerOptionRaw;
-    }
-
     try {
         const t0 = Date.now();
 
-        // Use native https for bulletproof compatibility on Vercel
-        const data = await new Promise((resolve, reject) => {
+        const compileWithWandbox = (compilerName) => new Promise((resolve, reject) => {
+            const payload = {
+                compiler: compilerName,
+                code:     codeToSend,
+                stdin:    stdin || '',
+                options:  compilerOptions
+            };
+
+            if (compilerOptionRaw) {
+                payload['compiler-option-raw'] = compilerOptionRaw;
+            }
+
             const dataStr = JSON.stringify(payload);
             const reqOptions = {
                 hostname: 'wandbox.org',
@@ -962,6 +961,25 @@ app.post('/api/execute', async (req, res) => {
             req.write(dataStr);
             req.end();
         });
+
+        let data = null;
+        let compilerName = '';
+        let lastProviderError = null;
+
+        for (const candidate of compilerCandidates) {
+            try {
+                data = await compileWithWandbox(candidate);
+                compilerName = candidate;
+                break;
+            } catch (err) {
+                lastProviderError = err;
+                console.warn(`[compiler] Wandbox compiler '${candidate}' failed: ${err.message}`);
+            }
+        }
+
+        if (!data) {
+            throw lastProviderError || new Error('No Wandbox compiler responded successfully.');
+        }
 
         const elapsed = ((Date.now() - t0) / 1000).toFixed(3);
 
