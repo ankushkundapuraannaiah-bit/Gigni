@@ -272,11 +272,24 @@ function setStatus(s) {
   const d = document.getElementById('status-dot');
   d.className = 'status-dot' + (s==='running'?' running':s==='error'?' error':'');
 }
+const outputTextDecoder = new TextDecoder('utf-8');
+function normalizeOutputText(value) {
+  if (value == null) return '';
+  if (typeof value === 'string') return value;
+  if (value instanceof ArrayBuffer) return outputTextDecoder.decode(new Uint8Array(value));
+  if (ArrayBuffer.isView(value)) {
+    return outputTextDecoder.decode(new Uint8Array(value.buffer, value.byteOffset, value.byteLength));
+  }
+  if (Array.isArray(value) && value.every(n => Number.isInteger(n) && n >= 0 && n <= 255)) {
+    return outputTextDecoder.decode(new Uint8Array(value));
+  }
+  return String(value);
+}
 function appendOutput(text, cls='out-line') {
   const out = document.getElementById('output');
   const sp = document.createElement('span');
   sp.className = cls;
-  sp.textContent = text + '\n';
+  sp.textContent = normalizeOutputText(text) + '\n';
   out.appendChild(sp);
   out.scrollTop = out.scrollHeight;
 }
@@ -318,8 +331,8 @@ document.getElementById('btn-run').addEventListener('click', async () => {
       py.runPython(`_si=iter(${lines})\nimport builtins\ndef _inp(p=''):\n try:\n  l=next(_si)\n  if p:print(p,end='')\n  print(l)\n  return l\n except StopIteration:raise EOFError()\nbuiltins.input=_inp`);
     }
     py.runPython(code);
-    const out=py.runPython('sys.stdout.getvalue()');
-    const err=py.runPython('sys.stderr.getvalue()');
+    const out=normalizeOutputText(py.runPython('sys.stdout.getvalue()'));
+    const err=normalizeOutputText(py.runPython('sys.stderr.getvalue()'));
     if(out) out.split('\n').forEach(l=>{if(l!=='')appendOutput(l,'out-line');});
     if(err) { err.split('\n').forEach(l=>{if(l!=='')appendOutput(l,'err-line');}); setStatus('error'); }
     else setStatus('ready');
