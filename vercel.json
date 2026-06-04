@@ -1,4 +1,81 @@
 {
+  "redirects": [
+    {
+      "source": "/compiler.html",
+      "destination": "/compiler",
+      "permanent": true
+    },
+    {
+      "source": "/python-compiler.html",
+      "destination": "/python-compiler",
+      "permanent": true
+    },
+    {
+      "source": "/javascript-compiler.html",
+      "destination": "/javascript-compiler",
+      "permanent": true
+    },
+    {
+      "source": "/c-compiler.html",
+      "destination": "/c-compiler",
+      "permanent": true
+    },
+    {
+      "source": "/cpp-compiler.html",
+      "destination": "/cpp-compiler",
+      "permanent": true
+    },
+    {
+      "source": "/java-compiler.html",
+      "destination": "/java-compiler",
+      "permanent": true
+    },
+    {
+      "source": "/about.html",
+      "destination": "/about",
+      "permanent": true
+    },
+    {
+      "source": "/zorus.html",
+      "destination": "/zorus",
+      "permanent": true
+    },
+    {
+      "source": "/zorus-course.html",
+      "destination": "/zorus-course",
+      "permanent": true
+    },
+    {
+      "source": "/zorus-month1.html",
+      "destination": "/zorus-month1",
+      "permanent": true
+    },
+    {
+      "source": "/hosting.html",
+      "destination": "/hosting",
+      "permanent": true
+    },
+    {
+      "source": "/dashboard.html",
+      "destination": "/dashboard",
+      "permanent": true
+    },
+    {
+      "source": "/admin.html",
+      "destination": "/admin",
+      "permanent": true
+    },
+    {
+      "source": "/zorus-test.html",
+      "destination": "/zorus-test",
+      "permanent": true
+    },
+    {
+      "source": "/verify-certificate.html",
+      "destination": "/verify-certificate",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/verify-certificate",
@@ -27,6 +104,38 @@
     {
       "source": "/java-compiler",
       "destination": "/java-compiler.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/about.html"
+    },
+    {
+      "source": "/zorus",
+      "destination": "/zorus.html"
+    },
+    {
+      "source": "/zorus-course",
+      "destination": "/zorus-course.html"
+    },
+    {
+      "source": "/zorus-month1",
+      "destination": "/zorus-month1.html"
+    },
+    {
+      "source": "/hosting",
+      "destination": "/hosting.html"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/dashboard.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/zorus-test",
+      "destination": "/zorus-test.html"
     },
     {
       "source": "/api/(.*)",
@@ -63,6 +172,19 @@
     {
       "source": "/robots.txt",
       "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
+      ]
+    },
+    {
+      "source": "/llms.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
         {
           "key": "Cache-Control",
           "value": "public, max-age=86400"

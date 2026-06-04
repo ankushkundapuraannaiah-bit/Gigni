@@ -5,22 +5,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- ═══ PRIMARY SEO META TAGS ═══════════════════════════════════════════════ -->
-  <title>Gigni Free Online HTML/CSS/JS Playground — Live Preview | No Login</title>
-  <meta name="description" content="Build and preview HTML, CSS, and JavaScript live in your browser with Gigni's Online Playground. Separate editor panes, instant live preview, Monaco VS Code Editor, and beautiful themes. No login required.">
-  <meta name="keywords" content="online html editor, html css js playground, live html preview, online web editor, html compiler online, css online, javascript playground, gigni html playground, run html online, frontend playground, web ide online, codepen alternative">
+  <title>Online HTML Compiler - HTML CSS JS Editor | Gigni Compiler</title>
+  <meta name="description" content="Use Gigni Online HTML Compiler to write, edit, and preview HTML, CSS, and JavaScript online for free. Live browser preview, Monaco editor, responsive workspace, and no login required.">
+  <meta name="keywords" content="online html compiler, html compiler online, online html editor, html css js editor, html css javascript compiler online, live html preview, run html online, online web editor, frontend playground, gigni html compiler, gigni online compiler">
+  <meta name="application-name" content="Gigni Online HTML Compiler">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <meta name="author" content="Gigni | GigniConnect">
   <meta name="theme-color" content="#10b981">
   <link rel="canonical" href="https://www.gigniconnect.space/compiler">
+  <link rel="alternate" type="text/plain" title="Gigni Compiler LLM Summary" href="https://www.gigniconnect.space/llms.txt">
   <link rel="icon" type="image/png" href="favicon.png">
 
   <!-- ═══ OPEN GRAPH ══════════════════════════════════════════════════════════ -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.gigniconnect.space/compiler">
   <meta property="og:site_name" content="Gigni | GigniConnect">
-  <meta property="og:title" content="Gigni Free Online HTML/CSS/JS Playground — Live Preview | No Login">
-  <meta property="og:description" content="Build and preview HTML, CSS & JS live with Gigni's online playground. Monaco editor, instant preview, no login.">
+  <meta property="og:title" content="Online HTML Compiler - HTML CSS JS Editor | Gigni Compiler">
+  <meta property="og:description" content="Write, edit, and preview HTML, CSS, and JavaScript online for free with Gigni. Live preview, Monaco editor, and no login required.">
   <meta property="og:image" content="https://www.gigniconnect.space/Gemini_Generated_Image_anvpx2anvpx2anvp.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Online HTML Compiler - HTML CSS JS Editor | Gigni Compiler">
+  <meta name="twitter:description" content="Build HTML, CSS, and JavaScript online with Gigni's free live-preview web editor. No login required.">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "Gigni Online HTML Compiler",
+        "alternateName": ["Online HTML Compiler", "HTML CSS JS Editor", "Online HTML Editor", "Frontend Playground"],
+        "url": "https://www.gigniconnect.space/compiler",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any",
+        "browserRequirements": "Modern web browser",
+        "isAccessibleForFree": true,
+        "description": "Gigni Online HTML Compiler lets users write, edit, and preview HTML, CSS, and JavaScript online with a live browser preview and no login.",
+        "featureList": ["Run HTML online", "Edit HTML CSS JavaScript", "Live preview", "Monaco code editor", "Responsive workspace", "No login required"],
+        "keywords": "online html compiler, html compiler online, online html editor, html css js editor, run html online",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "publisher": { "@type": "Organization", "name": "Gigni", "url": "https://www.gigniconnect.space/" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Can I run HTML, CSS, and JavaScript online for free?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes. Gigni Online HTML Compiler lets users edit HTML, CSS, and JavaScript online and see a live preview for free without login." }
+          },
+          {
+            "@type": "Question",
+            "name": "Is Gigni an online HTML compiler with live preview?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes. Gigni includes an online HTML editor and compiler with live preview for frontend experiments, examples, and web practice." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
 
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
   <!-- Monaco Editor CSS -->
@@ -192,12 +235,12 @@
 <body class="boost" id="body-root">
 
   <nav>
-    <a class="logo" href="index.html">GIGNI</a>
+    <a class="logo" href="/">GIGNI</a>
     <div class="nav-links">
-      <a href="index.html">Home</a>
-      <a href="about.html">About</a>
-      <a href="compiler.html" class="active">Compiler</a>
-      <a href="zorus.html" class="zorus-nav-btn">Zorus 2.1</a>
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+      <a href="/compiler" class="active">Compiler</a>
+      <a href="/zorus" class="zorus-nav-btn">Zorus 2.1</a>
     </div>
     <div class="theme-switcher">
       <button class="theme-btn boost-btn" onclick="setTheme('boost')">☀️ Boost</button>
@@ -207,19 +250,19 @@
   </nav>
 
   <div class="mobile-nav" id="mobile-nav">
-    <a href="index.html" onclick="toggleMobileMenu()">Home</a>
-    <a href="about.html" onclick="toggleMobileMenu()">About</a>
-    <a href="compiler.html" onclick="toggleMobileMenu()">Compiler</a>
-    <a href="zorus.html" onclick="toggleMobileMenu()">Zorus 2.1</a>
+    <a href="/" onclick="toggleMobileMenu()">Home</a>
+    <a href="/about" onclick="toggleMobileMenu()">About</a>
+    <a href="/compiler" onclick="toggleMobileMenu()">Compiler</a>
+    <a href="/zorus" onclick="toggleMobileMenu()">Zorus 2.1</a>
   </div>
 
   <div class="compiler-nav">
-    <a href="python-compiler.html" class="tab-item">🐍 Python</a>
-    <a href="javascript-compiler.html" class="tab-item">⚡ JavaScript</a>
-    <a href="c-compiler.html" class="tab-item">🔵 C</a>
-    <a href="cpp-compiler.html" class="tab-item">🔷 C++</a>
-    <a href="java-compiler.html" class="tab-item">☕ Java</a>
-    <a href="compiler.html" class="tab-item active-lang">🌐 HTML/CSS</a>
+    <a href="/python-compiler" class="tab-item">🐍 Python</a>
+    <a href="/javascript-compiler" class="tab-item">⚡ JavaScript</a>
+    <a href="/c-compiler" class="tab-item">🔵 C</a>
+    <a href="/cpp-compiler" class="tab-item">🔷 C++</a>
+    <a href="/java-compiler" class="tab-item">☕ Java</a>
+    <a href="/compiler" class="tab-item active-lang">🌐 HTML/CSS</a>
   </div>
 
   <div class="main-container">

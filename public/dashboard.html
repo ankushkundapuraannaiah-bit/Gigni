@@ -533,14 +533,14 @@
 
 <!-- TOP NAV -->
 <nav>
-  <a href="index.html" class="logo">GIGNI</a>
+  <a href="/" class="logo">GIGNI</a>
   <div class="search-bar">
     <span class="material-icons search-icon">search</span>
     <input type="text" placeholder="Search courses, projects, certificates…">
   </div>
   <div class="nav-user">
     <div class="user-av" id="nav-av">G</div>
-    <a href="index.html" onclick="localStorage.removeItem('gigni_user'); localStorage.removeItem('gigni_token');" class="logout-btn">Sign out</a>
+    <a href="/" onclick="localStorage.removeItem('gigni_user'); localStorage.removeItem('gigni_token');" class="logout-btn">Sign out</a>
   </div>
 </nav>
 
@@ -583,7 +583,7 @@
           <h2>Zorus 2.1 Course Track</h2>
           <p>Use the Zorus 2.1 course videos as references, then upload your implementation from the Project section.</p>
         </div>
-        <a href="zorus-course.html" class="btn-act">Open Full Course →</a>
+        <a href="/zorus-course" class="btn-act">Open Full Course →</a>
       </div>
     </div>
 
@@ -752,7 +752,7 @@ const ZORUS_PROJECTS=[
 
 document.addEventListener('DOMContentLoaded',async()=>{
   let user=JSON.parse(localStorage.getItem('gigni_user')||'{}');
-  if(!user.email){window.location.href='index.html';return}
+  if(!user.email){window.location.href='/';return}
   renderAll(user);
   if(user.id){
     try{
@@ -843,7 +843,7 @@ function renderZorusWorkspace(user) {
             <strong style="font-size: 28px; color: var(--ink); font-weight: 900;">${scoreText}</strong>
           </div>
         </div>
-        <a href="zorus-test.html" class="btn-act" style="padding: 16px 36px; font-size: 15px; border-radius: 50px; font-weight: 800; text-decoration: none;">
+        <a href="/zorus-test" class="btn-act" style="padding: 16px 36px; font-size: 15px; border-radius: 50px; font-weight: 800; text-decoration: none;">
           ${user.zorus_score === null ? 'Begin Technical Assessment' : 'Retry Technical Assessment'} →
         </a>
       </div>
@@ -856,7 +856,7 @@ function renderZorusWorkspace(user) {
           <h2 style="font-size: 22px; font-weight: 900; color: var(--ink); letter-spacing: -0.02em;">Welcome to Zorus 2.1 Cohort Workspace</h2>
           <p style="color: var(--muted); font-size: 14px; font-weight: 600;">You successfully qualified the proctored assessment with a score of <strong style="color:#059669;">${user.zorus_score}%</strong>. You can now submit your cohort builds below.</p>
         </div>
-        <a href="zorus-course.html" class="btn-act green" style="border-radius: 50px; font-weight: 800; text-decoration: none;">Open Curriculum Reference</a>
+        <a href="/zorus-course" class="btn-act green" style="border-radius: 50px; font-weight: 800; text-decoration: none;">Open Curriculum Reference</a>
       </div>
 
       <div class="repo-shell" style="border-color: rgba(124,58,237,0.25);">
@@ -987,7 +987,7 @@ function renderDashboardZorusBanner(user) {
         <p>Your internship application is registered. Please qualify the technical assessment (score required: 85%) to activate workspace uploads.</p>
       </div>
       <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
-        <a href="zorus-test.html" class="btn-act" style="background:var(--orange); box-shadow:0 8px 22px rgba(249,115,22,0.25); text-decoration:none;">Take Assessment →</a>
+        <a href="/zorus-test" class="btn-act" style="background:var(--orange); box-shadow:0 8px 22px rgba(249,115,22,0.25); text-decoration:none;">Take Assessment →</a>
       </div>
     `;
   } else {

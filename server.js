@@ -13,21 +13,23 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
+app.use(require('./api/index.js'));
 
-// Serve HTML files from root
+// Serve compiler HTML pages from public/ folder and support clean paths
 const path = require('path');
 const fs = require('fs');
 
-// Serve compiler HTML pages
 const HTML_FILES = [
   'index', 'about', 'compiler', 'zorus',
   'c-compiler', 'cpp-compiler', 'java-compiler',
-  'python-compiler', 'javascript-compiler', 'zorus-test'
+  'python-compiler', 'javascript-compiler', 'zorus-test',
+  'admin', 'dashboard', 'hosting', 'verify-certificate',
+  'zorus-course', 'zorus-month1'
 ];
 
 HTML_FILES.forEach(name => {
-  app.get(`/${name}.html`, (req, res) => {
-    const filePath = path.join(__dirname, `${name}.html`);
+  app.get([`/${name}`, `/${name}.html`], (req, res) => {
+    const filePath = path.join(__dirname, 'public', `${name}.html`);
     if (fs.existsSync(filePath)) {
       res.sendFile(filePath);
     } else {
