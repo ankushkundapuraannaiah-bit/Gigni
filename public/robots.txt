@@ -1,20 +1,33 @@
 User-agent: *
 Allow: /
-Allow: /index.html
-Allow: /about.html
+
+# Main pages
+Allow: /about
 Allow: /compiler
+Allow: /zorus
+Allow: /zorus-course
+Allow: /zorus-month1
+Allow: /zorus-test
+Allow: /hosting
+Allow: /verify-certificate
+
+# Compiler pages
 Allow: /python-compiler
 Allow: /javascript-compiler
 Allow: /c-compiler
 Allow: /cpp-compiler
 Allow: /java-compiler
+
+# Static assets
 Allow: /llms.txt
-Allow: /zorus.html
-Allow: /hosting.html
-Allow: /zorus-course.html
-Allow: /zorus-month1.html
-Allow: /verify-certificate.html
+Allow: /sitemap.xml
+Allow: /robots.txt
+
+# Block sensitive endpoints
 Disallow: /api/
-Disallow: /admin.html
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /.env
+Disallow: /node_modules/
 
 Sitemap: https://www.gigniconnect.space/sitemap.xml
