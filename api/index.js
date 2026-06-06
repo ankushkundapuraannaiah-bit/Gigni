@@ -109,6 +109,21 @@ async function initializeDatabase() {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );`);
 
+        await pool.query(`CREATE TABLE IF NOT EXISTS developer_projects (
+            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id),
+            user_email VARCHAR(255),
+            user_name VARCHAR(255),
+            project_name VARCHAR(255) NOT NULL,
+            description TEXT,
+            github_url VARCHAR(512),
+            live_url VARCHAR(512),
+            slug VARCHAR(255) UNIQUE,
+            tags VARCHAR(255),
+            submission_id INTEGER,
+            published_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );`);
+
         // Run any missing column migrations safely
         const migrations = [
             { table: 'users', name: 'projects',      type: "JSONB DEFAULT '[]'" },
@@ -124,7 +139,12 @@ async function initializeDatabase() {
             { table: 'project_submissions', name: 'code_file_name', type: 'VARCHAR(255)' },
             { table: 'project_submissions', name: 'video_file_name', type: 'VARCHAR(255)' },
             { table: 'project_submissions', name: 'video_data', type: 'TEXT' },
-            { table: 'project_submissions', name: 'readme_file_name', type: 'VARCHAR(255)' }
+            { table: 'project_submissions', name: 'readme_file_name', type: 'VARCHAR(255)' },
+            { table: 'developer_projects', name: 'submission_id', type: 'INTEGER' },
+            { table: 'developer_projects', name: 'slug', type: 'VARCHAR(255) UNIQUE' },
+            { table: 'developer_projects', name: 'uniqueness', type: 'TEXT' },
+            { table: 'developer_projects', name: 'live_url', type: 'VARCHAR(512)' },
+            { table: 'developer_projects', name: 'tags', type: 'VARCHAR(255)' }
         ];
         for (const m of migrations) {
             try {
@@ -143,6 +163,32 @@ async function initializeDatabase() {
                 VALUES ($1, $2, $3, $4, $5);
             `, ['Ankush', 'Admin', 'ankushka2089@gmail.com', hashedPassword, 'Gigni Headquarters']);
             console.log('✅  Admin user created.');
+        }
+
+        // Seed Featured Repositories
+        const featuredRepos = [
+            { name: 'CopilotKit', url: 'https://github.com/CopilotKit/CopilotKit', desc: 'The open-source framework for building custom AI Copilots.', unique: 'Integrates deeply with application state to provide contextual AI assistants.', tags: 'AI, React, Framework' },
+            { name: 'Open Notebook', url: 'https://github.com/lfnovo/open-notebook', desc: 'Powerful tool for data scientists to manage experiments.', unique: 'Bridges the gap between raw data and visual experiment tracking.', tags: 'Data Science, Python' },
+            { name: 'PaddleOCR', url: 'https://github.com/PaddlePaddle/PaddleOCR', desc: 'Ultra-lightweight OCR system.', unique: 'Supports 80+ languages with industry-leading performance on mobile.', tags: 'AI, OCR, Computer Vision' },
+            { name: 'OpenAI Plugins', url: 'https://github.com/openai/plugins', desc: 'Official repository for ChatGPT Plugins.', unique: 'The blueprint for extending LLM capabilities via external APIs.', tags: 'AI, OpenAI, API' },
+            { name: 'Coding Interview University', url: 'https://github.com/jwasham/coding-interview-university', desc: 'Complete CS study plan.', unique: 'A community-driven roadmap that has helped thousands land FAANG roles.', tags: 'Career, Learning, CS' },
+            { name: 'Copilot SDK', url: 'https://github.com/github/copilot-sdk', desc: 'Build extensions for GitHub Copilot.', unique: 'Enables custom developer experiences directly within the world\'s most popular AI pair programmer.', tags: 'AI, GitHub, SDK' },
+            { name: 'TVM', url: 'https://github.com/apache/tvm', desc: 'Open deep learning compiler stack.', unique: 'Optimizes ML workloads across diverse hardware from CPUs to mobile accelerators.', tags: 'ML, Compilers, Infrastructure' },
+            { name: 'Graphify', url: 'https://github.com/safishamsi/graphify', desc: 'Transform data into interactive graphs.', unique: 'Uses advanced layout engines to visualize complex relational networks in the browser.', tags: 'Data Viz, JavaScript' },
+            { name: 'FreeDomain', url: 'https://github.com/DigitalPlatDev/FreeDomain', desc: 'Discover free domains for projects.', unique: 'Aggregates free TLD providers for developers to launch projects at zero cost.', tags: 'Tools, Web Dev' },
+            { name: 'GStack', url: 'https://github.com/garrytan/gstack', desc: 'The Garry Tan optimized tech stack.', unique: 'A curated selection of tools focused on extreme developer velocity and scale.', tags: 'Architecture, Startups' },
+            { name: 'Obsidian Mind', url: 'https://github.com/breferrari/obsidian-mind', desc: 'Mind-mapping for Obsidian notes.', unique: 'Visualizes the "second brain" using dynamic, linked mind maps.', tags: 'Productivity, Plugin' }
+        ];
+
+        for (const r of featuredRepos) {
+            const slug = r.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            const check = await pool.query('SELECT id FROM developer_projects WHERE slug = $1', [slug]);
+            if (check.rows.length === 0) {
+                await pool.query(`
+                    INSERT INTO developer_projects (user_name, project_name, description, uniqueness, github_url, tags, slug)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7)
+                `, ['Gigni Featured', r.name, r.desc, r.unique, r.url, r.tags, slug]);
+            }
         }
 
         console.log('✅  Database schema ready.');
@@ -603,67 +649,8 @@ app.post('/api/user/update', authenticateToken, async (req, res) => {
 });
 
 // ─── ZORUS: APPLY ─────────────────────────────────────────────────────────────
-app.post('/api/zorus-apply', authenticateToken, async (req, res) => {
-    const { userId, email, fname, lname } = req.body;
-    if (req.user.id != userId) {
-        return res.status(403).json({ error: 'Unauthorized' });
-    }
-    try {
-        const check = await pool.query(`SELECT id FROM zorus_applications WHERE user_id = $1;`, [userId]);
-        if (check.rows.length > 0) return res.status(400).json({ error: 'Already applied' });
-
-        await pool.query(
-            `INSERT INTO zorus_applications (user_id, email, fname, lname) VALUES ($1, $2, $3, $4);`,
-            [userId, email, fname, lname]
-        );
-
-        // Send Zorus test invitation email (must be awaited)
-        if (process.env.GMAIL_USER && gmailPass) {
-            try {
-                await transporter.sendMail({
-                    from: `"Gigni Community" <${process.env.GMAIL_USER}>`,
-                    to: email,
-                    subject: 'Zorus 2.1 — Technical Assessment Invitation',
-                    html: `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#030712;">
-<div style="font-family:'Outfit',Helvetica,Arial,sans-serif;background:#030712;color:#f3f4f6;max-width:600px;margin:auto;border:1px solid rgba(255,255,255,0.08);border-radius:24px;overflow:hidden;">
-  <div style="background:linear-gradient(135deg,#f97316,#ef4444);padding:50px 40px;text-align:center;">
-    <p style="font-size:12px;color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:3px;margin:0 0 10px;">Technical Assessment</p>
-    <h1 style="font-size:48px;color:#fff;margin:0;letter-spacing:2px;">ZORUS 2.1</h1>
-    <p style="font-size:16px;color:rgba(255,255,255,0.8);margin-top:12px;">Python Internship Programme · Cohort 2026</p>
-  </div>
-  <div style="padding:44px;">
-    <p style="font-size:18px;color:#9ca3af;">Dear ${fname},</p>
-    <p style="font-size:16px;line-height:1.8;color:#f3f4f6;">Thank you for applying to the <strong>Zorus 2.1 Python Internship Programme</strong>. We are pleased to invite you to complete our technical assessment — a 25-question test covering Python, Agentic AI, and problem-solving.</p>
-    <div style="margin:36px 0;background:rgba(255,255,255,0.03);border-radius:20px;padding:30px;border:1px solid rgba(255,255,255,0.06);">
-      <h3 style="color:#f97316;margin-top:0;text-transform:uppercase;font-size:13px;letter-spacing:1px;">Assessment Details</h3>
-      <ul style="padding-left:0;list-style:none;">
-        <li style="margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;color:#d1d5db;"><span style="color:#f97316;font-size:18px;">✓</span> <span>25 multiple-choice questions on Python &amp; Agentic AI</span></li>
-        <li style="margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;color:#d1d5db;"><span style="color:#f97316;font-size:18px;">✓</span> <span>Minimum passing score: <strong>85%</strong></span></li>
-        <li style="margin-bottom:0;display:flex;align-items:flex-start;gap:10px;color:#d1d5db;"><span style="color:#f97316;font-size:18px;">✓</span> <span>Top scorers will be shortlisted for the 3-month internship</span></li>
-      </ul>
-    </div>
-    <div style="text-align:center;margin:40px 0;">
-      <a href="https://www.gigniconnect.space/zorus-test.html" style="background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;padding:18px 52px;border-radius:100px;text-decoration:none;font-weight:800;font-size:17px;display:inline-block;">Begin Technical Assessment →</a>
-    </div>
-    <div style="background:rgba(59,91,219,0.08);border-left:4px solid #3b5bdb;border-radius:0 12px 12px 0;padding:20px 24px;margin-bottom:36px;">
-      <p style="margin:0;font-size:14px;color:#93c5fd;line-height:1.7;">You are among a select group of applicants invited to this assessment. Good luck, ${fname}! We look forward to seeing your performance.</p>
-    </div>
-    <p style="font-size:13px;color:#4b5563;text-align:center;">Warm regards,<br><strong style="color:#fff;">Team Gigni</strong><br><span style="font-size:11px;">gigniconnect@gmail.com · gigniconnect.space</span></p>
-  </div>
-</div></body></html>`
-                });
-                console.log(`✅  Zorus assessment email sent to ${email}`);
-            } catch (err) {
-                console.error(`❌  Zorus email failed for ${email}:`, err.message);
-            }
-        } else {
-            console.warn('⚠️  Skipping Zorus email — email credentials not configured.');
-        }
-
-        res.status(200).json({ success: true });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+app.post('/api/zorus-apply', authenticateToken, (req, res) => {
+    res.status(403).json({ error: 'Zorus 2.1 Applications are now closed. Stay tuned for future cohorts!' });
 });
 
 // ─── ZORUS: GET ALL APPLICATIONS (admin) ─────────────────────────────────────
@@ -680,17 +667,8 @@ app.get('/api/zorus-applications', authenticateToken, async (req, res) => {
 });
 
 // ─── ZORUS: SUBMIT SCORE ──────────────────────────────────────────────────────
-app.post('/api/zorus-submit-score', authenticateToken, async (req, res) => {
-    const { userId, score } = req.body;
-    if (req.user.id != userId) {
-        return res.status(403).json({ error: 'Unauthorized' });
-    }
-    try {
-        await pool.query(`UPDATE zorus_applications SET score = $1 WHERE user_id = $2;`, [score, userId]);
-        res.status(200).json({ success: true });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
+app.post('/api/zorus-submit-score', authenticateToken, (req, res) => {
+    res.status(403).json({ error: 'Assessment submission is closed.' });
 });
 
 // ─── ADMIN: BULK EMAIL ────────────────────────────────────────────────────────
@@ -874,20 +852,20 @@ app.post('/api/execute', async (req, res) => {
     }
 
     // Try stable versions first, then head compilers if Wandbox rotates versions.
+    // ── Wandbox compiler map ─────────────────────────────────────────────────
     const WANDBOX_COMPILERS = {
-        'c':          ['gcc-13.2.0-c', 'gcc-12.2.0-c', 'clang-16.0.0-c', 'gcc-head-c', 'clang-head-c'],
-        'cpp':        ['gcc-13.2.0', 'gcc-12.2.0', 'clang-16.0.0', 'gcc-head', 'clang-head'],
-        'c++':        ['gcc-13.2.0', 'gcc-12.2.0', 'clang-16.0.0', 'gcc-head', 'clang-head'],
-        'java':       ['openjdk-jdk-21+35', 'openjdk-jdk-17+35', 'openjdk-head'],
-        'python':     ['cpython-3.10.15'],
-        'python3':    ['cpython-3.10.15'],
-        'javascript': ['nodejs-18.20.4'],
-        'js':         ['nodejs-18.20.4']
+        'c':          'gcc-13.2.0-c',
+        'cpp':        'gcc-13.2.0',
+        'c++':        'gcc-13.2.0',
+        'java':       'openjdk-jdk-21+35',
+        'python':     'cpython-3.10.15',
+        'python3':    'cpython-3.10.15',
+        'javascript': 'nodejs-18.20.4',
+        'js':         'nodejs-18.20.4'
     };
 
-    const lang = language.toLowerCase();
-    const compilerCandidates = WANDBOX_COMPILERS[lang];
-    if (!compilerCandidates) {
+    const compilerName = WANDBOX_COMPILERS[language.toLowerCase()];
+    if (!compilerName) {
         return res.status(400).json({ error: `Language '${language}' is not supported by the Gigni compiler.` });
     }
 
@@ -897,32 +875,19 @@ app.post('/api/execute', async (req, res) => {
         codeToSend = source_code.replace(/\bpublic\s+class\s+Main\b/, 'class Main');
     }
 
-    // Build compiler options — include -lm for C/C++ to support math.h (sqrt, pow, etc.)
-    let compilerOptions = '';
-    let compilerOptionRaw = '';
-    if (lang === 'c') {
-        compilerOptions = 'warning';
-        compilerOptionRaw = '-lm';
-    } else if (lang === 'cpp' || lang === 'c++') {
-        compilerOptions = 'warning';
-        compilerOptionRaw = '-lm';
-    }
+    const payload = {
+        compiler: compilerName,
+        code:     codeToSend,
+        stdin:    stdin || '',
+        options:  language.toLowerCase() === 'c' || language.toLowerCase() === 'cpp' || language.toLowerCase() === 'c++' 
+                    ? 'warning' 
+                    : ''
+    };
 
     try {
         const t0 = Date.now();
-
-        const compileWithWandbox = (compilerName) => new Promise((resolve, reject) => {
-            const payload = {
-                compiler: compilerName,
-                code:     codeToSend,
-                stdin:    stdin || '',
-                options:  compilerOptions
-            };
-
-            if (compilerOptionRaw) {
-                payload['compiler-option-raw'] = compilerOptionRaw;
-            }
-
+        // Use native https for bulletproof compatibility on Vercel
+        const data = await new Promise((resolve, reject) => {
             const dataStr = JSON.stringify(payload);
             const reqOptions = {
                 hostname: 'wandbox.org',
@@ -962,25 +927,6 @@ app.post('/api/execute', async (req, res) => {
             req.end();
         });
 
-        let data = null;
-        let compilerName = '';
-        let lastProviderError = null;
-
-        for (const candidate of compilerCandidates) {
-            try {
-                data = await compileWithWandbox(candidate);
-                compilerName = candidate;
-                break;
-            } catch (err) {
-                lastProviderError = err;
-                console.warn(`[compiler] Wandbox compiler '${candidate}' failed: ${err.message}`);
-            }
-        }
-
-        if (!data) {
-            throw lastProviderError || new Error('No Wandbox compiler responded successfully.');
-        }
-
         const elapsed = ((Date.now() - t0) / 1000).toFixed(3);
 
         // ── Parse Wandbox response ───────────────────────────────────────────
@@ -1018,6 +964,103 @@ app.post('/api/execute', async (req, res) => {
             error:   'Failed to run code. The cloud compiler is temporarily unavailable — please try again in a moment.',
             details: err.message || 'Unknown error'
         });
+    }
+});
+
+// ─── DEVELOPER PUBLISHER: GET SINGLE PROJECT BY SLUG ─────────────────────────
+app.get('/api/dev/project/:slug', async (req, res) => {
+    const { slug } = req.params;
+    try {
+        const result = await pool.query(
+            `SELECT user_name, project_name, description, uniqueness, github_url, live_url, tags, published_at
+             FROM developer_projects WHERE slug = $1`,
+            [slug]
+        );
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Project not found' });
+        res.json({ success: true, project: result.rows[0] });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ─── DEVELOPER PUBLISHER: PUBLISH A PROJECT ──────────────────────────────────
+app.post('/api/dev/publish', authenticateToken, async (req, res) => {
+    const { projectName, description, uniqueness, githubUrl, liveUrl, tags, submissionId } = req.body;
+    const userId = req.user.id;
+    const userEmail = req.user.email;
+
+    if (!projectName) {
+        return res.status(400).json({ error: 'Project name is required' });
+    }
+    if (!githubUrl && !submissionId) {
+        return res.status(400).json({ error: 'Provide a GitHub URL or select an existing project submission' });
+    }
+    const slug = projectName.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Math.random().toString(36).substring(2, 7);
+
+    try {
+        const userRes = await pool.query('SELECT fname, lname FROM users WHERE id = $1', [userId]);
+        if (userRes.rows.length === 0) return res.status(404).json({ error: 'User not found' });
+        const userName = `${userRes.rows[0].fname || ''} ${userRes.rows[0].lname || ''}`.trim() || userEmail;
+
+        const result = await pool.query(
+            `INSERT INTO developer_projects
+             (user_id, user_email, user_name, project_name, description, uniqueness, github_url, live_url, tags, submission_id, slug)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+             RETURNING id`,
+            [userId, userEmail, userName, projectName, description || null, uniqueness || null,
+             githubUrl || null, liveUrl || null, tags || null,
+             submissionId || null, slug]
+        );
+        res.json({ success: true, id: result.rows[0].id });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ─── DEVELOPER PUBLISHER: GET ALL PROJECTS (public) ──────────────────────────
+app.get('/api/dev/projects', async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT id, user_name, project_name, description, github_url, live_url, tags, published_at
+             FROM developer_projects
+             ORDER BY published_at DESC
+             LIMIT 100`
+        );
+        res.json({ success: true, projects: result.rows });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ─── DEVELOPER PUBLISHER: GET MY PROJECTS ────────────────────────────────────
+app.get('/api/dev/my-projects', authenticateToken, async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT id, project_name, description, github_url, live_url, tags, submission_id, published_at
+             FROM developer_projects
+             WHERE user_id = $1
+             ORDER BY published_at DESC`,
+            [req.user.id]
+        );
+        res.json({ success: true, projects: result.rows });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// ─── DEVELOPER PUBLISHER: DELETE A PROJECT ───────────────────────────────────
+app.delete('/api/dev/project/:id', authenticateToken, async (req, res) => {
+    const { id } = req.params;
+    try {
+        const check = await pool.query(`SELECT user_id FROM developer_projects WHERE id = $1`, [id]);
+        if (check.rows.length === 0) return res.status(404).json({ error: 'Project not found' });
+        if (check.rows[0].user_id !== req.user.id && req.user.email !== 'ankushka2089@gmail.com') {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+        await pool.query(`DELETE FROM developer_projects WHERE id = $1`, [id]);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 

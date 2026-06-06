@@ -166,6 +166,8 @@
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+<link rel="stylesheet" href="theme.css">
+<script src="theme.js"></script>
 <style>
   :root {
     --ink: #12062a;
@@ -1060,6 +1062,7 @@
     <a href="#knowledge">Knowledge</a>
     <a href="#process">Process</a>
     <a href="/zorus" class="zorus-nav-btn">Zorus 2.1</a>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode"></button>
     <button onclick="openOvl('signin')">Login</button>
     <button class="btn primary" onclick="openOvl('signup')">Create Account</button>
   </div>
@@ -1139,6 +1142,26 @@
         <div class="mini-video" style="--tilt:-0.7deg">
           <iframe src="https://www.youtube.com/embed/z4cwvz6zVtg" title="Automation Build Lab preview" allowfullscreen loading="lazy"></iframe>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ── FEATURED REPOSITORIES (Engaging Template) ── -->
+  <section class="band band-white" id="featured-repositories">
+    <div class="section-inner">
+      <div class="section-head reveal">
+        <div class="section-head-left">
+          <div class="section-label">✨ Featured Repositories</div>
+          <h2>Explore the<br><span class="accent">AI Frontier.</span></h2>
+        </div>
+        <p>Curated high-impact open source projects integrated with the Gigni ecosystem. Explore their uniqueness and build upon them.</p>
+      </div>
+
+      <div class="course-grid" id="featured-repos-container">
+        <!-- Dynamically populated by JS -->
+        <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--muted);">Loading high-impact repositories...</div>
       </div>
     </div>
   </section>
@@ -2127,10 +2150,44 @@
     } catch (e) { alert('Connection error.'); }
   }
 
+  /* ── Fetch and Render Featured Repos ── */
+  async function loadFeaturedRepos() {
+    const container = document.getElementById('featured-repos-container');
+    try {
+      const res = await fetch('/api/dev/projects');
+      const data = await res.json();
+      if (data.success && data.projects.length > 0) {
+        container.innerHTML = data.projects.map(repo => `
+          <article class="course-card reveal visible">
+            <div class="course-body">
+              <span class="tag">${repo.tags || 'Open Source'}</span>
+              <h3>${repo.project_name}</h3>
+              <p style="margin-bottom: 12px;">${repo.description}</p>
+              <div style="background: var(--bg-secondary); padding: 12px; border-radius: 12px; font-size: 13px; border-left: 3px solid var(--purple); margin-bottom: 20px;">
+                <strong>Why it's unique:</strong><br>
+                <span style="font-style: italic; color: var(--text-muted);">${repo.uniqueness || 'High-impact open source project.'}</span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <a href="${repo.github_url}" target="_blank" class="btn" style="flex: 1; font-size: 12px; padding: 8px;">GitHub</a>
+                <a href="/p/${repo.slug}" class="btn primary" style="flex: 1; font-size: 12px; padding: 8px;">Gigni Page</a>
+              </div>
+            </div>
+          </article>
+        `).join('');
+      } else {
+        container.innerHTML = '<p>No featured projects found.</p>';
+      }
+    } catch (err) {
+      console.error('Failed to load repos:', err);
+      container.innerHTML = '<p>Error loading projects.</p>';
+    }
+  }
+
   /* ── Init ── */
   initBackground();
   initReveal();
   renderUploadPanel();
+  loadFeaturedRepos();
 </script>
 </body>
 </html>

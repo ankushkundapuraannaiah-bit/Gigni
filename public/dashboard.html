@@ -464,22 +464,33 @@
     .empty-state h3 { font-size: 24px; margin-bottom: 12px; letter-spacing: -0.02em; }
     .empty-state p { color: var(--muted); line-height: 1.7; font-size: 15px; }
 
-    /* ── ZORUS SECTION ── */
-    .zorus-dash-banner {
-      margin-top: 40px;
+    /* ── DEVELOPER PUBLISHER STYLES ── */
+    .devpub-form-card {
       border: 1.5px solid var(--border);
       border-radius: 20px;
-      background: linear-gradient(135deg, rgba(124,58,237,0.06), rgba(147,51,234,0.04));
+      background: rgba(255,255,255,0.95);
       padding: 32px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-      box-shadow: 0 12px 32px rgba(124,58,237,0.08);
+      box-shadow: 0 16px 40px rgba(124,58,237,0.07);
+      margin-bottom: 28px;
     }
-    .zorus-dash-banner h2 { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; }
-    .zorus-dash-banner p { color: var(--muted); font-size: 14px; }
+    .devpub-form-card h3 { font-size: 20px; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 6px; }
+    .devpub-form-card > p { color: var(--muted); font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
+    .devpub-radio-row { display: flex; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
+    .devpub-radio-btn { flex: 1; min-width: 140px; border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 18px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 14px; color: var(--muted); transition: all 0.2s; background: var(--purple-soft); }
+    .devpub-radio-btn.active { border-color: var(--purple); color: var(--purple); background: var(--purple-mid); }
+    .devpub-radio-btn input { accent-color: var(--purple); width: 16px; height: 16px; }
+    .devpub-published-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 8px; }
+    .devpub-pub-card { border: 1.5px solid var(--border); border-radius: 16px; padding: 20px; background: rgba(255,255,255,0.9); box-shadow: 0 8px 24px rgba(124,58,237,0.06); transition: transform 0.2s, box-shadow 0.2s; position: relative; }
+    .devpub-pub-card:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(124,58,237,0.12); }
+    .devpub-pub-card h4 { font-size: 15px; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 6px; }
+    .devpub-pub-card p { color: var(--muted); font-size: 13px; line-height: 1.5; margin-bottom: 12px; }
+    .devpub-tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .devpub-tag { background: var(--purple-soft); border: 1px solid var(--border); border-radius: 999px; padding: 3px 10px; font-size: 11px; font-weight: 800; color: var(--purple); }
+    .devpub-link-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .devpub-link { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: var(--purple); text-decoration: none; border: 1px solid var(--border); border-radius: 999px; padding: 5px 12px; transition: background 0.15s; }
+    .devpub-link:hover { background: var(--purple-soft); }
+    .devpub-del-btn { position: absolute; top: 14px; right: 14px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: #ef4444; border-radius: 8px; padding: 4px 9px; font-size: 11px; font-weight: 800; cursor: pointer; transition: background 0.2s; }
+    .devpub-del-btn:hover { background: rgba(239,68,68,0.18); }
 
     /* ── VERIFY OVERLAY ── */
     .verify-overlay {
@@ -523,7 +534,7 @@
       .content { padding: 24px 16px; }
       .repo-body, .submission-grid, .frow2 { grid-template-columns: 1fr; }
       .search-bar { display: none; }
-      .zorus-dash-banner { flex-direction: column; }
+      .devpub-published-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -555,8 +566,8 @@
     <a id="nav-project" class="nav-item" onclick="switchTab('project',this)">
       <span class="material-icons">terminal</span> Project
     </a>
-    <a id="nav-zorus" class="nav-item" onclick="switchTab('zorus',this)">
-      <span class="material-icons">star</span> Zorus 2.1 Cohort
+    <a id="nav-devpub" class="nav-item" onclick="switchTab('devpub',this)">
+      <span class="material-icons">rocket_launch</span> Dev Publisher
     </a>
     <a id="nav-certificate" class="nav-item" onclick="switchTab('certificate',this)">
       <span class="material-icons">workspace_premium</span> Certificate
@@ -578,13 +589,6 @@
         <p>Gigni is your collection of hands-on experience courses. Learn from project videos, submit real work, and earn verified certificates.</p>
       </div>
       <div class="grid" id="dashboard-cards"></div>
-      <div class="zorus-dash-banner" id="zorus-section">
-        <div>
-          <h2>Zorus 2.1 Course Track</h2>
-          <p>Use the Zorus 2.1 course videos as references, then upload your implementation from the Project section.</p>
-        </div>
-        <a href="/zorus-course" class="btn-act">Open Full Course →</a>
-      </div>
     </div>
 
     <!-- PROFILE TAB -->
@@ -682,13 +686,62 @@
       </div>
     </div>
 
-    <!-- ZORUS 2.1 TAB -->
-    <div id="tab-zorus" class="tab-content">
+    <!-- DEVELOPER PUBLISHER TAB -->
+    <div id="tab-devpub" class="tab-content">
       <div class="header-info">
-        <h1>Zorus 2.1 Cohort Workspace</h1>
-        <p>Manage your cohort internship application, proctored assessments, and verified cohort builds.</p>
+        <h1>Developer Publisher</h1>
+        <p>Showcase your projects to the Gigni community. Publish a GitHub repository or select a verified project from your submissions — it will appear on the home page slider.</p>
       </div>
-      <div id="zorus-workspace-container"></div>
+
+      <!-- PUBLISH FORM -->
+      <div class="devpub-form-card">
+        <h3>Publish a New Project</h3>
+        <p>Fill in your project details. Provide a GitHub link or link an existing verified submission.</p>
+        <div class="devpub-radio-row">
+          <label class="devpub-radio-btn active" id="devpub-opt-github" onclick="devpubToggleMode('github')">
+            <input type="radio" name="devpub-mode" value="github" checked>
+            🔗 GitHub Repository
+          </label>
+          <label class="devpub-radio-btn" id="devpub-opt-submission" onclick="devpubToggleMode('submission')">
+            <input type="radio" name="devpub-mode" value="submission">
+            📁 Existing Submission
+          </label>
+        </div>
+        <div class="frow2">
+          <div class="fg">
+            <label>Project Name *</label>
+            <input type="text" id="devpub-name" placeholder="e.g. AI Resume Builder">
+          </div>
+          <div class="fg">
+            <label>Tech Stack / Tags</label>
+            <input type="text" id="devpub-tags" placeholder="e.g. Python, React, OpenAI">
+          </div>
+        </div>
+        <div class="fg" id="devpub-github-row">
+          <label>GitHub Repository URL *</label>
+          <input type="url" id="devpub-github-url" placeholder="https://github.com/you/your-repo">
+        </div>
+        <div class="fg" id="devpub-submission-row" style="display:none">
+          <label>Select Verified Submission *</label>
+          <select id="devpub-submission-sel"><option value="">Loading submissions…</option></select>
+        </div>
+        <div class="fg">
+          <label>Live Demo URL (optional)</label>
+          <input type="url" id="devpub-live-url" placeholder="https://your-project.vercel.app">
+        </div>
+        <div class="fg">
+          <label>Short Description</label>
+          <textarea id="devpub-desc" rows="3" placeholder="Describe what your project does in 1–2 sentences."></textarea>
+        </div>
+        <button class="btn-act" id="devpub-publish-btn" onclick="publishDevProject()">Publish to Home Page 🚀</button>
+      </div>
+
+      <!-- MY PUBLISHED PROJECTS -->
+      <div class="devpub-form-card">
+        <h3>My Published Projects</h3>
+        <p>These appear in the Developer Showcase on the home page.</p>
+        <div id="devpub-my-list"><p style="color:var(--muted);font-size:14px;">Loading…</p></div>
+      </div>
     </div>
 
     <!-- CERTIFICATE TAB -->
@@ -728,7 +781,7 @@
 
 <script>
 function getAuthHeader(){const token=localStorage.getItem('gigni_token')||(JSON.parse(localStorage.getItem('gigni_user')||'{}').token);return token?{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'}:{'Content-Type':'application/json'}}
-function switchTab(id,el){if(!el)el=document.getElementById('nav-'+id);document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.sidebar .nav-item').forEach(i=>i.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');if(el)el.classList.add('active');if(id==='certificate'||id==='project'||id==='zorus')fetchSubmissions()}
+function switchTab(id,el){if(!el)el=document.getElementById('nav-'+id);document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.sidebar .nav-item').forEach(i=>i.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');if(el)el.classList.add('active');if(id==='certificate'||id==='project')fetchSubmissions();if(id==='devpub'){loadMyPublishedProjects();loadSubmissionsForDevPub();}}
 
 const COURSE_PROJECTS=[
   {id:'talking-ai-clone',name:'Talking AI Clone',video:'https://www.youtube.com/embed/HDcKTHm0B9Q',readme:'<h3>Talking AI Clone</h3><p>Create a realistic AI identity workflow inspired by the Zorus 2.1 course page.</p><ul><li>Record or generate a baseline avatar sample.</li><li>Build the voice/script workflow.</li><li>Submit code, working demo video, and README.</li></ul>'},
@@ -775,15 +828,13 @@ function renderAll(user){
   });
   renderDashboardCards(user);
   renderCourseProjects();
-  renderZorusWorkspace(user);
-  renderDashboardZorusBanner(user);
   fetchSubmissions();
 }
 
 function renderDashboardCards(user){
   document.getElementById('dashboard-cards').innerHTML=[
     {icon:'COURSE',title:'Hands-on Course Library',content:'Build practical projects from guided course videos.',button:'Open Projects',tab:'project'},
-    {icon:'COHORT',title:'Zorus 2.1 Workspace',content:'Manage internship assessment and upload Zorus cohort builds.',button:'Zorus Workspace',tab:'zorus'},
+    {icon:'PUBLISH',title:'Developer Publisher',content:'Showcase your GitHub projects & verified builds on the home page.',button:'Publish Project',tab:'devpub'},
     {icon:'CERT',title:'Certificates',content:'Verified work unlocks downloadable certificates.',button:'View Certificates',tab:'certificate'}
   ].map(c=>`<div class="card"><div class="cico">${c.icon}</div><h3>${c.title}</h3><p>${c.content}</p><button class="btn-act" onclick="switchTab('${c.tab}')">${c.button} →</button></div>`).join('')
 }
@@ -806,202 +857,116 @@ function selectCourseProject(id,el){
   document.getElementById('submit-project').value=p.name
 }
 
-// Zorus Workspace Rendering
-function renderZorusWorkspace(user) {
-  const container = document.getElementById('zorus-workspace-container');
-  if (!user.zorus_applied) {
-    container.innerHTML = `
-      <div class="empty-state" style="max-width: 680px; margin: 20px auto; padding: 50px 40px; border-radius: 28px; background: rgba(255,255,255,0.95); box-shadow: 0 16px 40px rgba(124,58,237,0.06); text-align: center; border: 1.5px solid var(--border);">
-        <div class="cico" style="margin-bottom: 24px;">ZORUS 2.1</div>
-        <h2 style="font-size: 26px; font-weight: 900; color: var(--ink); margin-bottom: 12px; letter-spacing: -0.02em;">Unleash the Zorus 2.1 Cohort</h2>
-        <p style="color: var(--muted); font-size: 15px; line-height: 1.7; margin-bottom: 30px; font-weight: 500;">
-          Join an elite group of student developers building production-grade Agentic AI pipelines. Master voice cloning, HeyGen digital twins, visual automation with n8n, and full-stack web integration.
-        </p>
-        <div style="background: var(--purple-soft); border-left: 4px solid var(--purple); border-radius: 0 12px 12px 0; padding: 20px; text-align: left; margin-bottom: 32px;">
-          <strong style="color: var(--purple); display: block; margin-bottom: 6px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em;">Internship Qualification:</strong>
-          <span style="color: var(--ink); font-size: 14px; line-height: 1.5; font-weight: 600;">You must apply to the cohort and pass the proctored 25-question Python & Agentic AI Technical Assessment with a score of 85% or higher.</span>
-        </div>
-        <button class="btn-act" onclick="applyForZorus()" id="zorus-apply-btn" style="padding: 16px 36px; font-size: 15px; border-radius: 50px; font-weight: 800;">Apply for Zorus 2.1 →</button>
-      </div>
-    `;
-  } else if (user.zorus_applied && (user.zorus_score === null || user.zorus_score < 85)) {
-    const scoreText = user.zorus_score === null ? 'Pending' : `${user.zorus_score}%`;
-    container.innerHTML = `
-      <div class="empty-state" style="max-width: 680px; margin: 20px auto; padding: 50px 40px; border-radius: 28px; background: rgba(255,255,255,0.95); box-shadow: 0 16px 40px rgba(124,58,237,0.06); text-align: center; border: 1.5px solid var(--border);">
-        <div class="cico" style="margin-bottom: 24px; background: #fffbeb; border-color: #fcd34d; color: #b45309;">ASSESSMENT PENDING</div>
-        <h2 style="font-size: 26px; font-weight: 900; color: var(--ink); margin-bottom: 12px; letter-spacing: -0.02em;">Technical Assessment Required</h2>
-        <p style="color: var(--muted); font-size: 15px; line-height: 1.7; margin-bottom: 30px; font-weight: 500;">
-          Your application for the Zorus 2.1 Python Internship Programme is received! To unlock cohort project uploads and curriculum credentials, you must qualify the proctored assessment.
-        </p>
-        <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 32px; flex-wrap: wrap;">
-          <div style="background: var(--purple-soft); border: 1px solid var(--border); border-radius: 16px; padding: 16px 24px; min-width: 160px; text-align: center;">
-            <span style="font-size: 12px; color: var(--purple); font-weight: 800; display: block; text-transform: uppercase;">Required Score</span>
-            <strong style="font-size: 28px; color: var(--ink); font-weight: 900;">85%</strong>
-          </div>
-          <div style="background: var(--purple-soft); border: 1px solid var(--border); border-radius: 16px; padding: 16px 24px; min-width: 160px; text-align: center;">
-            <span style="font-size: 12px; color: var(--purple); font-weight: 800; display: block; text-transform: uppercase;">Your Best Score</span>
-            <strong style="font-size: 28px; color: var(--ink); font-weight: 900;">${scoreText}</strong>
-          </div>
-        </div>
-        <a href="/zorus-test" class="btn-act" style="padding: 16px 36px; font-size: 15px; border-radius: 50px; font-weight: 800; text-decoration: none;">
-          ${user.zorus_score === null ? 'Begin Technical Assessment' : 'Retry Technical Assessment'} →
-        </a>
-      </div>
-    `;
+// ── Developer Publisher ──────────────────────────────────────────────────────
+function devpubToggleMode(mode) {
+  const ghRow = document.getElementById('devpub-github-row');
+  const subRow = document.getElementById('devpub-submission-row');
+  const optGh = document.getElementById('devpub-opt-github');
+  const optSub = document.getElementById('devpub-opt-submission');
+  if (mode === 'github') {
+    ghRow.style.display = ''; subRow.style.display = 'none';
+    optGh.classList.add('active'); optSub.classList.remove('active');
   } else {
-    container.innerHTML = `
-      <div style="background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(16,185,129,0.02)); border: 1.5px solid rgba(16,185,129,0.3); border-radius: 20px; padding: 24px 32px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 32px; box-shadow: 0 10px 30px rgba(16,185,129,0.05);">
-        <div>
-          <span class="status-pill status-verified" style="margin-bottom: 8px; font-size: 11px;">✓ Cohort Qualified</span>
-          <h2 style="font-size: 22px; font-weight: 900; color: var(--ink); letter-spacing: -0.02em;">Welcome to Zorus 2.1 Cohort Workspace</h2>
-          <p style="color: var(--muted); font-size: 14px; font-weight: 600;">You successfully qualified the proctored assessment with a score of <strong style="color:#059669;">${user.zorus_score}%</strong>. You can now submit your cohort builds below.</p>
-        </div>
-        <a href="/zorus-course" class="btn-act green" style="border-radius: 50px; font-weight: 800; text-decoration: none;">Open Curriculum Reference</a>
-      </div>
-
-      <div class="repo-shell" style="border-color: rgba(124,58,237,0.25);">
-        <div class="repo-head" style="background: rgba(124,58,237,0.04); border-bottom-color: rgba(124,58,237,0.15);">
-          <div class="repo-path">zorus-cohort-workspace / <strong id="zorus-repo-title">zorus-talking-ai-clone</strong></div>
-          <button class="btn-act green" onclick="document.getElementById('zorus-submission-form').scrollIntoView({behavior:'smooth'})">Upload Cohort Build ↑</button>
-        </div>
-        <div class="repo-body">
-          <div class="repo-sidebar" style="border-right-color: rgba(124,58,237,0.15);">
-            <div style="font-size:11px;font-weight:900;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.1em;">Cohort Modules</div>
-            <div id="zorus-project-list"></div>
-          </div>
-          <div class="repo-main">
-            <div class="video-frame" style="border-color: rgba(124,58,237,0.2);">
-              <iframe id="zorus-project-video" title="Cohort module reference video" allowfullscreen></iframe>
-            </div>
-            <div class="readme-panel" id="zorus-project-readme" style="background: rgba(124,58,237,0.02); border-color: rgba(124,58,237,0.15);"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="submission-grid">
-        <form class="submit-card" id="zorus-submission-form" onsubmit="submitZorusProjectWork(event)">
-          <h3>Commit Cohort Build</h3>
-          <div class="fg"><label>Cohort Module</label><select id="zorus-submit-project"></select></div>
-          <div class="fg">
-            <label>Module Source Code</label>
-            <input type="file" id="zorus-submit-code-file" accept=".txt,.md,.js,.jsx,.ts,.tsx,.html,.css,.json,.py,.java,.c,.cpp,.zip" required>
-            <textarea id="zorus-submit-code" placeholder="Optional notes or repository URL" style="margin-top:8px;"></textarea>
-          </div>
-          <div class="fg">
-            <label>Working Demo Video</label>
-            <input type="file" id="zorus-submit-video-file" accept="video/*" required>
-            <input type="url" id="zorus-submit-video" placeholder="Optional backup video link" style="margin-top:8px;">
-          </div>
-          <div class="fg">
-            <label>README Documentation</label>
-            <input type="file" id="zorus-submit-readme-file" accept=".md,.txt" required>
-            <textarea id="zorus-submit-readme" placeholder="Optional README notes" style="margin-top:8px;"></textarea>
-          </div>
-          <button class="btn-act green" id="zorus-submit-work-btn" style="width:100%;justify-content:center;padding:14px;font-weight:800; border-radius:50px;">Submit Cohort Build ✓</button>
-        </form>
-        <div class="submit-card">
-          <h3>Cohort Build Status</h3>
-          <div id="zorus-submission-list" class="status-list"></div>
-        </div>
-      </div>
-    `;
-    renderZorusCourseProjects();
+    ghRow.style.display = 'none'; subRow.style.display = '';
+    optGh.classList.remove('active'); optSub.classList.add('active');
   }
 }
 
-function renderZorusCourseProjects() {
-  const list = document.getElementById('zorus-project-list');
-  const select = document.getElementById('zorus-submit-project');
-  if(!list || !select) return;
-  list.innerHTML = ZORUS_PROJECTS.map((p, i) => `<button type="button" class="repo-file ${i===0?'active':''}" onclick="selectZorusProject('${p.id}',this)">📄 ${p.name.replace('Zorus 2.1: ', '')}</button>`).join('');
-  select.innerHTML = ZORUS_PROJECTS.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
-  selectZorusProject(ZORUS_PROJECTS[0].id, list.querySelector('.repo-file'));
-}
-
-function selectZorusProject(id, el) {
-  const p = ZORUS_PROJECTS.find(x => x.id === id) || ZORUS_PROJECTS[0];
-  document.querySelectorAll('#zorus-project-list .repo-file').forEach(b => b.classList.remove('active'));
-  if(el) el.classList.add('active');
-  document.getElementById('zorus-repo-title').innerText = p.id;
-  document.getElementById('zorus-project-video').src = p.video;
-  document.getElementById('zorus-project-readme').innerHTML = p.readme;
-  document.getElementById('zorus-submit-project').value = p.name;
-}
-
-async function applyForZorus() {
-  const btn = document.getElementById('zorus-apply-btn');
-  const oldText = btn.innerText;
-  btn.innerText = 'Syncing...';
-  btn.disabled = true;
-  
-  const user = JSON.parse(localStorage.getItem('gigni_user') || '{}');
-  if (!user.id) return alert('No user identity found.');
-  
+async function loadSubmissionsForDevPub() {
+  const sel = document.getElementById('devpub-submission-sel');
+  if (!sel) return;
   try {
-    const res = await fetch('/api/zorus-apply', {
+    const res = await fetch('/api/project/submissions', { headers: getAuthHeader() });
+    const data = await res.json();
+    if (data.success && data.submissions && data.submissions.length) {
+      const verified = data.submissions.filter(s => s.status === 'Verified');
+      if (verified.length) {
+        sel.innerHTML = verified.map(s => `<option value="${s.id}">${s.project_name} (Verified ${new Date(s.verified_at).toLocaleDateString()})</option>`).join('');
+      } else {
+        sel.innerHTML = '<option value="">No verified submissions yet</option>';
+      }
+    } else {
+      sel.innerHTML = '<option value="">No submissions found</option>';
+    }
+  } catch(e) { sel.innerHTML = '<option value="">Failed to load submissions</option>'; }
+}
+
+async function publishDevProject() {
+  const btn = document.getElementById('devpub-publish-btn');
+  const mode = document.querySelector('input[name="devpub-mode"]:checked').value;
+  const name = document.getElementById('devpub-name').value.trim();
+  const tags = document.getElementById('devpub-tags').value.trim();
+  const githubUrl = document.getElementById('devpub-github-url').value.trim();
+  const liveUrl = document.getElementById('devpub-live-url').value.trim();
+  const desc = document.getElementById('devpub-desc').value.trim();
+  const submissionId = mode === 'submission' ? document.getElementById('devpub-submission-sel').value : null;
+
+  if (!name) return alert('Please enter a project name.');
+  if (mode === 'github' && !githubUrl) return alert('Please enter a GitHub repository URL.');
+  if (mode === 'submission' && !submissionId) return alert('Please select a verified submission.');
+
+  const old = btn.innerText; btn.innerText = 'Publishing…'; btn.disabled = true;
+  try {
+    const res = await fetch('/api/dev/publish', {
       method: 'POST',
       headers: getAuthHeader(),
-      body: JSON.stringify({
-        userId: user.id,
-        email: user.email,
-        fname: user.fname,
-        lname: user.lname
-      })
+      body: JSON.stringify({ projectName: name, description: desc, githubUrl: mode === 'github' ? githubUrl : null, liveUrl, tags, submissionId: mode === 'submission' ? parseInt(submissionId) : null })
     });
     const data = await res.json();
-    if (data.success) {
-      alert('Application successful! Check your email for assessment details.');
-      user.zorus_applied = true;
-      user.zorus_score = null;
-      localStorage.setItem('gigni_user', JSON.stringify(user));
-      renderAll(user);
-    } else {
-      alert('Application failed: ' + (data.error || 'Unknown error'));
-    }
-  } catch(e) {
-    alert('Network error during application.');
-  } finally {
-    btn.innerText = oldText;
-    btn.disabled = false;
-  }
+    if (!data.success) throw new Error(data.error || 'Publish failed');
+    // Clear form
+    document.getElementById('devpub-name').value = '';
+    document.getElementById('devpub-tags').value = '';
+    document.getElementById('devpub-github-url').value = '';
+    document.getElementById('devpub-live-url').value = '';
+    document.getElementById('devpub-desc').value = '';
+    alert('🚀 Project published! It will appear on the home page Developer Showcase.');
+    loadMyPublishedProjects();
+  } catch(e) { alert('Publish failed: ' + e.message); }
+  finally { btn.innerText = old; btn.disabled = false; }
 }
 
-function renderDashboardZorusBanner(user) {
-  const banner = document.getElementById('zorus-section');
-  if (!banner) return;
-  
-  if (!user.zorus_applied) {
-    banner.innerHTML = `
-      <div>
-        <h2>Zorus 2.1 Internship Cohort</h2>
-        <p>Apply for the elite 3-month cohort internship. Solve proctored assessment, get verified builds, and earn certificates.</p>
-      </div>
-      <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
-        <button class="btn-act" onclick="switchTab('zorus')">Apply for Cohort →</button>
-      </div>
-    `;
-  } else if (user.zorus_applied && (user.zorus_score === null || user.zorus_score < 85)) {
-    banner.innerHTML = `
-      <div>
-        <h2>Zorus 2.1 Assessment Pending</h2>
-        <p>Your internship application is registered. Please qualify the technical assessment (score required: 85%) to activate workspace uploads.</p>
-      </div>
-      <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
-        <a href="/zorus-test" class="btn-act" style="background:var(--orange); box-shadow:0 8px 22px rgba(249,115,22,0.25); text-decoration:none;">Take Assessment →</a>
-      </div>
-    `;
-  } else {
-    banner.innerHTML = `
-      <div style="border-left: 4px solid #10b981; padding-left: 16px;">
-        <h2 style="color:var(--ink);">✓ Zorus 2.1 Cohort Active</h2>
-        <p>You qualified with a score of <strong>${user.zorus_score}%</strong>. Open your Zorus Workspace tab to submit Month 1, 2, and 3 builds.</p>
-      </div>
-      <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
-        <button class="btn-act green" onclick="switchTab('zorus')">Open Cohort Workspace →</button>
-      </div>
-    `;
-  }
+async function loadMyPublishedProjects() {
+  const container = document.getElementById('devpub-my-list');
+  if (!container) return;
+  container.innerHTML = '<p style="color:var(--muted);font-size:14px;">Loading…</p>';
+  try {
+    const res = await fetch('/api/dev/my-projects', { headers: getAuthHeader() });
+    const data = await res.json();
+    if (!data.success || !data.projects.length) {
+      container.innerHTML = '<div class="empty-state" style="margin:0;padding:36px;"><div class="cico">PUBLISH</div><h3>No projects yet</h3><p>Use the form above to publish your first project.</p></div>';
+      return;
+    }
+    container.innerHTML = `<div class="devpub-published-grid">${data.projects.map(p => {
+      const tags = (p.tags || '').split(',').map(t => t.trim()).filter(Boolean);
+      return `<div class="devpub-pub-card">
+        <button class="devpub-del-btn" onclick="deleteDevProject(${p.id})">✕ Remove</button>
+        <h4>${escHtml(p.project_name)}</h4>
+        <p>${escHtml(p.description || 'No description.')}</p>
+        <div class="devpub-tag-row">${tags.map(t => `<span class="devpub-tag">${escHtml(t)}</span>`).join('')}</div>
+        <div class="devpub-link-row">
+          ${p.github_url ? `<a class="devpub-link" href="${escHtml(p.github_url)}" target="_blank" rel="noopener">⑂ GitHub</a>` : ''}
+          ${p.live_url ? `<a class="devpub-link" href="${escHtml(p.live_url)}" target="_blank" rel="noopener">🌐 Live Demo</a>` : ''}
+        </div>
+        <p style="font-size:11px;color:var(--muted);margin-top:10px;">Published ${new Date(p.published_at).toLocaleDateString()}</p>
+      </div>`;
+    }).join('')}</div>`;
+  } catch(e) { container.innerHTML = '<p style="color:var(--muted);">Failed to load.</p>'; }
 }
+
+async function deleteDevProject(id) {
+  if (!confirm('Remove this project from the Developer Showcase?')) return;
+  try {
+    const res = await fetch('/api/dev/project/' + id, { method: 'DELETE', headers: getAuthHeader() });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error);
+    loadMyPublishedProjects();
+  } catch(e) { alert('Failed to remove: ' + e.message); }
+}
+
+function escHtml(str) { if (!str) return ''; const d = document.createElement('div'); d.appendChild(document.createTextNode(str)); return d.innerHTML; }
+
+
 
 function readTextFile(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(new Error('Could not read '+file.name));r.readAsText(file)})}
 function readDataFile(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(new Error('Could not read '+file.name));r.readAsDataURL(file)})}
@@ -1029,28 +994,7 @@ async function submitProjectWork(event){
   }catch(e){alert('Submission failed: '+e.message)}finally{btn.innerText=old;btn.disabled=false}
 }
 
-async function submitZorusProjectWork(event){
-  event.preventDefault();
-  const btn=document.getElementById('zorus-submit-work-btn');
-  const old=btn.innerText;
-  const codeFile=document.getElementById('zorus-submit-code-file').files[0];
-  const videoFile=document.getElementById('zorus-submit-video-file').files[0];
-  const readmeFile=document.getElementById('zorus-submit-readme-file').files[0];
-  if(!codeFile||!videoFile||!readmeFile)return alert('Please upload your code file, working project video, and README file.');
-  try{
-    btn.innerText='Uploading…';
-    btn.disabled=true;
-    const codeText=codeFile.name.toLowerCase().endsWith('.zip')?await readDataFile(codeFile):await readTextFile(codeFile);
-    const readmeText=await readTextFile(readmeFile);
-    const payload={projectName:document.getElementById('zorus-submit-project').value,codeContent:[codeText,document.getElementById('zorus-submit-code').value.trim()].filter(Boolean).join('\n\n--- Notes ---\n'),codeFileName:codeFile.name,videoUrl:document.getElementById('zorus-submit-video').value.trim(),videoFileName:videoFile.name,videoData:await readDataFile(videoFile),readmeContent:[readmeText,document.getElementById('zorus-submit-readme').value.trim()].filter(Boolean).join('\n\n--- Notes ---\n'),readmeFileName:readmeFile.name};
-    const res=await fetch('/api/project/submit',{method:'POST',headers:getAuthHeader(),body:JSON.stringify(payload)});
-    const data=await res.json();
-    if(!data.success)throw new Error(data.error||'Submission failed');
-    event.target.reset();
-    document.getElementById('verify-overlay').classList.add('open');
-    fetchSubmissions()
-  }catch(e){alert('Submission failed: '+e.message)}finally{btn.innerText=old;btn.disabled=false}
-}
+
 
 async function fetchSubmissions(){
   try{
@@ -1066,26 +1010,12 @@ async function fetchSubmissions(){
 function renderSubmissionList(submissions){
   const list=document.getElementById('submission-list');
   if(list) {
-    const generalSubs = submissions.filter(s => !s.project_name.startsWith('Zorus 2.1:'));
-    if(!generalSubs.length){
+    if(!submissions.length){
       list.innerHTML='<p style="color:var(--muted);line-height:1.7;font-size:14px;">No submissions yet. Upload your first project from the form.</p>';
     } else {
-      list.innerHTML=generalSubs.map(s=>{
+      list.innerHTML=submissions.map(s=>{
         const v=s.status==='Verified';
         return`<div class="status-item"><div class="status-row"><strong>${s.project_name}</strong><span class="status-pill ${v?'status-verified':'status-pending'}">${v?'✓ Verified':'⏳ Under Verification'}</span></div><p style="color:var(--muted);font-size:12px;margin-top:8px;">Submitted ${new Date(s.submitted_at).toLocaleString()}</p></div>`
-      }).join('');
-    }
-  }
-
-  const zorusList=document.getElementById('zorus-submission-list');
-  if(zorusList) {
-    const zorusSubs = submissions.filter(s => s.project_name.startsWith('Zorus 2.1:'));
-    if(!zorusSubs.length){
-      zorusList.innerHTML='<p style="color:var(--muted);line-height:1.7;font-size:14px;">No cohort builds submitted yet.</p>';
-    } else {
-      zorusList.innerHTML=zorusSubs.map(s=>{
-        const v=s.status==='Verified';
-        return`<div class="status-item" style="border-color: rgba(16,185,129,0.15); background: rgba(16,185,129,0.02);"><div class="status-row"><strong>${s.project_name.replace('Zorus 2.1: ', '')}</strong><span class="status-pill ${v?'status-verified':'status-pending'}">${v?'✓ Verified':'⏳ Under Verification'}</span></div><p style="color:var(--muted);font-size:12px;margin-top:8px;">Submitted ${new Date(s.submitted_at).toLocaleString()}</p></div>`
       }).join('');
     }
   }

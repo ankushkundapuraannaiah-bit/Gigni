@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gigni Project Showcase</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/theme.css">
+    <script src="/theme.js"></script>
+    <style>
+        body { font-family: 'Outfit', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .project-card { max-width: 800px; width: 100%; background: var(--bg-secondary); border: 1px solid var(--border-ui); padding: 40px; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
+        h1 { font-size: 3rem; margin-bottom: 10px; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .meta { color: var(--text-muted); margin-bottom: 30px; font-weight: bold; }
+        .uniqueness-box { background: rgba(124, 58, 237, 0.1); border-left: 4px solid #7c3aed; padding: 20px; border-radius: 0 15px 15px 0; margin: 30px 0; }
+        .description { font-size: 1.2rem; line-height: 1.6; }
+        .actions { margin-top: 40px; display: flex; gap: 15px; }
+        .btn { padding: 15px 30px; border-radius: 999px; text-decoration: none; font-weight: bold; transition: 0.2s; }
+        .btn.primary { background: var(--accent-gradient); color: white; }
+        .btn.secondary { border: 1px solid var(--border-ui); color: var(--text-main); }
+        .btn:hover { transform: translateY(-2px); opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="project-card" id="project-card">
+        <p>Loading project details...</p>
+    </div>
+
+    <script>
+        async function loadProject() {
+            const slug = window.location.pathname.split('/').pop();
+            const container = document.getElementById('project-card');
+            
+            try {
+                const res = await fetch(`/api/dev/project/${slug}`);
+                const data = await res.json();
+                
+                if (!data.success) {
+                    container.innerHTML = '<h1>Project Not Found</h1><a href="/" class="btn secondary">Back Home</a>';
+                    return;
+                }
+
+                const p = data.project;
+                document.title = `${p.project_name} | Gigni Showcase`;
+                
+                container.innerHTML = `
+                    <div class="meta">${p.tags || 'General'}</div>
+                    <h1>${p.project_name}</h1>
+                    <p>Published by <strong>${p.user_name}</strong> on ${new Date(p.published_at).toLocaleDateString()}</p>
+                    
+                    <div class="description">${p.description || 'No description provided.'}</div>
+                    
+                    <div class="uniqueness-box">
+                        <strong>The Gigni Uniqueness Factor:</strong><br>
+                        <p>${p.uniqueness || 'A high-impact contribution to the AI community.'}</p>
+                    </div>
+
+                    <div class="actions">
+                        ${p.github_url ? `<a href="${p.github_url}" target="_blank" class="btn primary">View Source on GitHub</a>` : ''}
+                        ${p.live_url ? `<a href="${p.live_url}" target="_blank" class="btn secondary">Visit Live Site</a>` : ''}
+                        <a href="/" class="btn secondary">Back to Gigni</a>
+                    </div>
+                `;
+            } catch (err) {
+                container.innerHTML = '<h1>Error loading project</h1>';
+            }
+        }
+        loadProject();
+    </script>
+</body>
+</html>

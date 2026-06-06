@@ -1,0 +1,38 @@
+:root {
+  /* Light Mode Variables */
+  --bg-main: #ffffff;
+  --bg-secondary: #f9fafb;
+  --text-main: #111827;
+  --text-muted: #4b5563;
+  --border-ui: rgba(0, 0, 0, 0.1);
+  --accent-gradient: linear-gradient(135deg, #3b5bdb, #2563eb);
+  --nav-bg: rgba(255, 255, 255, 0.8);
+}
+
+[data-theme='dark'] {
+  /* Dark Mode Variables (Gigni Signature) */
+  --bg-main: #030712;
+  --bg-secondary: rgba(255, 255, 255, 0.03);
+  --text-main: #f3f4f6;
+  --text-muted: #9ca3af;
+  --border-ui: rgba(255, 255, 255, 0.08);
+  --accent-gradient: linear-gradient(135deg, #3b5bdb, #8b5cf6);
+  --nav-bg: rgba(3, 7, 18, 0.8);
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.theme-toggle {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-ui);
+  color: var(--text-main);
+  padding: 8px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.2s;
+}

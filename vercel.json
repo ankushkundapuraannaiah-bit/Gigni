@@ -66,11 +66,6 @@
       "permanent": true
     },
     {
-      "source": "/zorus-test.html",
-      "destination": "/zorus-test",
-      "permanent": true
-    },
-    {
       "source": "/verify-certificate.html",
       "destination": "/verify-certificate",
       "permanent": true
@@ -132,10 +127,6 @@
     {
       "source": "/admin",
       "destination": "/admin.html"
-    },
-    {
-      "source": "/zorus-test",
-      "destination": "/zorus-test.html"
     },
     {
       "source": "/api/(.*)",

@@ -20,9 +20,9 @@ const path = require('path');
 const fs = require('fs');
 
 const HTML_FILES = [
-  'index', 'about', 'compiler', 'zorus',
+  'index', 'about', 'compiler',
   'c-compiler', 'cpp-compiler', 'java-compiler',
-  'python-compiler', 'javascript-compiler', 'zorus-test',
+  'python-compiler', 'javascript-compiler',
   'admin', 'dashboard', 'hosting', 'verify-certificate',
   'zorus-course', 'zorus-month1'
 ];
@@ -36,6 +36,12 @@ HTML_FILES.forEach(name => {
       res.status(404).send('Not found');
     }
   });
+});
+
+// Domain-based project hosting route
+app.get('/p/:slug', (req, res) => {
+  // Serves the project view template which fetches data from /api/dev/project/:slug
+  res.sendFile(path.join(__dirname, 'public', 'project-view.html'));
 });
 
 // ── JDoodle language map ──

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gigni Free Online C++ Compiler — Run C++ Online | No Login</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/editor/editor.main.min.css" />
+  <style>
+    :root {
+      --bg: #0f0f13;
+      --surface: #1a1a24;
+      --surface2: #22222e;
+      --border: #2e2e3e;
+      --accent: #7c3aed;
+      --accent-light: #a78bfa;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --green: #22c55e;
+      --red: #ef4444;
+      --yellow: #f59e0b;
+      --font-mono: 'JetBrains Mono','Fira Code','Cascadia Code',monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Segoe UI',system-ui,sans-serif; overflow: hidden; }
+
+    nav { display:flex; align-items:center; justify-content:space-between; padding:0 20px; height:48px; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; }
+    .nav-logo { font-weight:800; font-size:18px; color:var(--accent-light); letter-spacing:.5px; text-decoration:none; }
+    .nav-links { display:flex; gap:18px; }
+    .nav-links a { color:var(--text-muted); text-decoration:none; font-size:13px; transition:color .2s; }
+    .nav-links a:hover { color:var(--text); }
+
+    .lang-bar { display:flex; gap:6px; padding:6px 16px; background:var(--surface); border-bottom:1px solid var(--border); overflow-x:auto; flex-shrink:0; }
+    .lang-bar a { display:inline-flex; align-items:center; gap:5px; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; text-decoration:none; color:var(--text-muted); background:transparent; border:1px solid transparent; white-space:nowrap; transition:all .2s; }
+    .lang-bar a:hover { color:var(--text); background:var(--surface2); }
+    .lang-bar a.active { color:#fff; background:var(--accent); border-color:var(--accent); }
+
+    .workspace { display:flex; flex-direction:column; height:calc(100vh - 48px - 38px); }
+    .toolbar { display:flex; align-items:center; justify-content:space-between; padding:6px 12px; background:var(--surface2); border-bottom:1px solid var(--border); flex-shrink:0; gap:8px; }
+    .toolbar-left,.toolbar-right { display:flex; align-items:center; gap:6px; }
+    .lang-badge { display:flex; align-items:center; gap:5px; font-size:12px; font-weight:700; color:var(--accent-light); background:rgba(124,58,237,.15); border:1px solid rgba(124,58,237,.3); border-radius:4px; padding:3px 8px; }
+
+    .btn { display:inline-flex; align-items:center; gap:5px; padding:5px 10px; border-radius:5px; font-size:12px; font-weight:600; cursor:pointer; border:1px solid var(--border); background:var(--surface); color:var(--text-muted); transition:all .2s; user-select:none; }
+    .btn:hover { color:var(--text); background:var(--surface2); border-color:#444; }
+    .btn-run { background:var(--accent); color:#fff; border-color:var(--accent); padding:5px 16px; font-size:13px; }
+    .btn-run:hover { background:#6d28d9; border-color:#6d28d9; }
+    .btn-run:disabled { opacity:.5; cursor:not-allowed; }
+
+    .panels { display:flex; flex:1; overflow:hidden; }
+    .editor-panel { display:flex; flex-direction:column; flex:1; min-width:0; border-right:2px solid var(--border); }
+    .output-panel { display:flex; flex-direction:column; width:40%; min-width:280px; }
+    .panel-header { display:flex; align-items:center; justify-content:space-between; padding:6px 12px; background:var(--surface2); border-bottom:1px solid var(--border); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:var(--text-muted); flex-shrink:0; }
+    .panel-header span { display:flex; align-items:center; gap:5px; }
+
+    /* THE KEY FIX: editor-container must have no pointer-events overrides */
+    #editor-container { flex:1; position:relative; overflow:hidden; }
+
+    .stdin-wrap { border-top:1px solid var(--border); flex-shrink:0; }
+    .stdin-wrap textarea { width:100%; background:#0d1117; color:#7ee787; font-family:var(--font-mono); font-size:13px; padding:8px 12px; border:none; outline:none; resize:none; height:64px; }
+
+    #output { flex:1; font-family:var(--font-mono); font-size:13px; line-height:1.6; padding:12px; overflow-y:auto; background:#0d1117; white-space:pre-wrap; word-break:break-all; }
+    #output .out-line { color:#e2e8f0; }
+    #output .err-line { color:#f87171; }
+    #output .info-line { color:#64748b; font-style:italic; }
+    #output .success { color:#4ade80; }
+
+    /* iframe preview (HTML/CSS compiler) */
+    #preview-frame { flex:1; border:none; background:#fff; }
+
+    .status-dot { width:7px; height:7px; border-radius:50%; background:var(--green); animation:pulse 2s ease-in-out infinite; }
+    .status-dot.running { background:var(--yellow); animation:spin 1s linear infinite; border-radius:0; clip-path:polygon(50% 0%,100% 100%,0% 100%); }
+    .status-dot.error { background:var(--red); animation:none; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    #run-time { font-size:11px; color:var(--text-muted); }
+
+    .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:100; align-items:center; justify-content:center; }
+    .modal-bg.open { display:flex; }
+    .modal { background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:24px; min-width:300px; max-width:440px; width:90%; }
+    .modal h3 { margin-bottom:16px; font-size:15px; }
+    .modal .close-btn { float:right; cursor:pointer; color:var(--text-muted); font-size:18px; line-height:1; }
+    .setting-row { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+    .setting-row label { font-size:12px; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:.6px; }
+    .setting-row select { background:var(--surface); color:var(--text); border:1px solid var(--border); border-radius:5px; padding:6px 10px; font-size:13px; }
+
+    @media (max-width:700px) {
+      .panels { flex-direction:column; }
+      .editor-panel { border-right:none; border-bottom:2px solid var(--border); height:50%; }
+      .output-panel { width:100%; height:50%; }
+    }
+</style>
+</head>
+<body>
+
+<nav><a class="nav-logo" href="/index.html">GIGNI</a><div class="nav-links"><a href="/index.html">Home</a><a href="/about.html">About</a><a href="/compiler.html">Compiler</a><a href="/zorus.html">Zorus 2.1</a></div></nav>
+<div class="lang-bar"><a href="/python-compiler.html" class="">🐍 Python</a><a href="/javascript-compiler.html" class="">⚡ JavaScript</a><a href="/c-compiler.html" class="">🔵 C</a><a href="/cpp-compiler.html" class="active">🔷 C++</a><a href="/java-compiler.html" class="">☕ Java</a><a href="/compiler.html" class="">🌐 HTML/CSS</a></div>
+
+<div class="workspace">
+  
+<div class="toolbar">
+  <div class="toolbar-left"><div class="lang-badge">🔷 C++ (via JDoodle API)</div></div>
+  <div class="toolbar-right">
+    <button class="btn" id="btn-beautify">✨ Beautify</button>
+    <button class="btn" id="btn-settings">⚙️ Settings</button>
+    <button class="btn" id="btn-reset">↺ Reset</button>
+    <button class="btn" id="btn-download">⬇ Download</button>
+    <button class="btn" id="btn-copy">📋 Copy</button>
+    <button class="btn btn-run" id="btn-run">▶ Run</button>
+  </div>
+</div>
+  <div class="panels">
+    <div class="editor-panel">
+      <div id="editor-container"></div>
+      
+<div class="stdin-wrap">
+  <div class="panel-header"><span>📥 Standard Input (stdin)</span></div>
+  <textarea id="stdin-input" placeholder="Type input here (one value per line)..."></textarea>
+</div>
+    </div>
+    
+<div class="output-panel">
+  <div class="panel-header">
+    <span><div class="status-dot" id="status-dot"></div>Terminal Output</span>
+    <span style="display:flex;align-items:center;gap:10px;">
+      <span id="run-time"></span>
+      <button class="btn" id="btn-clear" style="padding:2px 8px;font-size:11px;">🧹 Clear</button>
+    </span>
+  </div>
+  <div id="output"><span class="info-line">Console ready. Write code and press ▶ Run.</span>
+</div>
+</div>
+  </div>
+</div>
+
+
+<div class="modal-bg" id="settings-modal">
+  <div class="modal">
+    <button class="close-btn" id="close-settings">×</button>
+    <h3>Editor Settings</h3>
+    <div class="setting-row">
+      <label>Editor Theme</label>
+      <select id="pref-theme">
+        <option value="vs">Light (vs)</option>
+        <option value="vs-dark" selected>Dark (vs-dark)</option>
+        <option value="hc-black">High Contrast</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <label>Font Size</label>
+      <select id="pref-fontsize">
+        <option value="12">12 px</option>
+        <option value="14" selected>14 px</option>
+        <option value="16">16 px</option>
+        <option value="18">18 px</option>
+        <option value="20">20 px</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <label>Tab Size</label>
+      <select id="pref-tabsize">
+        <option value="2">2 spaces</option>
+        <option value="4" selected>4 spaces</option>
+        <option value="8">8 spaces</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <label>Autocomplete</label>
+      <select id="pref-autocomplete">
+        <option value="on" selected>Enable</option>
+        <option value="off">Disable</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+
+<script>
+let editor = null;
+const DEFAULT_CODE = '#include <iostream>\n#include <vector>\n#include <string>\nusing namespace std;\n\n// Gigni C++ Compiler\n// Ctrl+A selects all | Delete/Backspace removes | Ctrl+Enter runs\n\nvoid greet(const string& name) {\n    cout << "Hello, " << name << "! 👋" << endl;\n}\n\nint main() {\n    vector<string> names = {"Alice", "Bob", "World"};\n    for (const auto& n : names) {\n        greet(n);\n    }\n    return 0;\n}\n';
+const MONACO_LANG  = 'cpp';
+const DL_FILENAME  = 'code.cpp';
+
+// ── JDoodle credentials ──────────────────────────────────────
+// Replace these with your own free JDoodle API credentials:
+// https://www.jdoodle.com/compiler-api
+const JDOODLE_CLIENT_ID     = 'YOUR_CLIENT_ID';
+const JDOODLE_CLIENT_SECRET = 'YOUR_CLIENT_SECRET';
+
+
+require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' } });
+require(['vs/editor/editor.main'], function () {
+  editor = monaco.editor.create(document.getElementById('editor-container'), {
+    value: DEFAULT_CODE,
+    language: MONACO_LANG,
+    theme: 'vs-dark',
+    // ── BUG FIXES ──────────────────────────────────────────
+    readOnly: false,         // FIXED: must be false or editing is blocked
+    domReadOnly: false,      // FIXED: secondary read-only guard
+    automaticLayout: true,   // FIXED: without this, layout mismatch breaks selection
+    contextmenu: true,       // FIXED: enables right-click Select All / Copy / Paste
+    // ───────────────────────────────────────────────────────
+    fontSize: 14,
+    tabSize: 4,
+    insertSpaces: true,
+    wordWrap: 'on',
+    minimap: { enabled: false },
+    scrollBeyondLastLine: false,
+    lineNumbers: 'on',
+    folding: true,
+    quickSuggestions: true,
+    suggestOnTriggerCharacters: true,
+    cursorStyle: 'line',
+    cursorBlinking: 'blink',
+  });
+
+  editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+    document.getElementById('btn-run').click();
+  });
+
+  editor.focus();
+  applyPreferences();
+});
+
+
+function applyPreferences() {
+  if (!editor) return;
+  monaco.editor.setTheme(document.getElementById('pref-theme').value);
+  editor.updateOptions({
+    fontSize:  parseInt(document.getElementById('pref-fontsize').value),
+    tabSize:   parseInt(document.getElementById('pref-tabsize').value),
+    readOnly:  false,
+    domReadOnly: false,
+    quickSuggestions: document.getElementById('pref-autocomplete').value === 'on',
+    suggestOnTriggerCharacters: document.getElementById('pref-autocomplete').value === 'on',
+  });
+}
+['pref-theme','pref-fontsize','pref-tabsize','pref-autocomplete'].forEach(id => {
+  document.getElementById(id).addEventListener('change', applyPreferences);
+});
+document.getElementById('btn-settings').addEventListener('click', () => {
+  document.getElementById('settings-modal').classList.add('open');
+});
+document.getElementById('close-settings').addEventListener('click', () => {
+  document.getElementById('settings-modal').classList.remove('open');
+  editor && editor.focus();
+});
+document.getElementById('settings-modal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) { e.currentTarget.classList.remove('open'); editor && editor.focus(); }
+});
+document.getElementById('btn-reset').addEventListener('click', () => {
+  if (editor) { editor.setValue(DEFAULT_CODE); editor.focus(); }
+});
+document.getElementById('btn-copy').addEventListener('click', () => {
+  if (!editor) return;
+  navigator.clipboard.writeText(editor.getValue());
+  const btn = document.getElementById('btn-copy');
+  btn.textContent = '✅ Copied';
+  setTimeout(() => { btn.textContent = '📋 Copy'; }, 1500);
+});
+document.getElementById('btn-download').addEventListener('click', () => {
+  if (!editor) return;
+  const blob = new Blob([editor.getValue()], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = DL_FILENAME;
+  a.click();
+});
+document.getElementById('btn-beautify').addEventListener('click', () => {
+  if (editor) { editor.getAction('editor.action.formatDocument').run(); editor.focus(); }
+});
+document.getElementById('btn-clear').addEventListener('click', () => {
+  document.getElementById('output').innerHTML = '<span class="info-line">Console cleared.</span>\n';
+  document.getElementById('run-time').textContent = '';
+  setStatus('ready');
+});
+function setStatus(s) {
+  const d = document.getElementById('status-dot');
+  d.className = 'status-dot' + (s==='running'?' running':s==='error'?' error':'');
+}
+function appendOutput(text, cls='out-line') {
+  const out = document.getElementById('output');
+  const sp = document.createElement('span');
+  sp.className = cls;
+  sp.textContent = text + '\n';
+  out.appendChild(sp);
+  out.scrollTop = out.scrollHeight;
+}
+
+
+document.getElementById('btn-run').addEventListener('click', async () => {
+  if (!editor) return;
+  const code  = editor.getValue();
+  const stdin = document.getElementById('stdin-input').value;
+  document.getElementById('output').innerHTML='';
+  setStatus('running');
+  const btn=document.getElementById('btn-run');
+  btn.disabled=true; btn.textContent='⏳ Compiling…';
+  const t0=performance.now();
+  try {
+    const res = await fetch('https://api.jdoodle.com/v1/execute',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        script: code,
+        stdin: stdin,
+        language: 'cpp17',
+        versionIndex: '1',
+        clientId: JDOODLE_CLIENT_ID,
+        clientSecret: JDOODLE_CLIENT_SECRET
+      })
+    });
+    const data = await res.json();
+    if (data.error) { appendOutput(data.error,'err-line'); setStatus('error'); }
+    else {
+      const out = data.output || '';
+      if(out.trim()) out.split('\n').forEach(l=>appendOutput(l,'out-line'));
+      else appendOutput('(No output)','info-line');
+      if(data.statusCode!==200) setStatus('error'); else setStatus('ready');
+    }
+  } catch(e){ appendOutput('Network error: '+e.message,'err-line'); setStatus('error'); }
+  document.getElementById('run-time').textContent='Time: '+((performance.now()-t0)/1000).toFixed(2)+'s';
+  btn.disabled=false; btn.textContent='▶ Run';
+  editor.focus();
+});
+
+</script>
+
+</body>
+</html>
