@@ -116,6 +116,7 @@ async function initializeDatabase() {
             user_name VARCHAR(255),
             project_name VARCHAR(255) NOT NULL,
             description TEXT,
+            uniqueness TEXT,
             github_url VARCHAR(512),
             live_url VARCHAR(512),
             slug VARCHAR(255) UNIQUE,
