@@ -1021,7 +1021,7 @@ app.post('/api/dev/publish', authenticateToken, async (req, res) => {
 app.get('/api/dev/projects', async (req, res) => {
     try {
         const result = await pool.query(
-            `SELECT id, user_name, project_name, description, github_url, live_url, tags, published_at
+            `SELECT id, user_name, project_name, description, uniqueness, slug, github_url, live_url, tags, published_at
              FROM developer_projects
              ORDER BY published_at DESC
              LIMIT 100`

@@ -169,27 +169,13 @@
 <link rel="stylesheet" href="theme.css">
 <script src="theme.js"></script>
 <style>
-  :root {
-    --ink: #12062a;
-    --muted: #6b7280;
-    --purple: #7c3aed;
-    --purple-2: #9333ea;
-    --purple-3: #a855f7;
-    --purple-soft: #f5f0ff;
-    --purple-mid: #ede9fe;
-    --white: #ffffff;
-    --panel: rgba(255,255,255,0.92);
-    --border: rgba(124,58,237,0.15);
-    --line: rgba(124,58,237,0.10);
-  }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
 
   body {
     font-family: 'Outfit', sans-serif;
     color: var(--ink);
-    background: #ffffff;
+    background: var(--bg-main);
     overflow-x: hidden;
   }
 
@@ -234,7 +220,7 @@
     padding: 10px 12px 10px 22px;
     border: 1px solid var(--border);
     border-radius: 999px;
-    background: rgba(255,255,255,0.88);
+    background: var(--nav-bg);
     backdrop-filter: blur(22px);
     box-shadow: 0 12px 40px rgba(124,58,237,0.10), 0 0 0 1px rgba(255,255,255,0.6) inset;
   }
@@ -703,7 +689,7 @@
   .course-card {
     border: 1.5px solid var(--border);
     border-radius: 24px;
-    background: rgba(255,255,255,0.9);
+    background: var(--panel);
     overflow: hidden;
     box-shadow: 0 20px 50px rgba(124,58,237,0.08);
     transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.28s ease, border-color 0.28s ease;
@@ -1022,9 +1008,9 @@
 
   /* ── SECTION BAND BACKGROUNDS ── */
   .band-purple {
-    background: linear-gradient(180deg, #f8f4ff 0%, #ffffff 60%);
+    background: linear-gradient(180deg, var(--purple-soft) 0%, var(--bg-main) 60%);
   }
-  .band-white { background: #ffffff; }
+  .band-white { background: var(--bg-main); }
 
   /* ── RESPONSIVE ── */
   @media (max-width: 900px) {
@@ -1766,13 +1752,11 @@
   function initBackground() {
     if (!window.THREE) return;
     const canvas = document.getElementById('bg-canvas');
-    // Solid white background so the page always reads as white
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+    // Alpha true allows body background to show
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.setClearColor(0xffffff, 1); // pure white
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xffffff);
     const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 120);
     camera.position.set(0, 0, 14);
 
@@ -2158,18 +2142,23 @@
       const data = await res.json();
       if (data.success && data.projects.length > 0) {
         container.innerHTML = data.projects.map(repo => `
-          <article class="course-card reveal visible">
-            <div class="course-body">
-              <span class="tag">${repo.tags || 'Open Source'}</span>
-              <h3>${repo.project_name}</h3>
-              <p style="margin-bottom: 12px;">${repo.description}</p>
-              <div style="background: var(--bg-secondary); padding: 12px; border-radius: 12px; font-size: 13px; border-left: 3px solid var(--purple); margin-bottom: 20px;">
-                <strong>Why it's unique:</strong><br>
-                <span style="font-style: italic; color: var(--text-muted);">${repo.uniqueness || 'High-impact open source project.'}</span>
+          <article class="course-card reveal visible" style="display: flex; flex-direction: column;">
+            <div class="course-body" style="flex: 1; display: flex; flex-direction: column; padding: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <span class="tag" style="background: var(--purple-soft); color: var(--purple); font-weight: 800; border: 1px solid var(--border); margin: 0;">${repo.tags || 'AI & Open Source'}</span>
+                <span style="font-size: 18px; opacity: 0.4;">⚡</span>
               </div>
-              <div style="display: flex; gap: 8px;">
-                <a href="${repo.github_url}" target="_blank" class="btn" style="flex: 1; font-size: 12px; padding: 8px;">GitHub</a>
-                <a href="/p/${repo.slug}" class="btn primary" style="flex: 1; font-size: 12px; padding: 8px;">Gigni Page</a>
+              <h3 style="font-size: 21px; font-weight: 900; margin-bottom: 12px; color: var(--ink);">${repo.project_name}</h3>
+              <p style="color: var(--muted); font-size: 14.5px; line-height: 1.6; margin-bottom: 24px; flex-grow: 1;">${repo.description}</p>
+              
+              <div style="background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(168, 85, 247, 0.05)); border: 1.5px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 24px; position: relative;">
+                <div style="position: absolute; top: -10px; left: 16px; background: var(--bg-main); padding: 0 8px; font-size: 10px; font-weight: 900; text-transform: uppercase; color: var(--purple); letter-spacing: 1px; border: 1.5px solid var(--border); border-radius: 4px;">The Gigni Factor</div>
+                <p style="font-size: 13.5px; color: var(--ink); font-weight: 600; line-height: 1.5; font-style: italic;">"${repo.uniqueness || 'Advancing the frontier of agentic building.'}"</p>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 10px;">
+                <a href="${repo.github_url}" target="_blank" class="btn" style="min-height: 42px; font-size: 13px; border-radius: 12px;">GitHub</a>
+                <a href="/p/${repo.slug}" class="btn primary" style="min-height: 42px; font-size: 13px; border-radius: 12px;">View Build →</a>
               </div>
             </div>
           </article>

@@ -16,8 +16,19 @@
   --text-main: #f3f4f6;
   --text-muted: #9ca3af;
   --border-ui: rgba(255, 255, 255, 0.08);
-  --accent-gradient: linear-gradient(135deg, #3b5bdb, #8b5cf6);
+  --accent-gradient: linear-gradient(135deg, #7c3aed, #8b5cf6);
   --nav-bg: rgba(3, 7, 18, 0.8);
+
+  /* Gigni Dark mode overrides */
+  --ink: var(--text-main);
+  --muted: var(--text-muted);
+  --white: var(--bg-main);
+  --panel: rgba(17, 24, 39, 0.8);
+  --border: var(--border-ui);
+  --line: rgba(255, 255, 255, 0.05);
+  --purple-soft: rgba(124, 58, 237, 0.1);
+  --purple-mid: rgba(124, 58, 237, 0.15);
+  --bg-secondary: rgba(255, 255, 255, 0.03);
 }
 
 body {
