@@ -1053,11 +1053,19 @@
     flex-wrap: wrap;
   }
   .devpub-section-head .section-head-left { flex: 1; min-width: 220px; }
+  .devpub-section-head h2 {
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    line-height: 0.93;
+    letter-spacing: -0.045em;
+    font-weight: 900;
+  }
+  .devpub-section-head .section-label {
+    font-size: 14px;
+    padding: 8px 18px;
+    margin-bottom: 22px;
+  }
   .devpub-slider-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
+    display: none; /* Hidden to match react.dev layout */
   }
   .devpub-slider-btn {
     width: 48px; height: 48px;
@@ -1088,7 +1096,7 @@
     content: '';
     position: absolute;
     top: 0; bottom: 0;
-    width: 60px;
+    width: 100px;
     z-index: 10;
     pointer-events: none;
   }
@@ -1104,14 +1112,18 @@
   .devpub-slider-track {
     display: flex;
     gap: 22px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
+    width: max-content;
     padding: 12px 4px 24px;
-    scrollbar-width: none;
+    animation: devpub-marquee 35s linear infinite;
   }
-  .devpub-slider-track::-webkit-scrollbar { display: none; }
+  .devpub-slider-track:hover {
+    animation-play-state: paused;
+  }
+
+  @keyframes devpub-marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
 
   .devpub-repo-card {
     flex: 0 0 340px;
@@ -2452,7 +2464,16 @@
       const res = await fetch('/api/dev/projects');
       const data = await res.json();
       if (data.success && data.projects.length > 0) {
-        track.innerHTML = data.projects.map((repo, idx) => {
+        // Build doubled list for seamless infinite marquee scroll
+        let projectsToRender = [...data.projects];
+        // Ensure there are enough cards to make marquee smooth across wide screens
+        while (projectsToRender.length < 8) {
+          projectsToRender = [...projectsToRender, ...data.projects];
+        }
+        // Duplicate once more for seamless looping reset
+        projectsToRender = [...projectsToRender, ...projectsToRender];
+
+        track.innerHTML = projectsToRender.map((repo, idx) => {
           const tags = (repo.tags || 'Open Source').split(',').map(t => t.trim()).filter(Boolean);
           const icon = getRepoIcon(repo.tags);
           const isGigni = (repo.user_name === 'Gigni Featured');
@@ -2512,54 +2533,11 @@
     }
   }
 
-  /* ── Slider Navigation ── */
-  let devpubAutoScroll;
-  function startDevpubAutoScroll() {
-    stopDevpubAutoScroll();
-    devpubAutoScroll = setInterval(() => {
-      const track = document.getElementById('devpub-track');
-      if (!track) return;
-      const card = track.querySelector('.devpub-repo-card');
-      if (!card) return;
-      const cardW = card.offsetWidth + 22;
-      const maxScroll = track.scrollWidth - track.clientWidth;
-      if (track.scrollLeft >= maxScroll - 10) {
-        track.scrollTo({ left: 0, behavior: 'smooth' });
-      } else {
-        track.scrollBy({ left: cardW, behavior: 'smooth' });
-      }
-    }, 4000);
-  }
-
-  function stopDevpubAutoScroll() {
-    if (devpubAutoScroll) clearInterval(devpubAutoScroll);
-  }
-
-  function devpubSlide(dir) {
-    const track = document.getElementById('devpub-track');
-    if (!track) return;
-    const card = track.querySelector('.devpub-repo-card');
-    const cardW = card ? card.offsetWidth + 22 : 362;
-    track.scrollBy({ left: dir * cardW * 2, behavior: 'smooth' });
-    startDevpubAutoScroll();
-  }
-
-  function initDevpubListeners() {
-    const track = document.getElementById('devpub-track');
-    if (!track) return;
-    track.addEventListener('mouseenter', stopDevpubAutoScroll);
-    track.addEventListener('mouseleave', startDevpubAutoScroll);
-    track.addEventListener('touchstart', stopDevpubAutoScroll, { passive: true });
-    track.addEventListener('touchend', startDevpubAutoScroll, { passive: true });
-  }
-
   /* ── Init ── */
   initBackground();
   initReveal();
   renderUploadPanel();
   loadFeaturedRepos();
-  startDevpubAutoScroll();
-  initDevpubListeners();
 </script>
 </body>
 </html>
