@@ -570,7 +570,7 @@
 <!-- HERO -->
 <section class="hero">
   <div class="hero-inner">
-    <div class="badge"><span class="pulse"></span> Application Cycle Open</div>
+    <div class="badge" style="border-color: rgba(239, 68, 68, 0.3); background: rgba(254, 242, 242, 0.7); color: #ef4444;"><span class="pulse" style="background: #ef4444; animation: none;"></span> Applications Closed</div>
     <h1>ZORUS <span class="outline">2.1</span></h1>
     <p class="hero-sub">Accelerate your career with an intensive 3-month AI development internship. Solve real problems, build real products, earn a verified certificate.</p>
 
@@ -582,7 +582,7 @@
     </div>
 
     <div class="hero-actions">
-      <button class="btn-primary" id="apply-btn" onclick="handleApply()">Apply Now →</button>
+      <button class="btn-primary" id="apply-btn" onclick="handleApply()" style="background: #9ca3af; box-shadow: none; cursor: not-allowed;" disabled>Applications Closed</button>
       <a href="/zorus-course" class="btn-ghost">View Curriculum</a>
     </div>
   </div>
@@ -691,10 +691,7 @@
 
   // Apply button
   async function handleApply() {
-    const btn = document.getElementById('apply-btn');
-    btn.innerText = 'Syncing Identity…';
-    btn.disabled = true;
-    setTimeout(() => { window.location.href = '/zorus-test'; }, 1500);
+    alert('Zorus 2.1 Applications are now closed. Stay tuned for future cohorts!');
   }
 
   // Scroll reveal

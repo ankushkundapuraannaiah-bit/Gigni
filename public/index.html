@@ -1043,6 +1043,246 @@
     .hero { padding-top: 110px; }
     h1 { letter-spacing: -0.04em; }
   }
+  /* ── DEVELOPER PUBLISH SLIDER ── */
+  .devpub-section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+  }
+  .devpub-section-head .section-head-left { flex: 1; min-width: 220px; }
+  .devpub-slider-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .devpub-slider-btn {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: rgba(255,255,255,0.92);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 24px rgba(124,58,237,0.10);
+    transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    color: var(--purple);
+    flex-shrink: 0;
+  }
+  .devpub-slider-btn:hover {
+    background: var(--purple-soft);
+    border-color: var(--purple);
+    transform: scale(1.08);
+    box-shadow: 0 14px 36px rgba(124,58,237,0.20);
+  }
+  .devpub-slider-btn svg { display: block; pointer-events: none; }
+
+  .devpub-slider-track-wrap {
+    position: relative;
+    overflow: hidden;
+  }
+  .devpub-slider-track-wrap::before,
+  .devpub-slider-track-wrap::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 60px;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .devpub-slider-track-wrap::before {
+    left: 0;
+    background: linear-gradient(to right, #fff 0%, transparent 100%);
+  }
+  .devpub-slider-track-wrap::after {
+    right: 0;
+    background: linear-gradient(to left, #fff 0%, transparent 100%);
+  }
+
+  .devpub-slider-track {
+    display: flex;
+    gap: 22px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding: 12px 4px 24px;
+    scrollbar-width: none;
+  }
+  .devpub-slider-track::-webkit-scrollbar { display: none; }
+
+  .devpub-repo-card {
+    flex: 0 0 340px;
+    width: 340px;
+    scroll-snap-align: start;
+    border: 1.5px solid var(--border);
+    border-radius: 26px;
+    background: rgba(255,255,255,0.96);
+    box-shadow: 0 16px 48px rgba(124,58,237,0.09);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.28s, border-color 0.28s;
+  }
+  .devpub-repo-card:hover {
+    transform: translateY(-10px) scale(1.015);
+    box-shadow: 0 32px 80px rgba(124,58,237,0.20);
+    border-color: rgba(124,58,237,0.4);
+  }
+
+  .devpub-card-glow {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, var(--purple), var(--purple-2), #c084fc);
+    border-radius: 26px 26px 0 0;
+  }
+
+  .devpub-card-header {
+    padding: 26px 24px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .devpub-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .devpub-card-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--purple-soft);
+    border: 1px solid var(--border);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--purple);
+  }
+  .devpub-card-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--purple), var(--purple-2));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    box-shadow: 0 6px 16px rgba(124,58,237,0.28);
+  }
+
+  .devpub-card-body { padding: 0 24px 20px; flex: 1; display: flex; flex-direction: column; }
+  .devpub-card-title {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .devpub-card-desc {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 18px;
+    flex: 1;
+  }
+
+  .devpub-uniqueness-box {
+    background: linear-gradient(135deg, rgba(124,58,237,0.06), rgba(168,85,247,0.04));
+    border: 1.5px solid rgba(124,58,237,0.15);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .devpub-uniqueness-label {
+    position: absolute;
+    top: -9px; left: 12px;
+    background: #fff;
+    padding: 0 7px;
+    font-size: 9px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--purple);
+    border: 1.5px solid rgba(124,58,237,0.2);
+    border-radius: 4px;
+  }
+  .devpub-uniqueness-text {
+    font-size: 12.5px;
+    color: var(--ink);
+    font-weight: 600;
+    line-height: 1.55;
+    font-style: italic;
+  }
+
+  .devpub-card-footer {
+    padding: 0 24px 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .devpub-card-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 11px 14px;
+    border-radius: 14px;
+    font-size: 12.5px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    border: 1.5px solid;
+  }
+  .devpub-card-btn.ghost {
+    color: var(--purple);
+    border-color: var(--border);
+    background: rgba(245,240,255,0.6);
+  }
+  .devpub-card-btn.ghost:hover {
+    background: var(--purple-soft);
+    border-color: var(--purple);
+    transform: translateY(-2px);
+  }
+  .devpub-card-btn.solid {
+    color: #fff;
+    border-color: transparent;
+    background: linear-gradient(135deg, var(--purple), var(--purple-2));
+    box-shadow: 0 6px 18px rgba(124,58,237,0.28);
+  }
+  .devpub-card-btn.solid:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(124,58,237,0.44);
+  }
+
+  .devpub-publisher-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--muted);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+  .devpub-publisher-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--purple);
+    box-shadow: 0 0 8px rgba(124,58,237,0.6);
+  }
+
+  @media (max-width: 700px) {
+    .devpub-repo-card { flex: 0 0 290px; width: 290px; }
+    .devpub-slider-controls { margin-top: 8px; }
+  }
 </style>
 </head>
 <body>
@@ -1057,9 +1297,9 @@
     <a href="/about">About</a>
     <a href="/compiler">Compiler</a>
     <a href="#available-projects">Projects</a>
+    <a href="#developer-publish">Dev Publish</a>
     <a href="#knowledge">Knowledge</a>
     <a href="#process">Process</a>
-    <a href="/zorus" class="zorus-nav-btn">Zorus 2.1</a>
     <button onclick="openOvl('signin')">Login</button>
     <button class="btn primary" onclick="openOvl('signup')">Create Account</button>
   </div>
@@ -1072,8 +1312,7 @@
   <a href="/" onclick="toggleMobileMenu()">Home</a>
   <a href="/about" onclick="toggleMobileMenu()">About</a>
   <a href="/compiler" onclick="toggleMobileMenu()">Compiler</a>
-  <a href="/zorus" onclick="toggleMobileMenu()">Zorus 2.1</a>
-  <a href="/zorus-course" onclick="toggleMobileMenu()">Curriculum</a>
+  <a href="/#developer-publish" onclick="toggleMobileMenu()">Dev Publish</a>
   <a href="/#available-projects" onclick="toggleMobileMenu()">Projects</a>
   <button onclick="toggleMobileMenu(); openOvl('signin')" style="margin-top:10px;">Login</button>
   <button class="btn primary" onclick="toggleMobileMenu(); openOvl('signup')">Create Account</button>
@@ -1092,7 +1331,7 @@
       <p class="hero-copy">Gigni turns course videos into real project work. Pick a project, build it, upload your code, working demo video, and README — then receive a certificate after admin verification.</p>
       <div class="hero-actions">
         <a class="btn primary" href="#available-projects">Explore Projects &nbsp;→</a>
-        <a class="btn zorus" href="/zorus">Zorus 2.1 Cohort &nbsp;🚀</a>
+        <a class="btn" href="#developer-publish" style="border-color:var(--purple);color:var(--purple);">Dev Showcase &nbsp;🚀</a>
         <button class="btn ghost" onclick="handleProjectApply('Talking AI Clone')">Apply for a Project</button>
       </div>
 
@@ -1145,20 +1384,43 @@
 
   <div class="divider"></div>
 
-  <!-- ── FEATURED REPOSITORIES (Engaging Template) ── -->
-  <section class="band band-white" id="featured-repositories">
+  <!-- ── DEVELOPER PUBLISH SLIDER ── -->
+  <section class="band band-white" id="developer-publish">
     <div class="section-inner">
-      <div class="section-head reveal">
+      <div class="devpub-section-head reveal">
         <div class="section-head-left">
-          <div class="section-label">✨ Featured Repositories</div>
-          <h2>Explore the<br><span class="accent">AI Frontier.</span></h2>
+          <div class="section-label">🚀 Developer Publish</div>
+          <h2>Built by<br><span class="accent">builders.</span></h2>
+          <p style="margin-top:14px; color:var(--muted); font-size:15px; font-weight:600; max-width:480px; line-height:1.7;">Curated open-source repositories and Gigni community projects. Explore the idea, uniqueness, and innovation behind each build. Publish your own from the dashboard.</p>
         </div>
-        <p>Curated high-impact open source projects integrated with the Gigni ecosystem. Explore their uniqueness and build upon them.</p>
+        <div class="devpub-slider-controls">
+          <button class="devpub-slider-btn" id="devpub-prev" aria-label="Previous projects" onclick="devpubSlide(-1)">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="13 5 8 10 13 15"/>
+            </svg>
+          </button>
+          <button class="devpub-slider-btn" id="devpub-next" aria-label="Next projects" onclick="devpubSlide(1)">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="7 5 12 10 7 15"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <div class="course-grid" id="featured-repos-container">
-        <!-- Dynamically populated by JS -->
-        <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--muted);">Loading high-impact repositories...</div>
+      <div class="devpub-slider-track-wrap">
+        <div class="devpub-slider-track" id="devpub-track">
+          <!-- Dynamically populated by JS -->
+          <div style="flex: 0 0 100%; text-align: center; padding: 60px 20px; color: var(--muted); font-weight: 600;">
+            <div style="font-size: 32px; margin-bottom: 12px;">⚡</div>
+            Loading developer projects...
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top: 28px;">
+        <a href="/dashboard" class="btn" id="devpub-publish-cta" style="padding:14px 32px; border-color:var(--purple); color:var(--purple); font-weight:800;">
+          Publish Your Project on Gigni &nbsp;🚀
+        </a>
       </div>
     </div>
   </section>
@@ -1594,67 +1856,67 @@
 
   <div class="divider"></div>
 
-  <!-- ── ZORUS SPOTLIGHT ── -->
-  <section class="band band-purple reveal" id="zorus-spotlight">
+  <!-- ── DEVELOPER COMMUNITY SPOTLIGHT ── -->
+  <section class="band band-purple reveal" id="dev-community-spotlight">
     <div class="section-inner">
-      <div class="section-label">✦ Flagship Program</div>
-      <h2 style="margin-bottom:40px;">Meet <span class="accent">Zorus 2.1</span></h2>
+      <div class="section-label">✦ Developer Community</div>
+      <h2 style="margin-bottom:40px;">Showcase your<br><span class="accent">builds.</span></h2>
       <div class="zorus-shell">
         <div class="zorus-copy">
-          <div class="zorus-pill">Zorus 2.1 — Now Open</div>
-          <h2>The most intensive AI developer program we offer.</h2>
+          <div class="zorus-pill">Developer Publisher — Now Live</div>
+          <h2>Turn your GitHub into a stage.</h2>
           <p>
-            Zorus 2.1 is Gigni's flagship 3-month cohort. It's not a course you watch passively — it's an internship you live. Over three months, you'll build three distinct, production-grade AI systems, collaborate with a global cohort, and emerge with a resume-defining portfolio.
+            The Gigni Developer Publisher lets any builder showcase their open-source repositories and verified projects to the entire Gigni community. Your work gets featured in the interactive Developer Publish slider on the home page — complete with your project's idea, uniqueness, and innovation highlighted for every visitor.
           </p>
           <ul>
-            <li>Month 1: Build a Realistic Talking AI Clone using HeyGen avatar technology and voice cloning workflows.</li>
-            <li>Month 2: Design and deploy a full N8N Agentic Automation pipeline — multi-node, API-connected, and production-ready.</li>
-            <li>Month 3: Turn your automation into a real frontend web application with live webhook integration and deployment.</li>
-            <li>Earn a verified Zorus 2.1 completion certificate upon admin approval of all three builds.</li>
+            <li>Publish any GitHub repository with a live link and tags.</li>
+            <li>Showcase verified Gigni project submissions from your dashboard.</li>
+            <li>Add a "Core Innovation" highlight that tells the story of your build.</li>
+            <li>Featured in the sliding Developer Publish showcase on the Gigni home page.</li>
           </ul>
-          <a href="/zorus" class="zorus-btn">Explore Zorus 2.1 →</a>
+          <a href="/dashboard" class="zorus-btn">Publish Your Project →</a>
         </div>
         <div class="zorus-info">
           <div class="zorus-stat-row">
-            <div class="zsr-icon">📅</div>
+            <div class="zsr-icon">🚀</div>
             <div>
-              <div class="zsr-val">June 1, 2026</div>
-              <div class="zsr-lbl">Cohort Start Date</div>
+              <div class="zsr-val">Live</div>
+              <div class="zsr-lbl">Home Page Slider</div>
             </div>
           </div>
           <div class="zorus-stat-row">
-            <div class="zsr-icon">⏱️</div>
+            <div class="zsr-icon">⑂</div>
             <div>
-              <div class="zsr-val">3 Months</div>
-              <div class="zsr-lbl">Intensive Duration</div>
+              <div class="zsr-val">GitHub</div>
+              <div class="zsr-lbl">Repository Showcase</div>
             </div>
           </div>
           <div class="zorus-stat-row">
-            <div class="zsr-icon">🛠️</div>
+            <div class="zsr-icon">⚡</div>
             <div>
-              <div class="zsr-val">3 Real Builds</div>
-              <div class="zsr-lbl">Production-Grade Projects</div>
-            </div>
-          </div>
-          <div class="zorus-stat-row">
-            <div class="zsr-icon">🏆</div>
-            <div>
-              <div class="zsr-val">Verified</div>
-              <div class="zsr-lbl">Certificate Upon Completion</div>
-            </div>
-          </div>
-          <div class="zorus-stat-row">
-            <div class="zsr-icon">🤖</div>
-            <div>
-              <div class="zsr-val">AI-First</div>
-              <div class="zsr-lbl">HeyGen · n8n · Web Integration</div>
+              <div class="zsr-val">Innovation</div>
+              <div class="zsr-lbl">Highlight Your Core Idea</div>
             </div>
           </div>
           <div class="zorus-stat-row">
             <div class="zsr-icon">🌐</div>
             <div>
               <div class="zsr-val">Global</div>
-              <div class="zsr-lbl">Open to All Students</div>
+              <div class="zsr-lbl">Open to All Builders</div>
+            </div>
+          </div>
+          <div class="zorus-stat-row">
+            <div class="zsr-icon">🏷️</div>
+            <div>
+              <div class="zsr-val">Tagging</div>
+              <div class="zsr-lbl">Tech Stack & Category Tags</div>
+            </div>
+          </div>
+          <div class="zorus-stat-row">
+            <div class="zsr-icon">✓</div>
+            <div>
+              <div class="zsr-val">Verified</div>
+              <div class="zsr-lbl">Submission or GitHub Link</div>
             </div>
           </div>
         </div>
@@ -2147,47 +2409,117 @@
     } catch (e) { alert('Connection error.'); }
   }
 
-  /* ── Fetch and Render Featured Repos ── */
+  /* ── DEVELOPER PUBLISH: Repo icon map ── */
+  const REPO_ICONS = {
+    'ai': '🤖', 'ml': '🧠', 'react': '⚛️', 'agents': '🕹️',
+    'ocr': '👁️', 'data': '📊', 'education': '📚', 'sdk': '🔧',
+    'llm': '💬', 'openai': '✨', 'framework': '🏗️', 'python': '🐍',
+    'computer vision': '👁️', 'tools': '🛠️', 'copilot': '🤝',
+    'rag': '🔍', 'productivity': '📋', 'algorithms': '⚙️', 'career': '🎯',
+    'github': '🐙', 'devtools': '🔨', 'plugins': '🔌'
+  };
+
+  /* Gradient palettes per card index for visual variety */
+  const CARD_GRADIENTS = [
+    'linear-gradient(90deg, #7c3aed, #9333ea, #c084fc)',
+    'linear-gradient(90deg, #0ea5e9, #6366f1, #a855f7)',
+    'linear-gradient(90deg, #059669, #0d9488, #10b981)',
+    'linear-gradient(90deg, #f97316, #ef4444, #e11d48)',
+    'linear-gradient(90deg, #8b5cf6, #06b6d4, #3b82f6)',
+    'linear-gradient(90deg, #d97706, #f59e0b, #fbbf24)',
+    'linear-gradient(90deg, #7c3aed, #2563eb, #0ea5e9)',
+    'linear-gradient(90deg, #be185d, #7c3aed, #4f46e5)'
+  ];
+
+  function getRepoIcon(tags) {
+    if (!tags) return '⚡';
+    const t = tags.toLowerCase();
+    for (const [key, icon] of Object.entries(REPO_ICONS)) {
+      if (t.includes(key)) return icon;
+    }
+    return '⚡';
+  }
+  function escStr(s) {
+    if (!s) return '';
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ── Fetch and Render Developer Publish Slider ── */
   async function loadFeaturedRepos() {
-    const container = document.getElementById('featured-repos-container');
+    const track = document.getElementById('devpub-track');
+    if (!track) return;
     try {
       const res = await fetch('/api/dev/projects');
       const data = await res.json();
       if (data.success && data.projects.length > 0) {
-        container.innerHTML = data.projects.map(repo => `
-          <article class="course-card reveal visible" style="display: flex; flex-direction: column;">
-            <div class="course-body" style="flex: 1; display: flex; flex-direction: column; padding: 24px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <span class="tag" style="background: var(--purple-soft); color: var(--purple); font-weight: 800; border: 1px solid var(--border); margin: 0;">${repo.tags || 'AI & Open Source'}</span>
-                <span style="font-size: 18px; opacity: 0.4;">⚡</span>
+        track.innerHTML = data.projects.map((repo, idx) => {
+          const tags = (repo.tags || 'Open Source').split(',').map(t => t.trim()).filter(Boolean);
+          const icon = getRepoIcon(repo.tags);
+          const isGigni = (repo.user_name === 'Gigni Featured');
+          const publisher = isGigni ? '✦ Gigni Featured' : ('👤 ' + (repo.user_name || 'Community Builder'));
+          const ghUrl = escStr(repo.github_url || '#');
+          const slug = escStr(repo.slug || '');
+          const name = escStr(repo.project_name || 'Unnamed');
+          const desc = escStr(repo.description || 'An innovative open-source project.');
+          const unique = escStr(repo.uniqueness || 'Advancing the frontier of agentic building.');
+          const gradient = CARD_GRADIENTS[idx % CARD_GRADIENTS.length];
+          const pubDate = repo.published_at ? new Date(repo.published_at).toLocaleDateString('en-US', {month:'short', year:'numeric'}) : '';
+          return `
+            <article class="devpub-repo-card" id="devpub-card-${idx}" style="--card-gradient: ${gradient};">
+              <div class="devpub-card-glow" style="background: ${gradient};"></div>
+              <div class="devpub-card-header">
+                <div class="devpub-card-tags">
+                  ${tags.slice(0,3).map(t => `<span class="devpub-card-tag">${escStr(t)}</span>`).join('')}
+                </div>
+                <div class="devpub-card-icon" style="background: ${gradient};">${icon}</div>
               </div>
-              <h3 style="font-size: 21px; font-weight: 900; margin-bottom: 12px; color: var(--ink);">${repo.project_name}</h3>
-              <p style="color: var(--muted); font-size: 14.5px; line-height: 1.6; margin-bottom: 24px; flex-grow: 1;">${repo.description}</p>
-              
-              <div style="background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(168, 85, 247, 0.05)); border: 1.5px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 24px; position: relative;">
-                <div style="position: absolute; top: -10px; left: 16px; background: #fff; padding: 0 8px; font-size: 10px; font-weight: 900; text-transform: uppercase; color: var(--purple); letter-spacing: 1px; border: 1.5px solid var(--border); border-radius: 4px;">The Gigni Factor</div>
-                <p style="font-size: 13.5px; color: var(--ink); font-weight: 600; line-height: 1.5; font-style: italic;">"${repo.uniqueness || 'Advancing the frontier of agentic building.'}"</p>
+              <div class="devpub-card-body">
+                <div class="devpub-publisher-badge">
+                  <span class="devpub-publisher-dot"></span>
+                  ${publisher}${pubDate ? ` &nbsp;·&nbsp; ${pubDate}` : ''}
+                </div>
+                <div class="devpub-card-title">${name}</div>
+                <div class="devpub-card-desc">${desc}</div>
+                <div class="devpub-uniqueness-box">
+                  <div class="devpub-uniqueness-label">⚡ Core Innovation</div>
+                  <div class="devpub-uniqueness-text">${unique}</div>
+                </div>
               </div>
-
-              <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 10px;">
-                <a href="${repo.github_url}" target="_blank" class="btn" style="min-height: 42px; font-size: 13px; border-radius: 12px;">GitHub</a>
-                <a href="/p/${repo.slug}" class="btn primary" style="min-height: 42px; font-size: 13px; border-radius: 12px;">View Build →</a>
+              <div class="devpub-card-footer">
+                ${ghUrl && ghUrl !== '#' ? `<a class="devpub-card-btn ghost" href="${ghUrl}" target="_blank" rel="noopener noreferrer">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                  View on GitHub
+                </a>` : `<span></span>`}
+                <a class="devpub-card-btn solid" href="${ghUrl !== '#' ? ghUrl : ('/p/' + slug)}" target="${ghUrl !== '#' ? '_blank' : '_self'}" rel="noopener noreferrer" style="background: ${gradient}; border-color: transparent;">
+                  Explore →
+                </a>
               </div>
-            </div>
-          </article>
-        `).join('');
+            </article>
+          `;
+        }).join('');
       } else {
-        container.innerHTML = `
-          <div style="grid-column: 1/-1; text-align: center; padding: 60px; background: var(--purple-soft); border-radius: 24px; border: 1px dashed var(--border);">
-            <h3 style="margin-bottom: 12px; color: var(--purple);">No featured projects found.</h3>
-            <p style="color: var(--muted); margin-bottom: 24px;">Be the first to showcase your innovation. Publish your GitHub repository from the dashboard.</p>
-            <a href="/dashboard" class="btn primary">Add Your Repository Here &nbsp;🚀</a>
+        track.innerHTML = `
+          <div style="flex: 0 0 100%; text-align: center; padding: 60px 24px; background: var(--purple-soft); border-radius: 24px; border: 1.5px dashed var(--border);">
+            <div style="font-size:44px; margin-bottom:14px;">🚀</div>
+            <h3 style="margin-bottom: 12px; color: var(--purple); font-size:22px;">Be the first developer to publish.</h3>
+            <p style="color: var(--muted); margin-bottom: 24px; font-size:15px;">Showcase your GitHub repository or verified project to the entire Gigni community.</p>
+            <a href="/dashboard" class="btn primary">Add Your Project &nbsp;🚀</a>
           </div>`;
       }
     } catch (err) {
       console.error('Failed to load repos:', err);
-      container.innerHTML = '<p>Error loading projects.</p>';
+      track.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted);">Unable to load projects right now.</div>';
     }
+  }
+
+  /* ── Slider Navigation ── */
+  function devpubSlide(dir) {
+    const track = document.getElementById('devpub-track');
+    if (!track) return;
+    // Card width + gap
+    const card = track.querySelector('.devpub-repo-card');
+    const cardW = card ? card.offsetWidth + 22 : 362;
+    track.scrollBy({ left: dir * cardW * 2, behavior: 'smooth' });
   }
 
   /* ── Init ── */

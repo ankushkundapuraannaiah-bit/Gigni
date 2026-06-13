@@ -5,9 +5,6 @@ Allow: /
 Allow: /about
 Allow: /compiler
 Allow: /zorus
-Allow: /zorus-course
-Allow: /zorus-month1
-Allow: /zorus-test
 Allow: /hosting
 Allow: /verify-certificate
 

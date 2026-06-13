@@ -166,18 +166,58 @@ async function initializeDatabase() {
             console.log('✅  Admin user created.');
         }
 
-        // Seed Featured Repositories
+        // Seed Featured Repositories — exactly the 6 repos requested by Gigni
         const featuredRepos = [
-            { name: 'CopilotKit', url: 'https://github.com/CopilotKit/CopilotKit', desc: 'The open-source framework for building custom AI Copilots and agentic UI.', unique: 'Enables deep integration of AI assistants within application state and workflows.', tags: 'AI, React, Agents' },
-            { name: 'Open Notebook', url: 'https://github.com/lfnovo/open-notebook', desc: 'A powerful, open-source tool for data scientists to manage and track experiments.', unique: 'Provides a bridge between raw data analysis and visual, documented experiment logs.', tags: 'Data Science, Python' },
-            { name: 'PaddleOCR', url: 'https://github.com/PaddlePaddle/PaddleOCR', desc: 'Ultra-lightweight and multi-language OCR system based on PaddlePaddle.', unique: 'Offers industry-leading performance for document analysis on mobile and server.', tags: 'AI, Computer Vision, OCR' },
-            { name: 'OpenAI Plugins', url: 'https://github.com/openai/plugins', desc: 'The official repository for exploring and building ChatGPT Plugins.', unique: 'Defines the standard for extending LLM intelligence via external API integration.', tags: 'AI, OpenAI, LLM' },
-            { name: 'Coding Interview University', url: 'https://github.com/jwasham/coding-interview-university', desc: 'A complete computer science study plan to become a software engineer.', unique: 'The gold standard roadmap for self-taught developers entering top-tier tech firms.', tags: 'Education, Computer Science' },
-            { name: 'Copilot SDK', url: 'https://github.com/github/copilot-sdk', desc: 'The official SDK for building extensions and custom tools for GitHub Copilot.', unique: 'Allows developers to enhance the world\'s most popular AI pair programmer.', tags: 'AI, GitHub, Tools' },
-            { name: 'LangChain', url: 'https://github.com/langchain-ai/langchain', desc: 'Building applications with LLMs through composability.', unique: 'The fundamental framework for building context-aware, reasoning applications.', tags: 'AI, Framework, LLM' },
-            { name: 'AutoGPT', url: 'https://github.com/Significant-Gravitas/AutoGPT', desc: 'An experimental open-source attempt to make GPT-4 fully autonomous.', unique: 'Pioneered the concept of autonomous agents that execute multi-step tasks.', tags: 'AI, Agents, Python' },
-            { name: 'BabyAGI', url: 'https://github.com/yoheinakajima/babyagi', desc: 'An AI-powered task management system using LLMs and vector databases.', unique: 'A minimal, influential implementation of the task-driven autonomous agent loop.', tags: 'AI, Python, Agents' }
+            {
+                name: 'CopilotKit',
+                url: 'https://github.com/CopilotKit/CopilotKit',
+                desc: 'CopilotKit is the open-source framework for building deeply integrated AI Copilots and agentic UI components into any React application. It bridges the gap between LLMs and real application state.',
+                unique: 'First-of-its-kind framework that lets AI agents read and write your app\'s live state — turning passive chatbots into truly active co-pilots with bidirectional context.',
+                tags: 'AI, React, Agents, LLM, Framework'
+            },
+            {
+                name: 'Open Notebook',
+                url: 'https://github.com/lfnovo/open-notebook',
+                desc: 'Open Notebook is a powerful open-source knowledge management and AI notebook tool that lets you capture, organize, and interact with your ideas using AI — inspired by Google NotebookLM.',
+                unique: 'Enables private, local-first AI-powered notebooks where your data never leaves your machine — combining RAG, multi-source ingestion, and conversational intelligence in one elegant tool.',
+                tags: 'AI, Python, LLM, RAG, Productivity'
+            },
+            {
+                name: 'PaddleOCR',
+                url: 'https://github.com/PaddlePaddle/PaddleOCR',
+                desc: 'PaddleOCR is an ultra-lightweight, production-grade OCR system supporting 80+ languages. Built on PaddlePaddle deep learning, it delivers state-of-the-art accuracy for text recognition at scale.',
+                unique: 'Combines detection, direction classification, and recognition into a single ultra-compact pipeline — achieving near-human text extraction accuracy on mobile hardware with a 8.1MB model.',
+                tags: 'AI, Computer Vision, OCR, Deep Learning, Python'
+            },
+            {
+                name: 'OpenAI Plugins',
+                url: 'https://github.com/openai/plugins',
+                desc: 'The official OpenAI repository showcasing the ChatGPT Plugins ecosystem — the standard for connecting large language models to external APIs, live data, and real-world actions.',
+                unique: 'Defined the universal plugin specification for LLMs — enabling any developer to extend ChatGPT\'s intelligence with custom APIs, creating the foundation of the agentic internet.',
+                tags: 'AI, OpenAI, Plugins, LLM, APIs'
+            },
+            {
+                name: 'Coding Interview University',
+                url: 'https://github.com/jwasham/coding-interview-university',
+                desc: 'A comprehensive, battle-tested multi-month study plan for becoming a software engineer at a major tech company. Covers data structures, algorithms, system design, and behavioral prep.',
+                unique: 'The most starred educational repository on GitHub — a self-taught developer\'s complete roadmap used by hundreds of thousands to land jobs at FAANG and top-tier engineering teams worldwide.',
+                tags: 'Education, Computer Science, Algorithms, Career'
+            },
+            {
+                name: 'GitHub Copilot SDK',
+                url: 'https://github.com/github/copilot-sdk',
+                desc: 'The official GitHub Copilot SDK empowers developers to build custom extensions, agents, and tools that integrate directly with GitHub Copilot — the world\'s most widely used AI pair programmer.',
+                unique: 'Unlocks the ability to extend and customize GitHub Copilot with domain-specific knowledge and tools — turning the world\'s most popular AI coding assistant into a fully programmable platform.',
+                tags: 'AI, GitHub, Copilot, SDK, DevTools'
+            }
         ];
+
+        // Remove old featured repos that are no longer in the list
+        const currentSlugs = featuredRepos.map(r => r.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+        await pool.query(
+            `DELETE FROM developer_projects WHERE user_name = 'Gigni Featured' AND slug NOT IN (${currentSlugs.map((_, i) => `$${i+1}`).join(',')})`,
+            currentSlugs
+        ).catch(() => {}); // non-fatal if it fails
 
         for (const r of featuredRepos) {
             const slug = r.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -187,6 +227,12 @@ async function initializeDatabase() {
                     INSERT INTO developer_projects (user_name, project_name, description, uniqueness, github_url, tags, slug)
                     VALUES ($1, $2, $3, $4, $5, $6, $7)
                 `, ['Gigni Featured', r.name, r.desc, r.unique, r.url, r.tags, slug]);
+            } else {
+                // Update existing entry with richer data
+                await pool.query(`
+                    UPDATE developer_projects SET description = $1, uniqueness = $2, github_url = $3, tags = $4
+                    WHERE slug = $5 AND user_name = 'Gigni Featured'
+                `, [r.desc, r.unique, r.url, r.tags, slug]);
             }
         }
 

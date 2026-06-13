@@ -733,6 +733,10 @@
           <label>Short Description</label>
           <textarea id="devpub-desc" rows="3" placeholder="Describe what your project does in 1–2 sentences."></textarea>
         </div>
+        <div class="fg">
+          <label>Core Innovation / What Makes It Unique</label>
+          <textarea id="devpub-uniqueness" rows="2" placeholder="What's the core innovation? What makes this project stand out? (shown as the ⚡ highlight on the home page)"></textarea>
+        </div>
         <button class="btn-act" id="devpub-publish-btn" onclick="publishDevProject()">Publish to Home Page 🚀</button>
       </div>
 
@@ -899,6 +903,7 @@ async function publishDevProject() {
   const githubUrl = document.getElementById('devpub-github-url').value.trim();
   const liveUrl = document.getElementById('devpub-live-url').value.trim();
   const desc = document.getElementById('devpub-desc').value.trim();
+  const uniqueness = document.getElementById('devpub-uniqueness').value.trim();
   const submissionId = mode === 'submission' ? document.getElementById('devpub-submission-sel').value : null;
 
   if (!name) return alert('Please enter a project name.');
@@ -910,7 +915,7 @@ async function publishDevProject() {
     const res = await fetch('/api/dev/publish', {
       method: 'POST',
       headers: getAuthHeader(),
-      body: JSON.stringify({ projectName: name, description: desc, githubUrl: mode === 'github' ? githubUrl : null, liveUrl, tags, submissionId: mode === 'submission' ? parseInt(submissionId) : null })
+      body: JSON.stringify({ projectName: name, description: desc, uniqueness, githubUrl: mode === 'github' ? githubUrl : null, liveUrl, tags, submissionId: mode === 'submission' ? parseInt(submissionId) : null })
     });
     const data = await res.json();
     if (!data.success) throw new Error(data.error || 'Publish failed');
@@ -920,6 +925,7 @@ async function publishDevProject() {
     document.getElementById('devpub-github-url').value = '';
     document.getElementById('devpub-live-url').value = '';
     document.getElementById('devpub-desc').value = '';
+    document.getElementById('devpub-uniqueness').value = '';
     alert('🚀 Project published! It will appear on the home page Developer Showcase.');
     loadMyPublishedProjects();
   } catch(e) { alert('Publish failed: ' + e.message); }
@@ -937,12 +943,22 @@ async function loadMyPublishedProjects() {
       container.innerHTML = '<div class="empty-state" style="margin:0;padding:36px;"><div class="cico">PUBLISH</div><h3>No projects yet</h3><p>Use the form above to publish your first project.</p></div>';
       return;
     }
-    container.innerHTML = `<div class="devpub-published-grid">${data.projects.map(p => {
+    const gradients = [
+      'linear-gradient(90deg, #7c3aed, #9333ea, #c084fc)',
+      'linear-gradient(90deg, #0ea5e9, #6366f1, #a855f7)',
+      'linear-gradient(90deg, #059669, #0d9488, #10b981)',
+      'linear-gradient(90deg, #f97316, #ef4444, #e11d48)',
+      'linear-gradient(90deg, #8b5cf6, #06b6d4, #3b82f6)'
+    ];
+    container.innerHTML = `<div class="devpub-published-grid">${data.projects.map((p, idx) => {
       const tags = (p.tags || '').split(',').map(t => t.trim()).filter(Boolean);
-      return `<div class="devpub-pub-card">
+      const grad = gradients[idx % gradients.length];
+      return `<div class="devpub-pub-card" style="padding-top:24px; overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:${grad};border-radius:16px 16px 0 0;"></div>
         <button class="devpub-del-btn" onclick="deleteDevProject(${p.id})">✕ Remove</button>
         <h4>${escHtml(p.project_name)}</h4>
         <p>${escHtml(p.description || 'No description.')}</p>
+        ${p.uniqueness ? `<div style="background:rgba(124,58,237,0.05);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--ink);font-style:italic;line-height:1.5;">⚡ ${escHtml(p.uniqueness)}</div>` : ''}
         <div class="devpub-tag-row">${tags.map(t => `<span class="devpub-tag">${escHtml(t)}</span>`).join('')}</div>
         <div class="devpub-link-row">
           ${p.github_url ? `<a class="devpub-link" href="${escHtml(p.github_url)}" target="_blank" rel="noopener">⑂ GitHub</a>` : ''}
