@@ -2513,13 +2513,44 @@
   }
 
   /* ── Slider Navigation ── */
+  let devpubAutoScroll;
+  function startDevpubAutoScroll() {
+    stopDevpubAutoScroll();
+    devpubAutoScroll = setInterval(() => {
+      const track = document.getElementById('devpub-track');
+      if (!track) return;
+      const card = track.querySelector('.devpub-repo-card');
+      if (!card) return;
+      const cardW = card.offsetWidth + 22;
+      const maxScroll = track.scrollWidth - track.clientWidth;
+      if (track.scrollLeft >= maxScroll - 10) {
+        track.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        track.scrollBy({ left: cardW, behavior: 'smooth' });
+      }
+    }, 4000);
+  }
+
+  function stopDevpubAutoScroll() {
+    if (devpubAutoScroll) clearInterval(devpubAutoScroll);
+  }
+
   function devpubSlide(dir) {
     const track = document.getElementById('devpub-track');
     if (!track) return;
-    // Card width + gap
     const card = track.querySelector('.devpub-repo-card');
     const cardW = card ? card.offsetWidth + 22 : 362;
     track.scrollBy({ left: dir * cardW * 2, behavior: 'smooth' });
+    startDevpubAutoScroll();
+  }
+
+  function initDevpubListeners() {
+    const track = document.getElementById('devpub-track');
+    if (!track) return;
+    track.addEventListener('mouseenter', stopDevpubAutoScroll);
+    track.addEventListener('mouseleave', startDevpubAutoScroll);
+    track.addEventListener('touchstart', stopDevpubAutoScroll, { passive: true });
+    track.addEventListener('touchend', startDevpubAutoScroll, { passive: true });
   }
 
   /* ── Init ── */
@@ -2527,6 +2558,8 @@
   initReveal();
   renderUploadPanel();
   loadFeaturedRepos();
+  startDevpubAutoScroll();
+  initDevpubListeners();
 </script>
 </body>
 </html>
