@@ -69,6 +69,11 @@
       "source": "/verify-certificate.html",
       "destination": "/verify-certificate",
       "permanent": true
+    },
+    {
+      "source": "/request.html",
+      "destination": "/request",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -127,6 +132,10 @@
     {
       "source": "/admin",
       "destination": "/admin.html"
+    },
+    {
+      "source": "/request",
+      "destination": "/request.html"
     },
     {
       "source": "/api/(.*)",
