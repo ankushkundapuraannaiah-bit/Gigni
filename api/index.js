@@ -125,6 +125,16 @@ async function initializeDatabase() {
             published_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );`);
 
+        await pool.query(`CREATE TABLE IF NOT EXISTS service_requests (
+            id SERIAL PRIMARY KEY,
+            company_name VARCHAR(255),
+            company_email VARCHAR(255) NOT NULL,
+            service_type VARCHAR(50) NOT NULL,
+            details TEXT NOT NULL,
+            status VARCHAR(50) DEFAULT 'Under Process',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );`);
+
         // Run any missing column migrations safely
         const migrations = [
             { table: 'users', name: 'projects',      type: "JSONB DEFAULT '[]'" },
@@ -378,6 +388,89 @@ app.get('/api/init', authenticateToken, async (req, res) => {
         res.status(200).json({ success: true, message: 'Database initialized and admin checked' });
     } catch (err) {
         res.status(500).json({ error: err.message });
+    }
+});
+
+// ─── POST SERVICE REQUESTS ───────────────────────────────────────────────────
+app.post('/api/service-requests', async (req, res) => {
+    const { company_name, company_email, service_type, details } = req.body;
+
+    if (!company_email || !service_type || !details) {
+        return res.status(400).json({ error: 'Missing required fields: email, service type, and details are required.' });
+    }
+
+    if (!validateEmail(company_email)) {
+        return res.status(400).json({ error: 'Invalid email address.' });
+    }
+
+    if (!['software', 'marketing', 'both'].includes(service_type)) {
+        return res.status(400).json({ error: 'Invalid service type.' });
+    }
+
+    try {
+        // 1. Insert into database
+        const result = await pool.query(
+            `INSERT INTO service_requests (company_name, company_email, service_type, details) 
+             VALUES ($1, $2, $3, $4) RETURNING *;`,
+            [company_name || null, company_email, service_type, details]
+        );
+
+        // 2. Prepare and send confirmation email
+        let serviceDisplayName = 'Software Development';
+        if (service_type === 'marketing') {
+            serviceDisplayName = 'Marketing';
+        } else if (service_type === 'both') {
+            serviceDisplayName = 'Software Development & Marketing';
+        }
+
+        const mailOptions = {
+            from: `"Gigni Support" <${process.env.GMAIL_USER}>`,
+            to: company_email,
+            subject: 'Gigni Service Request Received - Under Process',
+            html: `
+                <div style="font-family: Arial, sans-serif; color: #12062a; max-width: 600px; margin: 0 auto; border: 1px solid rgba(124,58,237,0.15); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(124,58,237,0.05);">
+                    <div style="background: linear-gradient(135deg, #7c3aed, #9333ea); padding: 30px; text-align: center; color: white;">
+                        <h1 style="margin: 0; font-size: 28px; letter-spacing: 1px;">GIGNI</h1>
+                        <p style="margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Next-Gen Agentic Solutions</p>
+                    </div>
+                    <div style="padding: 30px; background-color: #ffffff; line-height: 1.6;">
+                        <h2 style="color: #7c3aed; margin-top: 0; font-size: 20px;">Hello ${company_name ? company_name : 'there'},</h2>
+                        <p>Thank you for reaching out to Gigni! We have received your request for <strong>${serviceDisplayName}</strong> and it is currently <strong>Under Process</strong>.</p>
+                        
+                        <div style="background-color: #f5f0ff; border-left: 4px solid #7c3aed; padding: 15px; margin: 20px 0; border-radius: 4px;">
+                            <h4 style="margin: 0 0 8px 0; color: #7c3aed;">Your Request Details:</h4>
+                            <p style="margin: 0; font-size: 14px; white-space: pre-wrap;">${details}</p>
+                        </div>
+                        
+                        <p>Our team is reviewing your requirements. We will contact you soon with custom price estimates, timeline estimates, and potential architectural options for your project.</p>
+                        
+                        <p style="margin-bottom: 0;">Best regards,<br><strong>The Gigni Team</strong></p>
+                    </div>
+                    <div style="background-color: #ede9fe; padding: 15px 30px; text-align: center; font-size: 12px; color: #6b7280;">
+                        This is an automated confirmation email. Please do not reply directly to this message.
+                    </div>
+                </div>
+            `
+        };
+
+        // Send email
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('❌ Error sending confirmation email to', company_email, ':', error);
+            } else {
+                console.log('✅ Confirmation email sent to', company_email, ':', info.response);
+            }
+        });
+
+        res.status(201).json({
+            success: true,
+            message: 'Your service request has been submitted successfully and a confirmation email has been sent.',
+            request: result.rows[0]
+        });
+
+    } catch (err) {
+        console.error('Error inserting service request:', err);
+        res.status(500).json({ error: 'Server error processing service request.' });
     }
 });
 

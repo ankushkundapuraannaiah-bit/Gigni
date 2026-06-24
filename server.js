@@ -24,7 +24,7 @@ const HTML_FILES = [
   'c-compiler', 'cpp-compiler', 'java-compiler',
   'python-compiler', 'javascript-compiler',
   'admin', 'dashboard', 'hosting', 'verify-certificate',
-  'zorus', 'zorus-course', 'zorus-month1'
+  'zorus', 'zorus-course', 'zorus-month1', 'request'
 ];
 
 HTML_FILES.forEach(name => {
