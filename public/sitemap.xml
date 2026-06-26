@@ -4,9 +4,10 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
+  <!-- ═══ HOMEPAGE ══════════════════════════════════════════════════════════════ -->
   <url>
     <loc>https://www.gigniconnect.space/</loc>
-    <lastmod>2026-06-04</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -15,106 +16,132 @@
     </image:image>
   </url>
 
+  <!-- ═══ COMPILER PAGES ════════════════════════════════════════════════════════ -->
   <url>
     <loc>https://www.gigniconnect.space/compiler</loc>
-    <lastmod>2026-06-04</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <image:image>
       <image:loc>https://www.gigniconnect.space/Gemini_Generated_Image_anvpx2anvpx2anvp.png</image:loc>
-      <image:title>Online HTML Compiler - HTML CSS JS Live Preview Editor</image:title>
+      <image:title>Online HTML Compiler - HTML CSS JS Live Preview Editor | Gigni</image:title>
     </image:image>
   </url>
 
   <url>
     <loc>https://www.gigniconnect.space/python-compiler</loc>
-    <lastmod>2026-06-04</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
     <image:image>
       <image:loc>https://www.gigniconnect.space/Gemini_Generated_Image_anvpx2anvpx2anvp.png</image:loc>
-      <image:title>Online Python Compiler - Free Python Code Runner</image:title>
+      <image:title>Online Python Compiler - Free Python 3 Code Runner | Gigni</image:title>
     </image:image>
   </url>
 
   <url>
     <loc>https://www.gigniconnect.space/javascript-compiler</loc>
-    <lastmod>2026-06-04</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
     <image:image>
       <image:loc>https://www.gigniconnect.space/Gemini_Generated_Image_anvpx2anvpx2anvp.png</image:loc>
-      <image:title>Online JavaScript Compiler - Free JS Code Runner</image:title>
+      <image:title>Online JavaScript Compiler - Free JS Code Runner | Gigni</image:title>
     </image:image>
   </url>
 
   <url>
     <loc>https://www.gigniconnect.space/c-compiler</loc>
-    <lastmod>2026-06-04</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
     <image:image>
       <image:loc>https://www.gigniconnect.space/Gemini_Generated_Image_anvpx2anvpx2anvp.png</image:loc>
-      <image:title>Online C Compiler - Free C Code Runner</image:title>
+      <image:title>Online C Compiler - Free C Code Runner | Gigni</image:title>
     </image:image>
   </url>
 
   <url>
     <loc>https://www.gigniconnect.space/cpp-compiler</loc>
-    <lastmod>2026-06-04</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
     <image:image>
       <image:loc>https://www.gigniconnect.space/Gemini_Generated_Image_anvpx2anvpx2anvp.png</image:loc>
-      <image:title>Online C++ Compiler - Free C++ Code Runner</image:title>
+      <image:title>Online C++ Compiler - Free C++ Code Runner | Gigni</image:title>
     </image:image>
   </url>
 
   <url>
     <loc>https://www.gigniconnect.space/java-compiler</loc>
-    <lastmod>2026-06-04</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
     <image:image>
       <image:loc>https://www.gigniconnect.space/Gemini_Generated_Image_anvpx2anvpx2anvp.png</image:loc>
-      <image:title>Online Java Compiler - Free Java Code Runner</image:title>
+      <image:title>Online Java Compiler - Free Java Code Runner | Gigni</image:title>
+    </image:image>
+  </url>
+
+  <!-- ═══ COURSES / PROGRAMS ════════════════════════════════════════════════════ -->
+  <url>
+    <loc>https://www.gigniconnect.space/zorus</loc>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+    <image:image>
+      <image:loc>https://www.gigniconnect.space/Gemini_Generated_Image_anvpx2anvpx2anvp.png</image:loc>
+      <image:title>Zorus 2.1 - AI Internship &amp; Project-Based Courses | Gigni</image:title>
+    </image:image>
+  </url>
+
+  <!-- ═══ CORE PAGES ════════════════════════════════════════════════════════════ -->
+  <url>
+    <loc>https://www.gigniconnect.space/about</loc>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://www.gigniconnect.space/Gemini_Generated_Image_anvpx2anvpx2anvp.png</image:loc>
+      <image:title>About Gigni - The AI Developer Community | GigniConnect</image:title>
     </image:image>
   </url>
 
   <url>
-    <loc>https://www.gigniconnect.space/llms.txt</loc>
-    <lastmod>2026-06-04</lastmod>
+    <loc>https://www.gigniconnect.space/request</loc>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
-  </url>
-
-  <url>
-    <loc>https://www.gigniconnect.space/about</loc>
-    <lastmod>2026-06-04</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-
-  <url>
-    <loc>https://www.gigniconnect.space/zorus</loc>
-    <lastmod>2026-06-04</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-
-
-  <url>
-    <loc>https://www.gigniconnect.space/hosting</loc>
-    <lastmod>2026-06-04</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
+    <priority>0.80</priority>
+    <image:image>
+      <image:loc>https://www.gigniconnect.space/Gemini_Generated_Image_anvpx2anvpx2anvp.png</image:loc>
+      <image:title>Request Software &amp; Marketing Services | Gigni</image:title>
+    </image:image>
   </url>
 
   <url>
     <loc>https://www.gigniconnect.space/verify-certificate</loc>
-    <lastmod>2026-06-04</lastmod>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <url>
+    <loc>https://www.gigniconnect.space/hosting</loc>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
+    <image:image>
+      <image:loc>https://www.gigniconnect.space/Gemini_Generated_Image_anvpx2anvpx2anvp.png</image:loc>
+      <image:title>Gigni Hosting &amp; Zorus 2.1 Ecosystem | GigniConnect</image:title>
+    </image:image>
+  </url>
+
+  <!-- ═══ SUPPORTING FILES ══════════════════════════════════════════════════════ -->
+  <url>
+    <loc>https://www.gigniconnect.space/llms.txt</loc>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.50</priority>
   </url>
 
 </urlset>
