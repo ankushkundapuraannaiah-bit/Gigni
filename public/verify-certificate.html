@@ -6,32 +6,21 @@
   <title>Verify Certificate — Check Gigni Credential | GigniConnect</title>
   <meta name="description" content="Verify any Gigni (GigniConnect) certificate or credential instantly. Enter your certificate ID to authenticate your Zorus 2.1 completion or AI course certificate issued by gigniconnect.space.">
   <meta name="keywords" content="Gigni certificate verification, GigniConnect verify credential, verify Gigni certificate, Gigni credential check, Zorus 2.1 certificate, gigniconnect.space certificate, verify AI course certificate">
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="robots" content="index, follow">
   <meta name="author" content="Gigni | GigniConnect">
-  <meta name="application-name" content="Gigni | GigniConnect">
-  <meta name="theme-color" content="#7c3aed">
+  <meta name="theme-color" content="#6d28d9">
   <link rel="canonical" href="https://www.gigniconnect.space/verify-certificate">
   <link rel="icon" type="image/png" href="favicon.png">
 
-  <!-- Open Graph / Facebook -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.gigniconnect.space/verify-certificate">
-  <meta property="og:site_name" content="Gigni | GigniConnect">
-  <meta property="og:title" content="Verify Certificate — Check Gigni Credential | GigniConnect">
-  <meta property="og:description" content="Verify any Gigni (GigniConnect) certificate or credential instantly. Authenticate your Zorus 2.1 or AI course certificate issued by gigniconnect.space.">
+  <meta property="og:title" content="Verify Certificate — Check Gigni Credential">
+  <meta property="og:description" content="Verify any Gigni (GigniConnect) certificate or credential instantly. Authenticate your Zorus 2.1 or AI course certificate.">
   <meta property="og:image" content="https://www.gigniconnect.space/Gemini_Generated_Image_anvpx2anvpx2anvp.png">
-  <meta property="og:image:alt" content="Gigni Certificate Verification — GigniConnect">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:locale" content="en_US">
-
-  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="https://www.gigniconnect.space/verify-certificate">
-  <meta name="twitter:title" content="Verify Certificate — Check Gigni Credential | GigniConnect">
-  <meta name="twitter:description" content="Verify any Gigni (GigniConnect) certificate instantly at gigniconnect.space. Enter your certificate ID to authenticate.">
-  <meta name="twitter:image" content="https://www.gigniconnect.space/Gemini_Generated_Image_anvpx2anvpx2anvp.png">
-  <meta name="twitter:image:alt" content="Gigni Certificate Verification — GigniConnect">
+  <meta name="twitter:title" content="Verify Certificate — Check Gigni Credential">
+  <meta name="twitter:description" content="Verify any Gigni (GigniConnect) certificate instantly.">
 
   <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
@@ -42,144 +31,100 @@
         "@type": "WebPage",
         "name": "Verify Certificate — Check Gigni Credential",
         "url": "https://www.gigniconnect.space/verify-certificate",
-        "description": "Verify any Gigni (GigniConnect) certificate or credential instantly. Enter your certificate ID to authenticate your Zorus 2.1 completion or AI course certificate.",
-        "publisher": {
-          "@type": "Organization",
-          "name": "Gigni",
-          "alternateName": "GigniConnect",
-          "url": "https://www.gigniconnect.space/"
-        }
-      },
-      {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.gigniconnect.space/" },
-          { "@type": "ListItem", "position": 2, "name": "Verify Certificate", "item": "https://www.gigniconnect.space/verify-certificate" }
-        ]
+        "description": "Verify any Gigni certificate instantly. Enter your certificate ID to authenticate your Zorus 2.1 completion or AI course certificate.",
+        "publisher": { "@type": "Organization", "name": "Gigni", "url": "https://www.gigniconnect.space/" }
       }
     ]
   }
   </script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
   
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+
+  <!-- Theme -->
+  <link rel="stylesheet" href="theme.css">
+  <script src="theme.js"></script>
+
   <style>
-    :root {
-      --ink: #12062a;
-      --muted: #6b7280;
-      --purple: #7c3aed;
-      --purple-2: #9333ea;
-      --purple-3: #a855f7;
-      --purple-soft: #f5f0ff;
-      --purple-mid: #ede9fe;
-      --white: #ffffff;
-      --border: rgba(124,58,237,0.15);
-      --line: rgba(124,58,237,0.10);
-      --green: #10b981;
-      --orange: #f97316;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'Outfit', sans-serif;
-      color: var(--ink);
-      background: #ffffff;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-    }
-
     #bg-canvas {
       position: fixed;
       inset: 0;
       z-index: -2;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      opacity: 0.5;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 100vh;
-      z-index: -1;
-      background-image: radial-gradient(circle, rgba(124,58,237,0.11) 1px, transparent 1px);
-      background-size: 36px 36px;
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent 80%);
       pointer-events: none;
     }
 
-    /* ── NAVBAR ── */
+    /* Fixed pill navbar */
     nav {
-      width: 100%;
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 24px;
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(1200px, calc(100% - 32px));
       display: flex;
       align-items: center;
       justify-content: space-between;
-      z-index: 10;
+      padding: 10px 24px;
+      border-radius: 100px;
+      z-index: 1000;
+      background: var(--nav-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-ui);
+      box-shadow: var(--nav-shadow);
     }
-
     .logo {
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 900;
-      letter-spacing: 0.04em;
-      background: linear-gradient(135deg, var(--purple), var(--purple-2));
+      letter-spacing: 0.05em;
+      background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      background-clip: text;
-      filter: drop-shadow(0 0 18px rgba(192,38,211,0.35));
       text-decoration: none;
     }
-
-    .home-link {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 700;
-      padding: 8px 18px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(10px);
-      transition: all 0.2s ease;
+    .nav-links {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 13.5px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .nav-links a:hover {
+      color: var(--accent);
+      background: var(--accent-light);
     }
 
-    .home-link:hover {
-      color: var(--purple);
-      background: var(--purple-soft);
-      border-color: var(--purple);
-    }
-
-    /* ── CONTAINER ── */
-    .main-content {
-      flex: 1;
+    /* Page centred card layout */
+    .page-wrapper {
+      min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 40px 24px;
-      z-index: 5;
+      padding: 110px 24px 60px;
     }
 
     .verify-card {
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(25px);
-      border: 1px solid var(--border);
+      background: var(--bg-card);
+      border: 1px solid var(--border-ui);
       border-radius: 28px;
-      padding: 44px;
+      padding: 48px;
       width: 100%;
       max-width: 600px;
-      box-shadow: 0 20px 50px rgba(124,58,237,0.08), 0 0 0 1px rgba(255,255,255,0.6) inset;
-      animation: fadeInUp 0.5s ease-out;
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
-
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -187,436 +132,414 @@
 
     .verify-header {
       text-align: center;
-      margin-bottom: 32px;
+      margin-bottom: 36px;
     }
-
-    .verify-header h1 {
+    .verify-icon {
+      width: 64px;
+      height: 64px;
+      background: var(--accent-gradient);
+      border-radius: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       font-size: 28px;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      margin-bottom: 8px;
-      background: linear-gradient(135deg, var(--ink), var(--purple));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      margin-bottom: 18px;
+      box-shadow: 0 8px 20px rgba(109, 40, 217, 0.2);
     }
-
+    .verify-header h1 {
+      font-size: 26px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
     .verify-header p {
-      color: var(--muted);
-      font-size: 15px;
-      font-weight: 500;
-      line-height: 1.6;
-    }
-
-    .input-group {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .input-group input {
-      flex: 1;
-      background: rgba(124,58,237,0.02);
-      border: 1.5px solid var(--border);
-      border-radius: 14px;
-      padding: 14px 20px;
-      color: var(--ink);
-      font-family: inherit;
-      font-weight: 600;
-      font-size: 15px;
-      outline: none;
-      transition: all 0.25s ease;
-    }
-
-    .input-group input:focus {
-      border-color: var(--purple);
-      background: var(--white);
-      box-shadow: 0 0 0 4px rgba(124,58,237,0.1);
-    }
-
-    .input-group button {
-      background: linear-gradient(135deg, var(--purple), var(--purple-2));
-      color: #fff;
-      border: none;
-      border-radius: 14px;
-      padding: 0 28px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 6px 16px rgba(124,58,237,0.2);
-    }
-
-    .input-group button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 22px rgba(124,58,237,0.3);
-    }
-
-    /* ── RESULTS ── */
-    .result-container {
-      margin-top: 24px;
-      display: none;
-    }
-
-    .result-container.active {
-      display: block;
-      animation: fadeIn 0.4s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    /* Loading Spinner */
-    .loader {
-      display: none;
-      justify-content: center;
-      margin: 30px 0;
-    }
-    .loader.active {
-      display: flex;
-    }
-    .spinner {
-      width: 48px;
-      height: 48px;
-      border: 4px solid var(--purple-soft);
-      border-top-color: var(--purple);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Success Card */
-    .success-card {
-      border: 2px solid rgba(16, 185, 129, 0.25);
-      border-radius: 20px;
-      background: rgba(16, 185, 129, 0.02);
-      padding: 30px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .badge-verified {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(16, 185, 129, 0.08);
-      border: 1.5px solid rgba(16, 185, 129, 0.25);
-      color: var(--green);
-      padding: 6px 14px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
-    }
-
-    .detail-grid {
-      display: grid;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .detail-item {
-      border-bottom: 1px solid rgba(124, 58, 237, 0.08);
-      padding-bottom: 12px;
-    }
-
-    .detail-item:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
-
-    .detail-label {
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--purple);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 4px;
-    }
-
-    .detail-val {
-      font-size: 17px;
-      font-weight: 600;
-      color: var(--ink);
-    }
-
-    .btn-download {
-      width: 100%;
-      background: linear-gradient(135deg, var(--green), #059669);
-      color: #fff;
-      border: none;
-      border-radius: 14px;
-      padding: 14px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.25);
-      text-decoration: none;
-      font-size: 15px;
-    }
-
-    .btn-download:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 22px rgba(16, 185, 129, 0.35);
-    }
-
-    /* Error Card */
-    .error-card {
-      border: 2px solid rgba(239, 68, 68, 0.25);
-      border-radius: 20px;
-      background: rgba(239, 68, 68, 0.02);
-      padding: 30px;
-      text-align: center;
-    }
-
-    .badge-error {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(239, 68, 68, 0.08);
-      border: 1.5px solid rgba(239, 68, 68, 0.25);
-      color: #ef4444;
-      padding: 6px 14px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 16px;
-    }
-
-    .error-card h3 {
-      font-size: 20px;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
-
-    .error-card p {
-      color: var(--muted);
+      color: var(--text-muted);
       font-size: 14px;
       line-height: 1.6;
     }
 
-    /* ── FOOTER ── */
-    footer {
-      padding: 24px;
+    /* Input group */
+    .input-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .input-group input {
+      flex: 1;
+      padding: 14px 18px;
+      border: 1.5px solid var(--border-ui);
+      border-radius: 12px;
+      background: var(--bg-secondary);
+      color: var(--text-main);
+      font-family: 'Fira Code', monospace;
+      font-size: 14.5px;
+      outline: none;
+      transition: border-color 0.2s;
+      letter-spacing: 0.03em;
+    }
+    .input-group input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--glow-color);
+    }
+    .input-group input::placeholder {
+      font-family: 'Outfit', sans-serif;
+      color: var(--text-muted);
+      letter-spacing: normal;
+    }
+    .verify-btn {
+      padding: 14px 22px;
+      border-radius: 12px;
+      background: var(--accent-gradient);
+      color: #fff;
+      border: none;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .verify-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(109, 40, 217, 0.25);
+    }
+
+    /* Loader spinner */
+    .loader {
+      display: none;
       text-align: center;
-      z-index: 10;
+      padding: 32px 0;
+    }
+    .loader.active { display: block; }
+    .spinner-ring {
+      width: 44px;
+      height: 44px;
+      border: 3px solid var(--border-ui);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 12px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loader p {
+      color: var(--text-muted);
+      font-size: 13.5px;
+      font-weight: 700;
     }
 
-    footer p {
+    /* Results */
+    .result-container { display: none; }
+    .result-container.active { display: block; animation: fadeInUp 0.4s ease; }
+
+    .success-card {
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 18px;
+      padding: 24px;
+      background: var(--success-light);
+    }
+    .badge-verified {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: var(--success);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 20px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 500px) {
+      .detail-grid { grid-template-columns: 1fr; }
+    }
+    .detail-item {}
+    .detail-label {
+      font-size: 10px;
+      font-weight: 900;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 4px;
+    }
+    .detail-val {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--accent-gradient);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 800;
       font-size: 13px;
-      color: var(--muted);
-      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-download:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(109, 40, 217, 0.25);
     }
 
-    @media (max-width: 600px) {
-      .verify-card {
-        padding: 28px;
-      }
-      .input-group {
-        flex-direction: column;
-      }
-      .input-group button {
-        padding: 14px;
-        justify-content: center;
-      }
+    .error-card {
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 18px;
+      padding: 24px;
+      background: rgba(239, 68, 68, 0.04);
+    }
+    .badge-error {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 12px;
+    }
+    .error-card h3 {
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+    .error-card p {
+      color: var(--text-muted);
+      font-size: 13.5px;
+      line-height: 1.6;
+    }
+
+    /* Trust row */
+    .trust-row {
+      margin-top: 28px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .trust-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-ui);
+      border-radius: 999px;
+      padding: 5px 14px;
+    }
+
+    footer {
+      padding: 30px 24px;
+      text-align: center;
+    }
+    footer p {
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 580px) {
+      .verify-card { padding: 28px 20px; }
+      .input-group { flex-direction: column; }
     }
   </style>
 </head>
 <body>
+<canvas id="bg-canvas"></canvas>
 
-  <canvas id="bg-canvas"></canvas>
+<!-- Top Nav -->
+<nav>
+  <a href="/" class="logo">GIGNI</a>
+  <div class="nav-links">
+    <a href="/">← Back Home</a>
+    <a href="/freelancers">Find Talent</a>
+    <button class="theme-toggle" id="theme-toggle" title="Toggle Theme"><span>🌙</span></button>
+  </div>
+</nav>
 
-  <nav>
-    <a href="/" class="logo">GIGNI</a>
-    <a href="/" class="home-link"><span class="material-icons" style="font-size: 16px;">arrow_back</span> Back to Home</a>
-  </nav>
+<!-- Centred Card -->
+<div class="page-wrapper">
+  <div class="verify-card">
+    <div class="verify-header">
+      <div class="verify-icon">🎓</div>
+      <h1>Verify Student Credential</h1>
+      <p>Confirm the authenticity of certificates issued by Gigni. Enter the unique certificate verification code below to check its legitimacy.</p>
+    </div>
 
-  <div class="main-content">
-    <div class="verify-card">
-      <div class="verify-header">
-        <h1>Verify Student Credential</h1>
-        <p>Confirm the legitimacy of credentials issued by Team Gigni. Enter the certificate verification code below.</p>
-      </div>
+    <div class="input-group">
+      <input type="text" id="cert-no-input" placeholder="Enter certificate code e.g. GIG-20260525-4F8X" autocomplete="off" spellcheck="false">
+      <button class="verify-btn" onclick="performVerification()">✓ Verify</button>
+    </div>
 
-      <div class="input-group">
-        <input type="text" id="cert-no-input" placeholder="e.g. GIG-20260525-4F8X" autocomplete="off" spellcheck="false">
-        <button onclick="performVerification()">
-          <span class="material-icons">verified_user</span> Verify
-        </button>
-      </div>
+    <!-- Loader -->
+    <div class="loader" id="verify-loader">
+      <div class="spinner-ring"></div>
+      <p>Checking registry database…</p>
+    </div>
 
-      <!-- LOADER -->
-      <div class="loader" id="verify-loader">
-        <div class="spinner"></div>
-      </div>
+    <!-- Results -->
+    <div class="result-container" id="verify-results"></div>
 
-      <!-- RESULTS CONTAINER -->
-      <div class="result-container" id="verify-results">
-        <!-- Will be dynamically populated -->
-      </div>
+    <!-- Trust badges below -->
+    <div class="trust-row">
+      <div class="trust-pill">🔒 Cryptographically Verified</div>
+      <div class="trust-pill">📄 Tamper-Proof Registry</div>
+      <div class="trust-pill">⚡ Real-time Lookup</div>
     </div>
   </div>
+</div>
 
-  <footer>
-    <p>&copy; 2026 Team Gigni. All rights reserved.</p>
-  </footer>
+<footer>
+  <p>&copy; 2026 Gigni / GigniConnect. All rights reserved. &nbsp;·&nbsp; <a href="/" style="color:var(--accent); font-weight:700; text-decoration:none;">gigniconnect.space</a></p>
+</footer>
 
-  <script>
-    // Search on Enter key press
-    document.getElementById('cert-no-input').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        performVerification();
-      }
-    });
+<script>
+  // Enter key triggers verification
+  document.getElementById('cert-no-input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') performVerification();
+  });
 
-    // Check URL parameters for auto-verification on load
-    window.addEventListener('DOMContentLoaded', () => {
-      const params = new URLSearchParams(window.location.search);
-      const code = params.get('code') || params.get('no');
-      if (code) {
-        document.getElementById('cert-no-input').value = code;
-        performVerification();
-      }
-    });
+  // Auto-verify if URL contains ?code= or ?no=
+  window.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code') || params.get('no');
+    if (code) {
+      document.getElementById('cert-no-input').value = code;
+      performVerification();
+    }
+  });
 
-    async function performVerification() {
-      const codeInput = document.getElementById('cert-no-input');
-      const code = codeInput.value.trim();
-      
-      const loader = document.getElementById('verify-loader');
-      const resultsWrap = document.getElementById('verify-results');
+  async function performVerification() {
+    const codeInput = document.getElementById('cert-no-input');
+    const code = codeInput.value.trim();
+    const loader = document.getElementById('verify-loader');
+    const resultsWrap = document.getElementById('verify-results');
 
-      if (!code) {
-        alert('Please enter a certificate number.');
-        return;
-      }
+    if (!code) { alert('Please enter a certificate verification number.'); return; }
 
-      // Reset & show loading state
-      resultsWrap.classList.remove('active');
-      resultsWrap.innerHTML = '';
-      loader.classList.add('active');
+    resultsWrap.classList.remove('active');
+    resultsWrap.innerHTML = '';
+    loader.classList.add('active');
 
-      try {
-        const res = await fetch(`/api/certificate/verify/${encodeURIComponent(code)}`);
-        const data = await res.json();
-        
-        loader.classList.remove('active');
-        resultsWrap.classList.add('active');
+    try {
+      const res = await fetch(`/api/certificate/verify/${encodeURIComponent(code)}`);
+      const data = await res.json();
+      loader.classList.remove('active');
+      resultsWrap.classList.add('active');
 
-        if (res.ok && data.success) {
-          const cert = data.certificate;
-          
-          resultsWrap.innerHTML = `
-            <div class="success-card">
-              <div class="badge-verified">
-                <span class="material-icons" style="font-size: 14px;">check_circle</span> Verified Credential
+      if (res.ok && data.success) {
+        const cert = data.certificate;
+        resultsWrap.innerHTML = `
+          <div class="success-card">
+            <div class="badge-verified">✓ Verified Gigni Certificate</div>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <div class="detail-label">Certificate Code</div>
+                <div class="detail-val" style="font-family:'Fira Code',monospace;font-size:13px;">${escapeHtml(cert.certificate_no)}</div>
               </div>
-              <div class="detail-grid">
-                <div class="detail-item">
-                  <div class="detail-label">Certificate Code</div>
-                  <div class="detail-val" style="font-family: monospace; letter-spacing: 0.02em;">${cert.certificate_no}</div>
-                </div>
-                <div class="detail-item">
-                  <div class="detail-label">Recipient Name</div>
-                  <div class="detail-val">${cert.recipient_name}</div>
-                </div>
-                <div class="detail-item">
-                  <div class="detail-label">Verified Course / Track</div>
-                  <div class="detail-val">${cert.course_name}</div>
-                </div>
-                <div class="detail-item">
-                  <div class="detail-label">Date of Issue</div>
-                  <div class="detail-val">${cert.date_of_issue}</div>
-                </div>
+              <div class="detail-item">
+                <div class="detail-label">Recipient</div>
+                <div class="detail-val">${escapeHtml(cert.recipient_name)}</div>
               </div>
-              <a href="${cert.certificate_data}" download="${cert.course_name.replace(/\s+/g, '-')}-Certificate-${cert.certificate_no}" class="btn-download" style="margin-top: 10px;">
-                <span class="material-icons">download</span> Download Certificate
-              </a>
+              <div class="detail-item">
+                <div class="detail-label">Verified Course / Track</div>
+                <div class="detail-val">${escapeHtml(cert.course_name)}</div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-label">Date of Issue</div>
+                <div class="detail-val">${escapeHtml(cert.date_of_issue)}</div>
+              </div>
             </div>
-          `;
-        } else {
-          // Error/Not found state
-          resultsWrap.innerHTML = `
-            <div class="error-card">
-              <div class="badge-error">
-                <span class="material-icons" style="font-size: 14px;">warning</span> Record Not Found
-              </div>
-              <h3>Invalid Certificate Number</h3>
-              <p style="margin-top: 8px;">The certificate code <strong>${escapeHtml(code)}</strong> could not be found in Gigni's registry database. Please check for spelling mistakes and try again.</p>
-            </div>
-          `;
-        }
-      } catch (err) {
-        loader.classList.remove('active');
-        resultsWrap.classList.add('active');
+            <a href="${cert.certificate_data}" download="${cert.course_name.replace(/\s+/g, '-')}-Certificate-${cert.certificate_no}" class="btn-download">⬇ Download Certificate PDF</a>
+          </div>
+        `;
+      } else {
         resultsWrap.innerHTML = `
           <div class="error-card">
-            <div class="badge-error">
-              <span class="material-icons" style="font-size: 14px;">error</span> Verification Error
-            </div>
-            <h3>Network Sync Failure</h3>
-            <p style="margin-top: 8px;">Could not connect to the verification API. Please check your internet connection and try again.</p>
+            <div class="badge-error">⚠ Record Not Found</div>
+            <h3>Invalid Certificate Number</h3>
+            <p>The code <strong>${escapeHtml(code)}</strong> could not be found in Gigni's verification registry. Please check for typos and try again, or contact support at gigniconnect.space.</p>
           </div>
         `;
       }
+    } catch (err) {
+      loader.classList.remove('active');
+      resultsWrap.classList.add('active');
+      resultsWrap.innerHTML = `
+        <div class="error-card">
+          <div class="badge-error">⚡ Verification Error</div>
+          <h3>Network Sync Failed</h3>
+          <p>Could not connect to the Gigni verification API. Please check your internet connection and try again.</p>
+        </div>
+      `;
     }
+  }
 
-    function escapeHtml(val) {
-      return String(val || '').replace(/[&<>"']/g, ch => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-      }[ch]));
-    }
+  function escapeHtml(val) {
+    return String(val || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
 
-    // ── THREE.JS PARTICLE BACKGROUND ──
+  // Three.js Particle Background
+  let particles, renderer, scene, camera;
+
+  function initBackground() {
     const canvas = document.getElementById('bg-canvas');
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    if (!canvas || !window.THREE) return;
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 5;
 
-    const pCount = 1200;
-    const pPos = new Float32Array(pCount * 3);
-    for(let i=0; i<pCount*3; i++) {
-      pPos[i] = (Math.random() - 0.5) * 15;
-    }
+    const pos = new Float32Array(2400);
+    for (let i = 0; i < 2400; i++) pos[i] = (Math.random() - 0.5) * 14;
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const mat = new THREE.PointsMaterial({ size: 0.024, color: 0x8b5cf6, transparent: true, opacity: isDark ? 0.32 : 0.14 });
+    particles = new THREE.Points(geo, mat);
+    scene.add(particles);
 
-    const pGeo = new THREE.BufferGeometry();
-    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-    const pMat = new THREE.PointsMaterial({ size: 0.022, color: 0x7c3aed, transparent: true, opacity: 0.45 });
-    const points = new THREE.Points(pGeo, pMat);
-    scene.add(points);
-    
-    function animate() { 
-      requestAnimationFrame(animate); 
-      points.rotation.y += 0.0004; 
-      points.rotation.x += 0.0002;
-      renderer.render(scene, camera); 
-    }
-    animate();
-    
-    window.onresize = () => { 
-      renderer.setSize(window.innerWidth, window.innerHeight); 
-      camera.aspect = window.innerWidth / window.innerHeight; 
-      camera.updateProjectionMatrix(); 
-    };
-  </script>
+    window.addEventListener('resize', () => {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+    });
+
+    (function animate() {
+      requestAnimationFrame(animate);
+      particles.rotation.y += 0.0005;
+      particles.rotation.x += 0.0002;
+      renderer.render(scene, camera);
+    })();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initBackground();
+    const tBtn = document.getElementById('theme-toggle');
+    if (tBtn) tBtn.addEventListener('click', () => {
+      setTimeout(() => { if (particles) particles.material.opacity = document.documentElement.getAttribute('data-theme') === 'dark' ? 0.32 : 0.14; }, 60);
+    });
+  });
+</script>
 </body>
 </html>
