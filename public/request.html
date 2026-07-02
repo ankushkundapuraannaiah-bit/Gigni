@@ -519,6 +519,7 @@
     <a href="/">Home</a>
     <a href="/about">About</a>
     <a href="/compiler">Compiler</a>
+    <a href="/freelancers">Find Talent</a>
     <a href="/request" class="active">Request Service</a>
     <a href="/zorus">Zorus 2.1</a>
   </div>
@@ -531,6 +532,7 @@
   <a href="/" onclick="toggleMobileMenu()">Home</a>
   <a href="/about" onclick="toggleMobileMenu()">About</a>
   <a href="/compiler" onclick="toggleMobileMenu()">Compiler</a>
+  <a href="/freelancers" onclick="toggleMobileMenu()">Find Talent</a>
   <a href="/request" onclick="toggleMobileMenu()">Request Service</a>
   <a href="/zorus" onclick="toggleMobileMenu()">Zorus 2.1</a>
 </div>
@@ -800,6 +802,21 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
+  });
+
+  // Prefill developer request from freelancers page
+  window.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const developerName = params.get('dev');
+    if (developerName) {
+      const detailsBox = document.getElementById('projectDetails');
+      if (detailsBox) {
+        detailsBox.value = `I want to hire Gigni developer: ${developerName}.\n\nHere are our project requirements: `;
+        // Scroll to form card
+        const formCard = document.querySelector('.form-card');
+        if (formCard) formCard.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   });
 </script>
 </body>

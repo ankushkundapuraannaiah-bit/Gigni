@@ -747,6 +747,19 @@ app.get('/api/users', authenticateToken, async (req, res) => {
     }
 });
 
+// ─── PUBLIC: GET ALL FREELANCERS (public directory) ──────────────────────────
+app.get('/api/public/freelancers', async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT id, fname, lname, college, year, field, interest, intro, linkedin, github FROM users ORDER BY fname ASC;`
+        );
+        res.status(200).json({ success: true, freelancers: result.rows });
+    } catch (err) {
+        console.error('Fetch public freelancers error:', err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // ─── ADD ITEM (project / certificate / hackathon) ─────────────────────────────
 app.post('/api/user/add-item', authenticateToken, async (req, res) => {
     const { userId, type, item } = req.body;

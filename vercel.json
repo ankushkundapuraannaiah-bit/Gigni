@@ -74,6 +74,11 @@
       "source": "/request.html",
       "destination": "/request",
       "permanent": true
+    },
+    {
+      "source": "/freelancers.html",
+      "destination": "/freelancers",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -136,6 +141,10 @@
     {
       "source": "/request",
       "destination": "/request.html"
+    },
+    {
+      "source": "/freelancers",
+      "destination": "/freelancers.html"
     },
     {
       "source": "/api/(.*)",
